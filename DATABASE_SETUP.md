@@ -14,8 +14,16 @@ If you're seeing database connection errors, follow these steps:
    ```
 
 2. **Update the DATABASE_URL** in your `.env` file:
+
+   **If running with docker-compose (app in container):**
    ```bash
-   # Note: Using port 5433 to avoid conflicts with existing PostgreSQL installations
+   # Use the container name "postgres" as the host
+   DATABASE_URL=postgresql://menufic:menufic_password@postgres:5432/menufic_db
+   ```
+
+   **If running app locally (not in Docker) but connecting to Docker DB:**
+   ```bash
+   # Use localhost with port 5433
    DATABASE_URL=postgresql://menufic:menufic_password@localhost:5433/menufic_db
    ```
 
