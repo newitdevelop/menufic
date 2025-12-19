@@ -14,15 +14,27 @@ services:
       - 3000
     ports:
       - 3000:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
-  mariadb:
-    image: lscr.io/linuxserver/mariadb:latest
+  postgres:
+    image: postgres:15-alpine
     container_name: menufic-db
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-menufic}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-menufic_password}
+      POSTGRES_DB: ${POSTGRES_DB:-menufic_db}
     expose:
-      - 3306
+      - 5432
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/menufic/mariadb:/config
+      - ${DOCKER_VOLUME_STORAGE:-./data}/postgres:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-menufic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
