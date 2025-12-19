@@ -2,7 +2,7 @@ import type { FC, MouseEventHandler, PropsWithChildren } from "react";
 import { useMemo, useState } from "react";
 
 import { Button, LoadingOverlay, Popover, Stack, useMantineTheme } from "@mantine/core";
-import { IconBrandGithub } from "@tabler/icons";
+import { IconBrandGithub, IconBrandWindows } from "@tabler/icons";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -56,6 +56,23 @@ const GithubButton = (props: ButtonProps) => {
     );
 };
 
+const AzureButton = (props: ButtonProps) => {
+    return (
+        <Button
+            {...props}
+            data-testid="azure-login-button"
+            leftIcon={<IconBrandWindows size={16} />}
+            size="lg"
+            sx={(theme) => ({
+                "&:hover": { backgroundColor: "#0067B8", boxShadow: theme.shadows.md },
+                backgroundColor: "#0078D4",
+                borderRadius: theme.radius.sm,
+                color: White,
+            })}
+        />
+    );
+};
+
 export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, setLoading }) => {
     const router = useRouter();
     const t = useTranslations("auth");
@@ -77,6 +94,7 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
     return (
         <Stack px="xl" py="md" sx={{ gap: 20 }}>
             <LoadingOverlay overlayBlur={2} visible={loading} />
+            <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>
             <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>
             <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>
         </Stack>

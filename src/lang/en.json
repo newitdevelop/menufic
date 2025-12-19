@@ -17,6 +17,7 @@
         "openDashboard": "Go to Dashboard"
     },
     "auth": {
+        "azureSignIn": "Sign in with Microsoft",
         "googleSignIn": "Sign in with Google",
         "githubSignIn": "Sign in with GitHub",
         "keyRequired": "Key is required",
