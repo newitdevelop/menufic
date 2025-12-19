@@ -3,7 +3,10 @@ version: "3.6"
 services:
 
   menufic:
-    image: l4rm4nd/menufic:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: menufic:latest
     container_name: menufic
     env_file:
       - .env

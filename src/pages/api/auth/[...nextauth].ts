@@ -19,11 +19,15 @@ export const authOptions: NextAuthOptions = {
     },
     pages: { signIn: "/auth/signin" },
     providers: [
-        AzureADProvider({
-            clientId: env.AZURE_AD_CLIENT_ID,
-            clientSecret: env.AZURE_AD_CLIENT_SECRET,
-            tenantId: env.AZURE_AD_TENANT_ID,
-        }),
+        ...(env.AZURE_AD_CLIENT_ID && env.AZURE_AD_CLIENT_SECRET && env.AZURE_AD_TENANT_ID
+            ? [
+                  AzureADProvider({
+                      clientId: env.AZURE_AD_CLIENT_ID,
+                      clientSecret: env.AZURE_AD_CLIENT_SECRET,
+                      tenantId: env.AZURE_AD_TENANT_ID,
+                  }),
+              ]
+            : []),
         GoogleProvider({
             clientId: env.GOOGLE_CLIENT_ID,
             clientSecret: env.GOOGLE_CLIENT_SECRET,

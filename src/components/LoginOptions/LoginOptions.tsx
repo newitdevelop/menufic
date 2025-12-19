@@ -91,6 +91,8 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
         }
     };
 
+    // Note: Azure button will only show if Azure AD is configured on the server
+    // The provider list is determined by NextAuth configuration
     return (
         <Stack px="xl" py="md" sx={{ gap: 20 }}>
             <LoadingOverlay overlayBlur={2} visible={loading} />
