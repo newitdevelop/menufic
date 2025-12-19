@@ -15,7 +15,8 @@ If you're seeing database connection errors, follow these steps:
 
 2. **Update the DATABASE_URL** in your `.env` file:
    ```bash
-   DATABASE_URL=postgresql://menufic:menufic_password@localhost:5432/menufic_db
+   # Note: Using port 5433 to avoid conflicts with existing PostgreSQL installations
+   DATABASE_URL=postgresql://menufic:menufic_password@localhost:5433/menufic_db
    ```
 
 3. **Add PostgreSQL credentials** (if using docker-compose):
@@ -23,8 +24,10 @@ If you're seeing database connection errors, follow these steps:
    POSTGRES_USER=menufic
    POSTGRES_PASSWORD=menufic_password
    POSTGRES_DB=menufic_db
-   POSTGRES_PORT=5432
+   POSTGRES_PORT=5433
    ```
+
+   > **Note:** Port 5433 is used by default to avoid conflicts. If you see a "port already allocated" error, see [PORT_CONFLICT_FIX.md](PORT_CONFLICT_FIX.md)
 
 ### Step 2: Start the Database
 
@@ -71,6 +74,30 @@ docker-compose up
 ```
 
 ## Common Issues and Solutions
+
+### Issue 0: "Port is already allocated" (Port 5432 conflict)
+
+**Symptoms**:
+- `Bind for 0.0.0.0:5432 failed: port is already allocated`
+- Docker container fails to start
+
+**Solutions**:
+
+This issue has been **fixed in the default configuration** - the app now uses port 5433 instead of 5432.
+
+1. **Update your .env file** to use port 5433:
+   ```bash
+   DATABASE_URL=postgresql://menufic:menufic_password@localhost:5433/menufic_db
+   POSTGRES_PORT=5433
+   ```
+
+2. **Restart the containers**:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+
+For more details and alternative solutions, see **[PORT_CONFLICT_FIX.md](PORT_CONFLICT_FIX.md)**
 
 ### Issue 1: "Can't reach database server"
 

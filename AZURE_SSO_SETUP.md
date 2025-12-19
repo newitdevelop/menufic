@@ -2,6 +2,15 @@
 
 This guide will walk you through setting up Azure AD Single Sign-On (SSO) for Menufic.
 
+## Important Note
+
+**Azure AD authentication is completely optional!** The login page will automatically show or hide authentication providers based on what you have configured:
+- If Azure AD credentials are not configured, the Azure/Microsoft button won't appear
+- If Google credentials are not configured, the Google button won't appear
+- If GitHub credentials are not configured, the GitHub button won't appear
+
+You can use any combination of providers or just one. The app adapts automatically.
+
 ## Prerequisites
 
 - An Azure AD tenant (Azure Active Directory)

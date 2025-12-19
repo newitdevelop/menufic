@@ -19,6 +19,7 @@ export const authOptions: NextAuthOptions = {
     },
     pages: { signIn: "/auth/signin" },
     providers: [
+        // Azure AD Provider (optional)
         ...(env.AZURE_AD_CLIENT_ID && env.AZURE_AD_CLIENT_SECRET && env.AZURE_AD_TENANT_ID
             ? [
                   AzureADProvider({
@@ -28,14 +29,24 @@ export const authOptions: NextAuthOptions = {
                   }),
               ]
             : []),
-        GoogleProvider({
-            clientId: env.GOOGLE_CLIENT_ID,
-            clientSecret: env.GOOGLE_CLIENT_SECRET,
-        }),
-        GitHubProvider({
-            clientId: env.GITHUB_CLIENT_ID,
-            clientSecret: env.GITHUB_CLIENT_SECRET,
-        }),
+        // Google Provider (optional)
+        ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+            ? [
+                  GoogleProvider({
+                      clientId: env.GOOGLE_CLIENT_ID,
+                      clientSecret: env.GOOGLE_CLIENT_SECRET,
+                  }),
+              ]
+            : []),
+        // GitHub Provider (optional)
+        ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET
+            ? [
+                  GitHubProvider({
+                      clientId: env.GITHUB_CLIENT_ID,
+                      clientSecret: env.GITHUB_CLIENT_SECRET,
+                  }),
+              ]
+            : []),
         CredentialsProvider({
             authorize(credentials) {
                 if (env.TEST_MENUFIC_USER_LOGIN_KEY && credentials?.loginKey === env.TEST_MENUFIC_USER_LOGIN_KEY) {

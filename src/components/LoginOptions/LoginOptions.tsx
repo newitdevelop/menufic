@@ -1,15 +1,15 @@
 import type { FC, MouseEventHandler, PropsWithChildren } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button, LoadingOverlay, Popover, Stack, useMantineTheme } from "@mantine/core";
 import { IconBrandGithub, IconBrandWindows } from "@tabler/icons";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { getProviders, signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 
 import type { ButtonProps as MantineButtonProps, PopoverBaseProps } from "@mantine/core";
 import type { BuiltInProviderType } from "next-auth/providers";
-import type { LiteralUnion } from "next-auth/react";
+import type { ClientSafeProvider, LiteralUnion } from "next-auth/react";
 
 import { White } from "src/styles/theme";
 
@@ -76,6 +76,8 @@ const AzureButton = (props: ButtonProps) => {
 export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, setLoading }) => {
     const router = useRouter();
     const t = useTranslations("auth");
+    const [availableProviders, setAvailableProviders] = useState<Record<string, ClientSafeProvider>>({});
+
     const callbackUrl = useMemo(() => {
         if (typeof router.query?.callbackUrl === "string" && !router.query?.callbackUrl?.includes("auth/signin")) {
             // if callbackUrl exists and its not the signin url, use it
@@ -84,6 +86,15 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
         return "/restaurant";
     }, [router.query]);
 
+    // Fetch available providers from NextAuth
+    useEffect(() => {
+        getProviders().then((providers) => {
+            if (providers) {
+                setAvailableProviders(providers);
+            }
+        });
+    }, []);
+
     const clickLoginOption = (provider: LiteralUnion<BuiltInProviderType, string>) => {
         signIn(provider, { callbackUrl });
         if (setLoading) {
@@ -91,14 +102,17 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
         }
     };
 
-    // Note: Azure button will only show if Azure AD is configured on the server
-    // The provider list is determined by NextAuth configuration
+    // Only show buttons for providers that are actually configured
+    const hasAzure = "azure-ad" in availableProviders;
+    const hasGoogle = "google" in availableProviders;
+    const hasGithub = "github" in availableProviders;
+
     return (
         <Stack px="xl" py="md" sx={{ gap: 20 }}>
             <LoadingOverlay overlayBlur={2} visible={loading} />
-            <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>
-            <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>
-            <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>
+            {hasAzure && <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>}
+            {hasGoogle && <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>}
+            {hasGithub && <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>}
         </Stack>
     );
 };
