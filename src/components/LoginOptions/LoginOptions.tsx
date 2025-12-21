@@ -76,7 +76,8 @@ const AzureButton = (props: ButtonProps) => {
 export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, setLoading }) => {
     const router = useRouter();
     const t = useTranslations("auth");
-    const [availableProviders, setAvailableProviders] = useState<Record<string, ClientSafeProvider>>({});
+    const [availableProviders, setAvailableProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
+    const [isLoadingProviders, setIsLoadingProviders] = useState(true);
 
     const callbackUrl = useMemo(() => {
         if (typeof router.query?.callbackUrl === "string" && !router.query?.callbackUrl?.includes("auth/signin")) {
@@ -90,8 +91,13 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
     useEffect(() => {
         getProviders().then((providers) => {
             if (providers) {
-                setAvailableProviders(providers);
+                // Filter out the credentials provider (used for testing only)
+                const oauthProviders = Object.fromEntries(
+                    Object.entries(providers).filter(([, provider]) => provider.type !== "credentials")
+                );
+                setAvailableProviders(oauthProviders);
             }
+            setIsLoadingProviders(false);
         });
     }, []);
 
@@ -103,16 +109,20 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
     };
 
     // Only show buttons for providers that are actually configured
-    const hasAzure = "azure-ad" in availableProviders;
-    const hasGoogle = "google" in availableProviders;
-    const hasGithub = "github" in availableProviders;
+    const hasAzure = availableProviders && "azure-ad" in availableProviders;
+    const hasGoogle = availableProviders && "google" in availableProviders;
+    const hasGithub = availableProviders && "github" in availableProviders;
 
     return (
-        <Stack px="xl" py="md" sx={{ gap: 20 }}>
-            <LoadingOverlay overlayBlur={2} visible={loading} />
-            {hasAzure && <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>}
-            {hasGoogle && <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>}
-            {hasGithub && <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>}
+        <Stack px="xl" py="md" sx={{ gap: 20, minHeight: 100, position: "relative" }}>
+            <LoadingOverlay overlayBlur={2} visible={loading || isLoadingProviders} />
+            {!isLoadingProviders && (
+                <>
+                    {hasAzure && <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>}
+                    {hasGoogle && <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>}
+                    {hasGithub && <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>}
+                </>
+            )}
         </Stack>
     );
 };

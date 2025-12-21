@@ -2,9 +2,73 @@
 
 This guide will help you set up and troubleshoot the PostgreSQL database for Menufic.
 
-## Quick Fix for "Failed to retrieve restaurants" Error
+## Automated Setup (Recommended)
 
-If you're seeing database connection errors, follow these steps:
+**NEW:** Database initialization is now fully automated! The application automatically:
+- Waits for PostgreSQL to be ready
+- Checks if the database is empty
+- Creates the schema if needed (using `prisma db push`)
+- Generates the Prisma Client
+- Starts the Next.js application
+
+### Quick Start with Automated Setup
+
+1. **Copy the example environment file**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Update your `.env` file** with the correct DATABASE_URL:
+   ```bash
+   # For docker-compose (app in container) - RECOMMENDED
+   DATABASE_URL=postgresql://menufic:menufic_password@postgres:5432/menufic_db
+
+   POSTGRES_USER=menufic
+   POSTGRES_PASSWORD=menufic_password
+   POSTGRES_DB=menufic_db
+   POSTGRES_PORT=5433
+   ```
+
+3. **Start the services**:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Check the logs** to see the automated initialization:
+   ```bash
+   docker-compose logs -f menufic
+   ```
+
+   You should see:
+   ```
+   🚀 Starting Menufic application...
+   ⏳ Waiting for PostgreSQL to be ready...
+   ✅ PostgreSQL is ready!
+   🔍 Checking database state...
+   📦 Database is empty - initializing schema...
+   ✅ Database schema created successfully!
+   🔧 Generating Prisma Client...
+   ✅ Initialization complete!
+   🎉 Starting Next.js application...
+   ```
+
+That's it! The application will be ready at `http://localhost:3000`
+
+### How It Works
+
+The automated initialization is handled by [docker-entrypoint.sh](docker-entrypoint.sh), which:
+
+1. **Waits for PostgreSQL**: Uses `npx prisma db execute` to verify database connectivity
+2. **Checks Database State**: Runs `npx prisma db pull` to detect if database is empty (P4001 error)
+3. **Creates Schema**: If empty, runs `npx prisma db push --accept-data-loss` to create tables
+4. **Generates Client**: Runs `npx prisma generate` to create the Prisma Client
+5. **Starts App**: Executes `npm run start` to launch Next.js
+
+This approach ensures your database is always properly initialized without manual intervention.
+
+## Manual Setup (Alternative)
+
+If you prefer manual control or need to troubleshoot, follow these steps:
 
 ### Step 1: Update Your Environment File
 

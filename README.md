@@ -94,6 +94,14 @@ docker compose up
 
 The web application will be accessible on http://127.0.0.1:3000.
 
+> **Note:** Database initialization is now fully automated! The application will automatically:
+> - Wait for PostgreSQL to be ready
+> - Create the database schema if it doesn't exist
+> - Generate the Prisma Client
+> - Start the Next.js application
+>
+> See [DATABASE_SETUP.md](DATABASE_SETUP.md) for more details.
+
 If you do not trust our externally hosted Docker Images, feel free to build the Docker Image locally yourself:
 
 ````
