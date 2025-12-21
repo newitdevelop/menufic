@@ -5,6 +5,8 @@ import { useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
+import { env } from "src/env/client.mjs";
+
 const useStyles = createStyles((theme) => ({
     copyRights: { color: theme.colors.dark[9], fontSize: theme.fontSizes.sm },
     footer: { background: theme.colors.dark[0], height: "100%" },
@@ -28,9 +30,11 @@ export const CustomFooter: FC = () => {
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
     const t = useTranslations("common");
 
+    const currentYear = new Date().getFullYear();
+
     const footerLinks = [
-        { label: t("privacyPolicy"), link: "/privacy-policy" },
-        { label: t("terms&Conditions"), link: "/terms-and-conditions" },
+        { label: t("privacyPolicy"), link: env.NEXT_PUBLIC_PRIVACY_POLICY_URL },
+        { label: t("terms&Conditions"), link: env.NEXT_PUBLIC_TERMS_CONDITIONS_URL },
     ];
 
     const items = footerLinks.map((link) => (
@@ -43,7 +47,7 @@ export const CustomFooter: FC = () => {
         <Footer className={classes.footer} height={isMobile ? 90 : 50}>
             <Container className={classes.inner} size="xl">
                 <Link className={classes.copyRights} href="/">
-                    {t("footerCopyright")}
+                    {t("footerCopyright", { year: currentYear })}
                 </Link>
                 <Group className={classes.links}>{items}</Group>
             </Container>

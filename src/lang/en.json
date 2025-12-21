@@ -11,7 +11,7 @@
         "updateSuccess": "Successfully updated",
         "privacyPolicy": "Privacy Policy",
         "terms&Conditions": "Terms & Conditions",
-        "footerCopyright": "© 2023 Copyright: Menufic",
+        "footerCopyright": "© {year} Copyright: Menufic",
         "login": "Login",
         "logout": "Logout",
         "openDashboard": "Go to Dashboard"
