@@ -13,7 +13,13 @@ IMAGEKIT_PRIVATE_KEY=placeholder\n\
 NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=https://placeholder.com\n\
 IMAGEKIT_BASE_FOLDER=placeholder\n' > .env
 
+# Temporarily remove the custom output path from schema to fix Prisma 5.1.1 bug
+RUN sed -i 's/output = "..\/node_modules\/.prisma\/client"//' prisma/schema.prisma
+
 RUN npm i
+
+# Restore the original schema
+RUN git checkout prisma/schema.prisma 2>/dev/null || sed -i '/provider = "prisma-client-js"/a\    output = "../node_modules/.prisma/client"' prisma/schema.prisma
 COPY . .
 
 # patch-package already ran in postinstall, and prisma client was already generated
