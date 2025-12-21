@@ -24,7 +24,7 @@
         "@mantine/hooks": "^5.10.0",
         "@mantine/next": "^5.10.0",
         "@mantine/notifications": "^5.10.0",
-        "@prisma/client": "^4.16.2",
+        "@prisma/client": "^4.13.0",
         "@sentry/nextjs": "^7.34.0",
         "@tabler/icons": "^1.119.0",
         "@tanstack/react-query": "^4.20.0",
@@ -35,8 +35,6 @@
         "@vercel/analytics": "^0.1.8",
         "blurhash": "^2.0.4",
         "browser-image-compression": "^2.0.0",
-        "browserslist": "^4.23.0",
-        "caniuse-lite": "^1.0.30001680",
         "downloadjs": "^1.4.7",
         "embla-carousel-autoplay": "^7.0.5",
         "embla-carousel-react": "^7.0.5",
@@ -84,13 +82,10 @@
         "eslint-plugin-sort-keys-fix": "^1.1.2",
         "eslint-plugin-typescript-sort-keys": "^2.1.0",
         "prettier": "^2.8.3",
-        "prisma": "^4.16.2",
+        "prisma": "^4.13.0",
         "typescript": "^4.9.4"
     },
     "ct3aMetadata": {
         "initVersion": "7.3.0"
-    },
-    "overrides": {
-        "@floating-ui/react-dom-interactions": "npm:@floating-ui/react@^0.19.0"
     }
 }
