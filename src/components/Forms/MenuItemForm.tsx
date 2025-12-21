@@ -31,7 +31,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     const tCommon = useTranslations("common");
 
     const { mutate: createMenuItem, isLoading: isCreating } = api.menuItem.create.useMutation({
-        onError: (err) => showErrorToast(t("createError"), err),
+        onError: (err: unknown) => showErrorToast(t("createError"), err),
         onSuccess: (data) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
@@ -42,7 +42,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     });
 
     const { mutate: updateMenuItem, isLoading: isUpdating } = api.menuItem.update.useMutation({
-        onError: (err) => showErrorToast(t("updateError"), err),
+        onError: (err: unknown) => showErrorToast(t("updateError"), err),
         onSuccess: (data) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>

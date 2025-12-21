@@ -30,7 +30,7 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
     const tCommon = useTranslations("common");
 
     const { mutate: createCategory, isLoading: isCreating } = api.category.create.useMutation({
-        onError: (err) => showErrorToast(t("createError"), err),
+        onError: (err: unknown) => showErrorToast(t("createError"), err),
         onSuccess: (data) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) => [...(categories || []), data]);
@@ -42,7 +42,7 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
     });
 
     const { mutate: updateCategory, isLoading: isUpdating } = api.category.update.useMutation({
-        onError: (err) => showErrorToast(t("updateError"), err),
+        onError: (err: unknown) => showErrorToast(t("updateError"), err),
         onSuccess: (data) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>

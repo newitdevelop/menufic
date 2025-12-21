@@ -31,7 +31,7 @@ const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string }> =
     const tCommon = useTranslations("common");
 
     const { mutate: deleteRestaurant, isLoading: isDeleting } = api.restaurant.deleteBanner.useMutation({
-        onError: (err) => showErrorToast(t("deleteError"), err),
+        onError: (err: unknown) => showErrorToast(t("deleteError"), err),
         onSettled: () => setDeleteFormOpen(false),
         onSuccess: (data) => {
             trpcCtx.restaurant.getBanners.setData({ id: restaurantId }, (banners = []) =>

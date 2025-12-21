@@ -4,7 +4,8 @@
       "Bash(dir:*)",
       "Bash(docker-compose down:*)",
       "Bash(docker compose:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ]
   }
 }
