@@ -28,7 +28,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
     const tCommon = useTranslations("common");
 
     const { mutate: createMenu, isLoading: isCreating } = api.menu.create.useMutation({
-        onError: (err: unknown) => showErrorToast(t("createError"), err),
+        onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data) => {
             onClose();
             trpcCtx.menu.getAll.setData({ restaurantId }, (menus) => [...(menus || []), data]);
@@ -37,7 +37,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
     });
 
     const { mutate: updateMenu, isLoading: isUpdating } = api.menu.update.useMutation({
-        onError: (err: unknown) => showErrorToast(t("updateError"), err),
+        onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
         onSuccess: (data) => {
             onClose();
             trpcCtx.menu.getAll.setData({ restaurantId }, (menus) =>

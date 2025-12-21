@@ -28,7 +28,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, ...rest }
     const tCommon = useTranslations("common");
 
     const { mutate: addBanner, isLoading: isCreating } = api.restaurant.addBanner.useMutation({
-        onError: (err: unknown) => showErrorToast(t("createError"), err),
+        onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data) => {
             onClose();
             trpcCtx.restaurant.getBanners.setData({ id: restaurantId }, (banners = []) => [...banners, data]);

@@ -34,7 +34,7 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
     const tCommon = useTranslations("common");
 
     const { mutate: deleteCategory, isLoading: isDeleting } = api.category.delete.useMutation({
-        onError: (err: unknown) => showErrorToast(t("deleteCategoryError"), err),
+        onError: (err: unknown) => showErrorToast(t("deleteCategoryError"), err as { message: string }),
         onSettled: () => setDeleteCategoryModalOpen(false),
         onSuccess: (data) => {
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
