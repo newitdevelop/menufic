@@ -4,7 +4,8 @@ COPY package*.json ./
 COPY prisma ./prisma
 
 # Create placeholder .env for build (needed for prisma generate in postinstall)
-RUN printf 'DATABASE_URL=postgresql://placeholder:placeholder@placeholder:5432/placeholder\n\
+RUN printf 'SKIP_ENV_VALIDATION=true\n\
+DATABASE_URL=postgresql://placeholder:placeholder@placeholder:5432/placeholder\n\
 NEXTAUTH_SECRET=placeholder\n\
 NEXTAUTH_URL=http://localhost:3000\n\
 IMAGEKIT_PUBLIC_KEY=placeholder\n\
