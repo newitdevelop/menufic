@@ -1,4 +1,12 @@
 FROM node:22.2.0
+
+# Install system dependencies for sharp
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
