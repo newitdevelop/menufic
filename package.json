@@ -5,7 +5,7 @@
     "scripts": {
         "build": "next build",
         "dev": "next dev",
-        "postinstall": "patch-package && prisma generate",
+        "postinstall": "patch-package && prisma generate --schema=./prisma/schema.prisma",
         "lint": "next lint",
         "lint:fix": "next lint --fix",
         "start": "next start",
@@ -89,5 +89,8 @@
     },
     "ct3aMetadata": {
         "initVersion": "7.3.0"
+    },
+    "overrides": {
+        "@floating-ui/react-dom-interactions": "npm:@floating-ui/react@^0.19.0"
     }
 }
