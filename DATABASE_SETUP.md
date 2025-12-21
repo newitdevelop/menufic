@@ -52,7 +52,7 @@ This guide will help you set up and troubleshoot the PostgreSQL database for Men
    🎉 Starting Next.js application...
    ```
 
-That's it! The application will be ready at `http://localhost:3000`
+That's it! The application will be ready at `http://localhost:3003`
 
 ### How It Works
 

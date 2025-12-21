@@ -92,7 +92,7 @@ cp .env.example .env
 docker compose up
 ````
 
-The web application will be accessible on http://127.0.0.1:3000.
+The web application will be accessible on http://127.0.0.1:3003.
 
 > **Note:** Database initialization is now fully automated! The application will automatically:
 > - Wait for PostgreSQL to be ready
