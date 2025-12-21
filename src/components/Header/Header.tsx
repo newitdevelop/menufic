@@ -88,7 +88,7 @@ export const NavHeader: FC<Props> = ({
     const t = useTranslations();
 
     const linkOptions = [
-        { icon: IconPizza, label: t("dashboard.restaurant.navTitle"), link: "/restaurant" },
+        { icon: IconPizza, label: t("dashboard.restaurant.navTitle"), link: "/venue" },
         { icon: IconEyeglass2, label: t("dashboard.explore.navTitle"), link: "/explore" },
     ];
 
@@ -164,7 +164,7 @@ export const NavHeader: FC<Props> = ({
                                 {status !== "loading" && showLoginButton && (
                                     <>
                                         {status === "authenticated" ? (
-                                            <Link href="/restaurant">
+                                            <Link href="/venue">
                                                 {isMobile ? (
                                                     <ActionIcon className={classes.dashboardActionIcon} size={36}>
                                                         <IconHome />

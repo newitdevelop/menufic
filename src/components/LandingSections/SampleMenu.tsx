@@ -16,7 +16,7 @@ export const SampleMenu: FC = () => {
     const [sampleRestaurantLink, setSampleLink] = useState("");
     useEffect(() => {
         const origin = typeof window !== "undefined" ? window.location.origin : "";
-        setSampleLink(`${origin}/restaurant/${env.NEXT_PUBLIC_SAMPLE_MENU_ID}/menu`);
+        setSampleLink(`${origin}/venue/${env.NEXT_PUBLIC_SAMPLE_MENU_ID}/menu`);
     }, []);
 
     return (

@@ -1,7 +1,7 @@
 import { categoryRouter } from "./routers/category.router";
 import { menuRouter } from "./routers/menu.router";
 import { menuItemRouter } from "./routers/menuItem.router";
-import { restaurantRouter } from "./routers/restaurant.router";
+import { restaurantRouter } from "./routers/venue.router";
 import { createTRPCRouter } from "./trpc";
 
 /**

@@ -45,7 +45,7 @@ const SignInTestUser: NextPage = () => {
             // if callbackUrl exists and its not the signin-test-user url, use it
             return router.query?.callbackUrl;
         }
-        return "/restaurant";
+        return "/venue";
     }, [router.query]);
 
     const { getInputProps, onSubmit } = useForm({
@@ -110,7 +110,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         const callbackUrl =
             context.query?.callbackUrl && !context.query?.callbackUrl?.includes("auth/signin-test-user")
                 ? context.query?.callbackUrl
-                : "/restaurant";
+                : "/venue";
         return { redirect: { destination: callbackUrl } };
     }
     return { props: { messages: (await import("src/lang/en.json")).default } };

@@ -47,7 +47,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         const callbackUrl =
             context.query?.callbackUrl && !context.query?.callbackUrl?.includes("auth/signin")
                 ? context.query?.callbackUrl
-                : "/restaurant";
+                : "/venue";
         return { redirect: { destination: callbackUrl } };
     }
     return { props: { messages: (await import("src/lang/en.json")).default } };

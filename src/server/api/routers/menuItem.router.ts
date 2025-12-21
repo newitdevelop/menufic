@@ -38,7 +38,7 @@ export const menuItemRouter = createTRPCRouter({
 
         if (input.imageBase64) {
             const [uploadedResponse, blurHash, color] = await Promise.all([
-                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/restaurant/menu/${input.menuId}`),
+                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue/menu/${input.menuId}`),
                 encodeImageToBlurhash(input.imageBase64),
                 getColor(input.imageBase64),
             ]);
@@ -96,7 +96,7 @@ export const menuItemRouter = createTRPCRouter({
 
         if (input.imageBase64) {
             const [uploadedResponse, blurHash, color] = await Promise.all([
-                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/restaurant/menu/${input.id}`),
+                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue/menu/${input.id}`),
                 encodeImageToBlurhash(input.imageBase64),
                 getColor(input.imageBase64),
             ]);

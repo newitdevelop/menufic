@@ -25,7 +25,7 @@ export const restaurantRouter = createTRPCRouter({
         }
 
         const [uploadedResponse, blurHash, color] = await Promise.all([
-            uploadImage(input.imageBase64, `user/${ctx.session.user.id}/restaurant/banners`),
+            uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue/banners`),
             encodeImageToBlurhash(input.imageBase64),
             getColor(input.imageBase64),
         ]);
@@ -54,7 +54,7 @@ export const restaurantRouter = createTRPCRouter({
         }
 
         const [uploadedResponse, blurHash, color] = await Promise.all([
-            uploadImage(input.imageBase64, `user/${ctx.session.user.id}/restaurant`),
+            uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue`),
             encodeImageToBlurhash(input.imageBase64),
             getColor(input.imageBase64),
         ]);
@@ -192,7 +192,7 @@ export const restaurantRouter = createTRPCRouter({
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
         /** Revalidate the published menu page */
-        await ctx.res?.revalidate(`/restaurant/${input.id}/menu`);
+        await ctx.res?.revalidate(`/venue/${input.id}/menu`);
         return restaurant;
     }),
 
@@ -212,7 +212,7 @@ export const restaurantRouter = createTRPCRouter({
 
         if (input.imageBase64 && currentItem.imageId) {
             const [uploadedResponse, blurHash, color] = await Promise.all([
-                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/restaurant`),
+                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue`),
                 encodeImageToBlurhash(input.imageBase64),
                 getColor(input.imageBase64),
                 imageKit.deleteFile(currentItem.imageId),

@@ -71,8 +71,8 @@ export const PublishButton: FC<Props> = ({ restaurant }: Props) => {
         downloadjs(dataURL, `${name}-menu-qr-code.png`, "image/png");
     };
 
-    const menuUrl = `${origin}/restaurant/${restaurant.id}/menu`;
-    const previewMenuUrl = `${origin}/restaurant/${restaurant.id}/preview`;
+    const menuUrl = `${origin}/venue/${restaurant.id}/menu`;
+    const previewMenuUrl = `${origin}/venue/${restaurant.id}/preview`;
 
     return (
         <>

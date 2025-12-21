@@ -40,7 +40,7 @@ export const Hero: FC = () => {
                             {(styles) => (
                                 <Box style={styles}>
                                     {status === "authenticated" ? (
-                                        <Link href="/restaurant">
+                                        <Link href="/venue">
                                             <Button size="xl" variant="outline">
                                                 {tCommon("openDashboard")}
                                             </Button>

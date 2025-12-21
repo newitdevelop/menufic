@@ -39,7 +39,7 @@ const ExplorePage: NextPage = () => {
                             {restaurants?.map((item) => (
                                 <ImageCard
                                     key={item.id}
-                                    href={`/restaurant/${item.id}/menu`}
+                                    href={`/venue/${item.id}/menu`}
                                     image={item.image}
                                     subTitle={item.location}
                                     target="_blank"

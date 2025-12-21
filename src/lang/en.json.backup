@@ -47,23 +47,23 @@
         "hero": {
             "tagLine1": "The best way to create",
             "tagLine2": "Digital Menus",
-            "tagLine3": "for your venue",
+            "tagLine3": "for your restaurant",
             "getStarted": "Get started for free"
         },
         "steps": {
             "title": "How it works?",
             "stepItems": [
                 {
-                    "title": "Create venue",
-                    "description": "Create your venue with basic details"
+                    "title": "Create restaurant",
+                    "description": "Create your restaurant with basic details"
                 },
                 {
                     "title": "Add content",
-                    "description": "Add menu related content to your venue"
+                    "description": "Add menu related content to your restaurant"
                 },
                 {
-                    "title": "Publish venue",
-                    "description": "Publish your venue in order to make it accessible by anyone"
+                    "title": "Publish restaurant",
+                    "description": "Publish your restaurant in order to make it accessible by anyone"
                 },
                 {
                     "title": "Share",
@@ -73,28 +73,28 @@
         },
         "features": {
             "tagLine": "Why Menufic?",
-            "title": "Build your venue's menu with ease",
-            "subTitle": " Menufic has several awesome features that makes it perfect to take your venue's menu to the next level",
+            "title": "Build your restaurant's menu with ease",
+            "subTitle": " Menufic has several awesome features that makes it perfect to take your restaurant's menu to the next level",
             "featuresItems": [
                 {
                     "key": "webOptimized",
                     "title": "Optimized for the web",
-                    "description": "The generated menu page has been optimized for search engines as well as for social media crawlers and this will assure that your venue menu has a higher reach."
+                    "description": "The generated menu page has been optimized for search engines as well as for social media crawlers and this will assure that your restaurant menu has a higher reach."
                 },
                 {
                     "key": "themeSupport",
                     "title": "Dark and Light themes",
-                    "description": "As Menufic supports both Light and dark themes, you and your venue customers will have the independence to switch between these two modes."
+                    "description": "As Menufic supports both Light and dark themes, you and your restaurant customers will have the independence to switch between these two modes."
                 },
                 {
                     "key": "banners",
                     "title": "Promotions using banners",
-                    "description": "Add multiple banners to your venue which can help you to convey details such as offers or promotions to your customers."
+                    "description": "Add multiple banners to your restaurant which can help you to convey details such as offers or promotions to your customers."
                 },
                 {
                     "key": "organize",
                     "title": "Organize your data easily",
-                    "description": "Menufic provides an intuitive interface to easily manage your menus. Each venue can have multiple menus with multiple sub categories."
+                    "description": "Menufic provides an intuitive interface to easily manage your menus. Each restaurant can have multiple menus with multiple sub categories."
                 },
                 {
                     "key": "responsiveDesign",
@@ -104,7 +104,7 @@
                 {
                     "key": "qrCode",
                     "title": "QR code",
-                    "description": "Generate a QR code, print and share it with your customers by simply placing it on your venue tables, entrance, food packaging or delivery vehicles."
+                    "description": "Generate a QR code, print and share it with your customers by simply placing it on your restaurant tables, entrance, food packaging or delivery vehicles."
                 }
             ]
         },
@@ -117,21 +117,21 @@
             "title": "Pricing",
             "freeTier": {
                 "label": "Free",
-                "maxVenueCount": "Create up to {count} venues",
-                "maxMenuCount": "Add up to {count} menus per venue",
+                "maxRestaurantCount": "Create up to {count} restaurants",
+                "maxMenuCount": "Add up to {count} menus per restaurant",
                 "maxCategoryCount": "Add up to {count} categories per menu",
                 "maxMenuItemCount": "Add up to {count} items per category",
-                "maxBannerCount": "Add up to {count} banners per venue",
+                "maxBannerCount": "Add up to {count} banners per restaurant",
                 "supportType": "Basic support",
                 "getStartedBtnLabel": "Get Started"
             },
             "enterpriseTier": {
                 "label": "Enterprise",
-                "maxVenueCount": "Create any number of venues",
-                "maxMenuCount": "Add any number of menus per venue",
+                "maxRestaurantCount": "Create any number of restaurants",
+                "maxMenuCount": "Add any number of menus per restaurant",
                 "maxCategoryCount": "Add any number of categories per menu",
                 "maxMenuItemCount": "Add any number of items per category",
-                "maxBannerCount": "Add any number of banners per venue",
+                "maxBannerCount": "Add any number of banners per restaurant",
                 "supportType": "Basic support",
                 "contactUsButtonLabel": "Contact us"
             }
@@ -155,29 +155,29 @@
                 "line2": "open source ",
                 "line3": "project built with "
             },
-            "goal": "Our goal is to provide a simple and effective solution that venues could use to improve their reach and enhance how their customers interact with them.",
+            "goal": "Our goal is to provide a simple and effective solution that restaurants could use to improve their reach and enhance how their customers interact with them.",
             "appreciation": "We highly appreciate any feedback or contribution that could help us improve.",
             "githubButtonLabel": "Github"
         }
     },
     "menu": {
-        "noMenusForVenue": "There aren't any menus available for this venue. Try checking out later",
-        "noItemsForMenu": "There aren't any menu items for the chosen venue menu. Try checking out later.",
-        "noDetailsAvailable": "This venue details are unavailable at the moment. We are sorry for the inconvenience. Please try again in a while",
+        "noMenusForRestaurant": "There aren't any menus available for this restaurant. Try checking out later",
+        "noItemsForMenu": "There aren't any menu items for the chosen restaurant menu. Try checking out later.",
+        "noDetailsAvailable": "This restaurant details are unavailable at the moment. We are sorry for the inconvenience. Please try again in a while",
         "seoTitle": "{name} Menu",
         "seoDescription": {
-            "venueName": "Menu of venue {name}",
-            "venueLocation": "Location: {location}.",
-            "venueContactNo": " Contact Number: {contactNo}.",
+            "restaurantName": "Menu of restaurant {name}",
+            "restaurantLocation": "Location: {location}.",
+            "restaurantContactNo": " Contact Number: {contactNo}.",
             "menufic": "This menu was generated using Menufic.com"
         }
     },
     "preview": {
-        "seoTitle": "Venue Preview",
-        "seoDescription": "Preview how the published venue menu would look like",
+        "seoTitle": "Restaurant Preview",
+        "seoDescription": "Preview how the published restaurant menu would look like",
         "alertTitle": "Preview mode",
         "alertContent": "This preview URL is not meant to be shared with anyone.",
-        "alertDesc": " Once you have finalized your changes, you will be able to publish your venue menu and generate a sharable URL which can then be shared with your customers."
+        "alertDesc": " Once you have finalized your changes, you will be able to publish your restaurant menu and generate a sharable URL which can then be shared with your customers."
     },
     "dashboard": {
         "noContent": "whoops, nothing to see here ...",
@@ -190,7 +190,7 @@
             "cropModalTitle": "Crop Image"
         },
         "publishButton": {
-            "statusUpdateError": "Failed to update status of the venue menu",
+            "statusUpdateError": "Failed to update status of the restaurant menu",
             "publishedBtnLabel": "Published",
             "notPublishedBtnLabel": "Not Published",
             "modalTitle": "Publish and share your menu",
@@ -208,18 +208,18 @@
         },
         "editMenu": {
             "seoTitle": "Edit Menu",
-            "seoDescription": "Manage the menus of your venue",
+            "seoDescription": "Manage the menus of your restaurant",
             "breadcrumb": "Menu",
             "menu": {
                 "fetchError": "Failed to retrieve menus",
                 "positionUpdateError": "Failed to update the position of menu",
-                "deleteMenuError": "Failed to delete venue menu",
+                "deleteMenuError": "Failed to delete restaurant menu",
                 "addMenuLabel": "Add Menu",
                 "deleteConfirmTitle": "Delete {name} menu",
                 "deleteConfirmDesc": "Are you sure, you want to delete this menu? This action will also delete all the categories & items associated with this menu and cannot be undone",
                 "deleteSuccessToast": "Deleted the menu {name} and related details successfully",
                 "createModalTitle": "Create Menu",
-                "createError": "Failed to create menu for venue",
+                "createError": "Failed to create menu for restaurant",
                 "createSuccessDesc": "Created a new menu {name} successfully",
                 "updateModalTitle": "Update Menu",
                 "updateError": "Failed to update menu",
@@ -268,68 +268,68 @@
                 "inputDescriptionLabel": "Description"
             }
         },
-        "venue": {
-            "seoTitle": "Venues",
-            "seoDescription": "Manage all of the venues that you've created",
-            "navTitle": "Venues",
-            "addNewCardTitle": "Add new venue",
-            "addNewCardSubTitle": "Start creating a new digital menu by adding a new venue",
-            "headerTitle": "My Venues",
-            "createModalTitle": "Add Venue",
-            "createError": "Failed to create venue",
-            "createSuccessDesc": "Created new {name} venue successfully",
-            "updateModalTitle": "Edit Venue",
-            "updateError": "Failed to update venue",
-            "updateSuccessDesc": "Created venue {name}, successfully",
+        "restaurant": {
+            "seoTitle": "Restaurants",
+            "seoDescription": "Manage all of the restaurants that you've created",
+            "navTitle": "Restaurants",
+            "addNewCardTitle": "Add new restaurant",
+            "addNewCardSubTitle": "Start creating a new digital menu by adding a new restaurant",
+            "headerTitle": "My Restaurants",
+            "createModalTitle": "Add Restaurant",
+            "createError": "Failed to create restaurant",
+            "createSuccessDesc": "Created new {name} restaurant successfully",
+            "updateModalTitle": "Edit Restaurant",
+            "updateError": "Failed to update restaurant",
+            "updateSuccessDesc": "Created restaurant {name}, successfully",
             "inputNameLabel": "Name",
-            "inputNamePlaceholder": "Venue Name",
+            "inputNamePlaceholder": "Restaurant Name",
             "inputLocationLabel": "Location",
             "inputLocationPlaceholder": "No 05, Road Name, City",
             "inputContactNoLabel": "Contact Number",
             "inputContactNoPlaceholder": "+919367788755",
-            "fetchVenuesError": "Failed to retrieve venues",
-            "deleteModalTitle": "Delete venue {name}",
-            "deleteModalDesc": "Are you sure, you want to delete this venue? This action will also delete all the items associated with this venue and cannot be undone",
-            "deleteSuccessDesc": "Deleted the {name} venue and related details successfully",
-            "deleteError": "Failed to delete venue"
+            "fetchRestaurantsError": "Failed to retrieve restaurants",
+            "deleteModalTitle": "Delete restaurant {name}",
+            "deleteModalDesc": "Are you sure, you want to delete this restaurant? This action will also delete all the items associated with this restaurant and cannot be undone",
+            "deleteSuccessDesc": "Deleted the {name} restaurant and related details successfully",
+            "deleteError": "Failed to delete restaurant"
         },
-        "venueManage": {
-            "seoTitle": "Manage Venue",
-            "seoDescription": "Manage your venue's menus and banners",
-            "venueFetchError": "Failed to retrieve venue details",
-            "breadcrumb": "Venue",
+        "restaurantManage": {
+            "seoTitle": "Manage Restaurant",
+            "seoDescription": "Manage your restaurant's menus and banners",
+            "restaurantFetchError": "Failed to retrieve restaurant details",
+            "breadcrumb": "Restaurant",
             "menuCardTitle": "Menus",
-            "menuCardSubTitle": "Manage the menus, categories and individual menu items of your venue",
+            "menuCardSubTitle": "Manage the menus, categories and individual menu items of your restaurant",
             "bannersCardTitle": "Banners",
-            "bannersCardSubTitle": "Manage banners that could be used to display promotional content in your venue menu",
+            "bannersCardSubTitle": "Manage banners that could be used to display promotional content in your restaurant menu",
             "feedbackCardTitle": "Feedback (Coming Soon)",
-            "feedbackCardSubTitle": "View feedback received from your venue customers",
+            "feedbackCardSubTitle": "View feedback received from your restaurant customers",
             "statsCardTitle": "Stats (Coming Soon)",
             "statsCardSubTitle": "Gain insights on how many people view your published menu and which items are most popular"
         },
         "banner": {
             "seoTitle": "Banners",
-            "seoDescription": "Manage the banners of your venue",
+            "seoDescription": "Manage the banners of your restaurant",
             "breadcrumb": "Banners",
             "fetchError": "Failed to retrieve banners",
-            "createError": "Failed to create banner for venue",
-            "createSuccessDesc": "Successfully created new banner for the venue",
+            "createError": "Failed to create banner for restaurant",
+            "createSuccessDesc": "Successfully created new banner for the restaurant",
             "addModalTitle": "Add Banner",
             "addNewCardTitle": "Add new banner",
-            "addNewCardSubTitle": "Start creating a new venue menu by adding a new venue",
+            "addNewCardSubTitle": "Start creating a new restaurant menu by adding a new restaurant",
             "deleteError": "Failed to delete banner",
-            "deleteSuccessDesc": "Deleted the banner of the venue successfully",
-            "deleteModalTitle": "Delete venue banner?",
-            "deleteModalDesc": "Are you sure, you want to delete this venue banner? This action action cannot be undone"
+            "deleteSuccessDesc": "Deleted the banner of the restaurant successfully",
+            "deleteModalTitle": "Delete restaurant banner?",
+            "deleteModalDesc": "Are you sure, you want to delete this restaurant banner? This action action cannot be undone"
         },
         "explore": {
-            "seoTitle": "Explore venues",
-            "seoDescription": "Explore venues created and published by others",
+            "seoTitle": "Explore restaurants",
+            "seoDescription": "Explore restaurants created and published by others",
             "navTitle": "Explore",
-            "pageTitle": "Explore Venues",
-            "pageSubTitle": "Following are the venues published by all users",
-            "fetchError": "Failed to retrieve published venues",
-            "noContent": "There aren't any published venues"
+            "pageTitle": "Explore Restaurants",
+            "pageSubTitle": "Following are the restaurants published by all users",
+            "fetchError": "Failed to retrieve published restaurants",
+            "noContent": "There aren't any published restaurants"
         }
     },
     "privacyPolicy": {

@@ -84,7 +84,7 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
             // if callbackUrl exists and its not the signin url, use it
             return router.query?.callbackUrl;
         }
-        return "/restaurant";
+        return "/venue";
     }, [router.query]);
 
     // Fetch available providers from NextAuth
