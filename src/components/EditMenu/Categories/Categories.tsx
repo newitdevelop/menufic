@@ -37,7 +37,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
         {
             enabled: !!menuId,
             onError: () => showErrorToast(t("fetchError")),
-            onSuccess: (data) => {
+            onSuccess: (data: any) => {
                 const newSelected = openedCategories.filter((item) =>
                     data.map((category) => category.id).includes(item)
                 );

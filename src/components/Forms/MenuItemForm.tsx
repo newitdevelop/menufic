@@ -32,7 +32,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
 
     const { mutate: createMenuItem, isLoading: isCreating } = api.menuItem.create.useMutation({
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
                 categories?.map((item) => (item.id === categoryId ? { ...item, items: [...item.items, data] } : item))
@@ -43,7 +43,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
 
     const { mutate: updateMenuItem, isLoading: isUpdating } = api.menuItem.update.useMutation({
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
                 categories?.map((categoryItem) =>

@@ -39,7 +39,7 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const { mutate: deleteMenu, isLoading: isDeleting } = api.menu.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteMenuError"), err as { message: string }),
         onSettled: () => setDeleteMenuModalOpen(false),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             const filteredMenuData = trpcCtx.menu.getAll
                 .getData({ restaurantId })
                 ?.filter((menuItem) => menuItem.id !== data.id);

@@ -36,7 +36,7 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
     const { mutate: deleteCategory, isLoading: isDeleting } = api.category.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteCategoryError"), err as { message: string }),
         onSettled: () => setDeleteCategoryModalOpen(false),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
                 categories?.filter((item) => item.id !== data.id)
             );

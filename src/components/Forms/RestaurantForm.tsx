@@ -30,7 +30,7 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
 
     const { mutate: createRestaurant, isLoading: isCreating } = api.restaurant.create.useMutation({
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.restaurant.getAll.setData(undefined, (restaurants) => [...(restaurants || []), data]);
             showSuccessToast(tCommon("createSuccess"), t("createSuccessDesc", { name: data.name }));
@@ -39,7 +39,7 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
 
     const { mutate: updatedRestaurant, isLoading: isUpdating } = api.restaurant.update.useMutation({
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.restaurant.getAll.setData(undefined, (restaurants) =>
                 restaurants?.map((item) => (item.id === data.id ? { ...item, ...data } : item))

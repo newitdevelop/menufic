@@ -31,7 +31,7 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
 
     const { mutate: createCategory, isLoading: isCreating } = api.category.create.useMutation({
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) => [...(categories || []), data]);
             if (onAddSuccess) {
@@ -43,7 +43,7 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
 
     const { mutate: updateCategory, isLoading: isUpdating } = api.category.update.useMutation({
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             onClose();
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
                 categories?.map((item) => (item.id === data.id ? { ...item, ...data } : item))

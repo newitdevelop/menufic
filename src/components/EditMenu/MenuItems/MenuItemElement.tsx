@@ -71,7 +71,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
     const { mutate: deleteMenuItem, isLoading: isDeleting } = api.menuItem.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteMenuItemError"), err as { message: string }),
         onSettled: () => setDeleteMenuItemModalOpen(false),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             trpcCtx.category.getAll.setData({ menuId }, (categories) =>
                 categories?.map((categoryItem) =>
                     categoryItem.id === categoryId

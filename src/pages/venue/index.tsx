@@ -29,7 +29,7 @@ const RestaurantCard: FC<{ item: Restaurant & { image: Image | null } }> = ({ it
     const { mutate: deleteRestaurant, isLoading: isDeleting } = api.restaurant.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteError"), err as { message: string }),
         onSettled: () => setDeleteFormOpen(false),
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             trpcCtx.restaurant.getAll.setData(undefined, (restaurants) =>
                 restaurants?.filter((restaurantItem) => restaurantItem.id !== data.id)
             );
