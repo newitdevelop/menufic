@@ -39,7 +39,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
             onError: () => showErrorToast(t("fetchError")),
             onSuccess: (data: any) => {
                 const newSelected = openedCategories.filter((item) =>
-                    data.map((category) => category.id).includes(item)
+                    data.map((category: any) => category.id).includes(item)
                 );
                 if (newSelected.length === 0) {
                     setOpenedCategories(data[0] ? [data[0]?.id] : []);
