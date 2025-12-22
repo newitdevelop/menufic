@@ -31,12 +31,12 @@ const RestaurantMenuPage: NextPage = () => {
     return (
         <>
             <NextSeo
-                description={`${t("seoDescription.restaurantName", { name: restaurant?.name })}. ${t(
-                    "seoDescription.restaurantLocation",
+                description={`${t("seoDescription.venueName", { name: restaurant?.name })}. ${t(
+                    "seoDescription.venueLocation",
                     { location: restaurant?.location }
                 )}${
                     restaurant?.contactNo
-                        ? t("seoDescription.restaurantContactNo", { contactNo: restaurant?.contactNo })
+                        ? t("seoDescription.venueContactNo", { contactNo: restaurant?.contactNo })
                         : ""
                 } ${t("seoDescription.menufic")}`}
                 openGraph={{

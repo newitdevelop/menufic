@@ -6,6 +6,10 @@
 - `src/pages/venue/[restaurantId].tsx:29` - `restaurantFetchError` → `venueFetchError`
 - `src/pages/venue/[restaurantId]/banners.tsx:83` - `restaurantFetchError` → `venueFetchError`
 - `src/pages/venue/[restaurantId]/edit-menu.tsx:35` - `restaurantFetchError` → `venueFetchError`
+- `src/pages/venue/[restaurantId]/menu.tsx:34-39` - SEO description keys updated:
+  - `seoDescription.restaurantName` → `seoDescription.venueName`
+  - `seoDescription.restaurantLocation` → `seoDescription.venueLocation`
+  - `seoDescription.restaurantContactNo` → `seoDescription.venueContactNo`
 
 ### 2. Type Annotations Added (Comprehensive Fix)
 Applied `any` type annotations to ALL callback parameters across the codebase:
