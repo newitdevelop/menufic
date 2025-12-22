@@ -12,7 +12,8 @@
       "Bash(docker system:*)",
       "Bash(xargs ls:*)",
       "Bash(xargs sed:*)",
-      "Bash(docker-compose up:*)"
+      "Bash(docker-compose up:*)",
+      "Bash(npx prisma migrate dev:*)"
     ]
   }
 }

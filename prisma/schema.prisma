@@ -71,6 +71,7 @@ model MenuItem {
     name        String
     description String
     price       String
+    currency    String    @default("€")
     position    Int
     category    Category? @relation("MenuItemsOfCategory", fields: [categoryId], references: [id])
     categoryId  String?

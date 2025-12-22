@@ -20,6 +20,9 @@ if npx prisma db pull --schema=./prisma/schema.prisma 2>&1 | grep -q "P4001"; th
   echo "✅ Database schema created successfully!"
 else
   echo "✅ Database schema already exists"
+  echo "🔄 Running database migrations..."
+  npx prisma migrate deploy --schema=./prisma/schema.prisma
+  echo "✅ Database migrations applied successfully!"
 fi
 
 # Generate Prisma Client

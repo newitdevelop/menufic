@@ -13,6 +13,7 @@ export const menuInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });
 export const menuItemInput = z.object({
+    currency: z.enum(["€", "$"]).default("€"),
     description: z.string().trim().max(185, "Description cannot be longer than 185 characters"),
     imageBase64: z.string().optional(),
     imagePath: z.string().optional(),

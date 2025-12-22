@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Group, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Group, SegmentedControl, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -61,6 +61,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
 
     const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm({
         initialValues: {
+            currency: menuItem?.currency || "€",
             description: menuItem?.description || "",
             imageBase64: "",
             imagePath: menuItem?.image?.path || "",
@@ -73,6 +74,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     useEffect(() => {
         if (opened) {
             const newValues = {
+                currency: menuItem?.currency || "€",
                 description: menuItem?.description || "",
                 imageBase64: "",
                 imagePath: menuItem?.image?.path || "",
@@ -116,13 +118,23 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                         {...getInputProps("name")}
                         autoFocus
                     />
-                    <TextInput
-                        disabled={loading}
-                        label={t("inputPriceLabel")}
-                        placeholder={t("inputPricePlaceholder")}
-                        withAsterisk
-                        {...getInputProps("price")}
-                    />
+                    <Group align="flex-end" grow>
+                        <TextInput
+                            disabled={loading}
+                            label={t("inputPriceLabel")}
+                            placeholder={t("inputPricePlaceholder")}
+                            withAsterisk
+                            {...getInputProps("price")}
+                        />
+                        <SegmentedControl
+                            data={[
+                                { label: "€", value: "€" },
+                                { label: "$", value: "$" },
+                            ]}
+                            disabled={loading}
+                            {...getInputProps("currency")}
+                        />
+                    </Group>
                     <Textarea
                         disabled={loading}
                         label={t("inputDescriptionLabel")}

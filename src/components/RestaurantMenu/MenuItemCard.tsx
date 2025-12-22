@@ -101,7 +101,7 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         {item.name}
                     </Text>
                     <Text color="red" size="sm">
-                        {item.price}
+                        {item.currency || "€"}{item.price}
                     </Text>
                     <Text className={cx(classes.cardText, classes.cardItemDesc)} opacity={0.7} size="xs">
                         {item.description}

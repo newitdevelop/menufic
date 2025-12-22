@@ -134,7 +134,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                         </Grid.Col>
                         <Grid.Col md={2} sm={3} span={3}>
                             <Text align="center" color="red" opacity={0.8}>
-                                {menuItem.price}
+                                {menuItem.currency || "€"}{menuItem.price}
                             </Text>
                         </Grid.Col>
                         <Grid.Col lg={5} sm={9} span={12}>
