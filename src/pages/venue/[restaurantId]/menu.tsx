@@ -19,13 +19,12 @@ import { api } from "src/utils/api";
 /** Restaurant menu page that will be shared publicly */
 const RestaurantMenuPage: NextPage = () => {
     const router = useRouter();
-    const { status } = useSession();
     const restaurantId = router.query?.restaurantId as string;
     const t = useTranslations("menu");
 
     const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId },
-        { enabled: false }
+        { enabled: !!restaurantId, refetchOnMount: false, refetchOnWindowFocus: false }
     );
 
     return (

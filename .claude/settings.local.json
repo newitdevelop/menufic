@@ -16,7 +16,8 @@
       "Bash(npx prisma migrate dev:*)",
       "Bash(npm audit:*)",
       "Bash(where npm:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
