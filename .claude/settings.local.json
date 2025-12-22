@@ -9,7 +9,8 @@
       "Bash(docker build:*)",
       "Bash(test:*)",
       "Bash(cat:*)",
-      "Bash(docker system:*)"
+      "Bash(docker system:*)",
+      "Bash(xargs ls:*)"
     ]
   }
 }

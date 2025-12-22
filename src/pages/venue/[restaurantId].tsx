@@ -26,7 +26,7 @@ const RestaurantManagePage: NextPage = () => {
         {
             enabled: !!restaurantId,
             onError: () => {
-                showErrorToast(t("restaurantFetchError"));
+                showErrorToast(t("venueFetchError"));
                 router.push("/venue");
             },
         }

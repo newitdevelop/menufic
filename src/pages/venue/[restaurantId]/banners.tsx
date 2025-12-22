@@ -80,7 +80,7 @@ const BannersPage: NextPage = () => {
         {
             enabled: !!restaurantId,
             onError: () => {
-                showErrorToast(tRestaurant("restaurantFetchError"));
+                showErrorToast(tRestaurant("venueFetchError"));
                 router.push("/venue");
             },
         }
