@@ -84,7 +84,7 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
                         if (source.index !== destination?.index) {
                             const reorderedList = reorderList(menus, source.index, destination?.index || 0);
                             updateMenuPositions(
-                                reorderedList.map((item, index) => ({
+                                reorderedList.map((item: any, index) => ({
                                     id: item.id,
                                     newPosition: index,
                                 }))

@@ -94,7 +94,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
                             if (source.index !== destination?.index) {
                                 const reorderedList = reorderList(categories, source.index, destination?.index || 0);
                                 updateCategoryPositions(
-                                    reorderedList.map((item, index) => ({
+                                    reorderedList.map((item: any, index) => ({
                                         id: item.id,
                                         newPosition: index,
                                     }))

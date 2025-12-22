@@ -68,7 +68,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
                     if (source.index !== destination?.index) {
                         const reorderedList = reorderList(menuItems, source.index, destination?.index || 0);
                         updateMenuItemsPositions(
-                            reorderedList.map((item, index) => ({ id: item.id, newPosition: index }))
+                            reorderedList.map((item: any, index) => ({ id: item.id, newPosition: index }))
                         );
                     }
                     setTimeout(() => enableAutoAnimate(true), 100);
