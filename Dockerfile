@@ -16,6 +16,8 @@ RUN npm config set fetch-timeout 60000 && \
     npm config set fetch-retries 3 && \
     npm install
 
+# Add build argument to bust cache for source copy
+ARG CACHEBUST=1
 COPY . .
 
 # Remove any cached build artifacts and verify structure
