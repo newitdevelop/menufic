@@ -25,7 +25,7 @@ const RestaurantMenuPage: NextPage = () => {
 
     const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId },
-        { enabled: status === "authenticated" && !!restaurantId }
+        { enabled: false }
     );
 
     return (
