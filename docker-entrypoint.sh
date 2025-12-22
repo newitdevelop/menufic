@@ -21,7 +21,17 @@ if npx prisma db pull --schema=./prisma/schema.prisma 2>&1 | grep -q "P4001"; th
 else
   echo "✅ Database schema already exists"
   echo "🔄 Running database migrations..."
+
+  # Check if migrations table exists
+  if ! npx prisma db execute --schema=./prisma/schema.prisma --stdin <<< "SELECT 1 FROM _prisma_migrations LIMIT 1" > /dev/null 2>&1; then
+    echo "⚠️  Migrations table doesn't exist - baselining initial migration..."
+    npx prisma migrate resolve --applied 20240308151629_initial_migration --schema=./prisma/schema.prisma
+  fi
+
+  # Now deploy any new migrations
+  echo "📦 Deploying new migrations..."
   npx prisma migrate deploy --schema=./prisma/schema.prisma
+
   echo "✅ Database migrations applied successfully!"
 fi
 
