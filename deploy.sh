@@ -5,6 +5,9 @@
 
 set -e  # Exit on error
 
+# Enable Docker BuildKit for faster builds
+export DOCKER_BUILDKIT=1
+
 echo "Starting deployment process..."
 
 # Step 1: Stop containers

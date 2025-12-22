@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: menufic:latest
+    image: ghcr.io/newitdevelop/menufic:latest
     container_name: menufic
     env_file:
       - .env
