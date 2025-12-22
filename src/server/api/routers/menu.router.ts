@@ -46,7 +46,7 @@ export const menuRouter = createTRPCRouter({
         });
 
         const imagePaths: string[] = [];
-        const promiseList = [];
+        const promiseList: any[] = [];
         const transactions: PrismaPromise<unknown>[] = [];
 
         currentItem.categories.forEach((category) => {

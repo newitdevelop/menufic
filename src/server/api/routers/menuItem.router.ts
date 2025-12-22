@@ -66,7 +66,7 @@ export const menuItemRouter = createTRPCRouter({
             ctx.prisma.menuItem.delete({ where: { id_userId: { id: input.id, userId: ctx.session.user.id } } }),
         ];
 
-        const promiseList = [];
+        const promiseList: any[] = [];
 
         if (currentItem.imageId) {
             promiseList.push(imageKit.deleteFile(currentItem.imageId));
@@ -85,7 +85,7 @@ export const menuItemRouter = createTRPCRouter({
 
         const updateData: Partial<MenuItem> = { description: input.description, name: input.name, price: input.price };
 
-        const promiseList = [];
+        const promiseList: any[] = [];
         const transactions: (Prisma.Prisma__ImageClient<Image> | Prisma.Prisma__MenuItemClient<MenuItem>)[] = [];
 
         /** Delete the previous image from imageKit and db, if the image is being replaced */

@@ -44,7 +44,7 @@ export const categoryRouter = createTRPCRouter({
             include: { items: true },
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
-        const promiseList = [];
+        const promiseList: any[] = [];
         const transactions: PrismaPromise<unknown>[] = [];
         const imagePaths: string[] = [];
 

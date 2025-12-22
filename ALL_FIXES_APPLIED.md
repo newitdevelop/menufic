@@ -16,6 +16,9 @@
 
 ### Server/Backend
 6. **src/server/api/root.ts:4** - Fixed import path from `./routers/venue.router` → `./routers/restaurant.router`
+7. **src/server/api/routers/category.router.ts:47** - Added type to `promiseList: any[]`
+8. **src/server/api/routers/menu.router.ts:49** - Added type to `promiseList: any[]`
+9. **src/server/api/routers/menuItem.router.ts:69,88** - Added type to `promiseList: any[]` (2 instances)
 
 ## TypeScript Type Fixes
 
