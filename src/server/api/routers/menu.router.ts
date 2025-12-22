@@ -30,9 +30,12 @@ export const menuRouter = createTRPCRouter({
         return ctx.prisma.menu.create({
             data: {
                 availableTime: input.availableTime,
+                email: input.email,
+                message: input.message,
                 name: input.name,
                 position: lastMenuItem ? lastMenuItem.position + 1 : 0,
                 restaurantId: input.restaurantId,
+                telephone: input.telephone,
                 userId: ctx.session.user.id,
             },
         });
@@ -85,7 +88,13 @@ export const menuRouter = createTRPCRouter({
     /** Update the details of a restaurant menu */
     update: protectedProcedure.input(menuInput.merge(id)).mutation(async ({ ctx, input }) => {
         return ctx.prisma.menu.update({
-            data: { availableTime: input.availableTime, name: input.name },
+            data: {
+                availableTime: input.availableTime,
+                email: input.email,
+                message: input.message,
+                name: input.name,
+                telephone: input.telephone,
+            },
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
     }),

@@ -15,7 +15,7 @@ import {
     Text,
     useMantineColorScheme,
 } from "@mantine/core";
-import { IconMapPin, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
+import { IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
 import Autoplay from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 
@@ -238,6 +238,32 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     ))}
                 </Tabs.List>
             </Tabs>
+            {menuDetails && (
+                <Stack spacing="xs" mb="lg">
+                    {menuDetails.telephone && (
+                        <Flex align="center" gap={8}>
+                            <IconPhone size={16} />
+                            <a href={`tel:${menuDetails.telephone.replace(/\s/g, "")}`}>
+                                <Text size="sm">{menuDetails.telephone}</Text>
+                            </a>
+                        </Flex>
+                    )}
+                    {menuDetails.email && (
+                        <Flex align="center" gap={8}>
+                            <IconMail size={16} />
+                            <a href={`mailto:${menuDetails.email}`}>
+                                <Text size="sm">{menuDetails.email}</Text>
+                            </a>
+                        </Flex>
+                    )}
+                    {menuDetails.message && (
+                        <Flex align="center" gap={8}>
+                            <IconMessage size={16} />
+                            <Text size="sm">{menuDetails.message}</Text>
+                        </Flex>
+                    )}
+                </Stack>
+            )}
             <Box ref={menuParent}>
                 {menuDetails?.categories
                     ?.filter((category) => category?.items.length)

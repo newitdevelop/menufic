@@ -39,6 +39,9 @@ model Menu {
     updatedAt     DateTime    @updatedAt
     name          String
     availableTime String
+    telephone     String?
+    email         String?
+    message       String?
     position      Int
     categories    Category[]  @relation("CategoriesOfMenu")
     restaurant    Restaurant? @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])

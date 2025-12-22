@@ -47,7 +47,7 @@ export const CustomFooter: FC = () => {
         <Footer className={classes.footer} height={isMobile ? 90 : 50}>
             <Container className={classes.inner} size="xl">
                 <Link className={classes.copyRights} href="/">
-                    {t("footerCopyright", { year: currentYear })}
+                    {t("footerCopyright", { appName: env.NEXT_PUBLIC_APP_NAME, year: currentYear })}
                 </Link>
                 <Group className={classes.links}>{items}</Group>
             </Container>

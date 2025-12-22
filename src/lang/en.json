@@ -11,7 +11,7 @@
         "updateSuccess": "Successfully updated",
         "privacyPolicy": "Privacy Policy",
         "terms&Conditions": "Terms & Conditions",
-        "footerCopyright": "© {year} Copyright: Menufic",
+        "footerCopyright": "© {year} Copyright: {appName}",
         "login": "Login",
         "logout": "Logout",
         "openDashboard": "Go to Dashboard"
@@ -227,7 +227,13 @@
                 "inputNameLabel": "Name",
                 "inputNamePlaceholder": "Menu Name",
                 "inputTimeLabel": "Available Time",
-                "inputTimePlaceholder": "10.00 AM - 9.00 PM"
+                "inputTimePlaceholder": "10.00 AM - 9.00 PM",
+                "inputTelephoneLabel": "Telephone",
+                "inputTelephonePlaceholder": "+1234567890",
+                "inputEmailLabel": "Email",
+                "inputEmailPlaceholder": "contact@restaurant.com",
+                "inputMessageLabel": "Message",
+                "inputMessagePlaceholder": "Additional information or special notes"
             },
             "category": {
                 "fetchError": "Failed to retrieve categories and menu items",

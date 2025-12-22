@@ -14,7 +14,9 @@
       "Bash(xargs sed:*)",
       "Bash(docker-compose up:*)",
       "Bash(npx prisma migrate dev:*)",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(where npm:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

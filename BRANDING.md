@@ -61,16 +61,12 @@ NEXT_PUBLIC_APP_URL=https://myrestaurantapp.com
 NEXT_PUBLIC_LOGO_PATH=/my-custom-logo.svg
 ```
 
-### 3. Update Translations (Optional)
+### 3. Verify Changes
 
-Edit `src/lang/en.json` to customize the footer copyright:
-```json
-{
-  "common": {
-    "footerCopyright": "© {year} Copyright: My Restaurant App"
-  }
-}
-```
+The footer copyright will automatically use your `NEXT_PUBLIC_APP_NAME`:
+- Translation template: `"© {year} Copyright: {appName}"`
+- The `{appName}` is automatically replaced with your configured app name
+- No need to edit translation files manually!
 
 ### 4. Rebuild the Application
 

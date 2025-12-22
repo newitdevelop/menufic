@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Group, Stack, TextInput } from "@mantine/core";
+import { Button, Group, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -48,13 +48,25 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
     });
 
     const { getInputProps, onSubmit, isDirty, resetDirty, setValues } = useForm({
-        initialValues: { availableTime: menuItem?.availableTime || "", name: menuItem?.name || "" },
+        initialValues: {
+            availableTime: menuItem?.availableTime || "",
+            email: menuItem?.email || "",
+            message: menuItem?.message || "",
+            name: menuItem?.name || "",
+            telephone: menuItem?.telephone || "",
+        },
         validate: zodResolver(menuInput),
     });
 
     useEffect(() => {
         if (opened) {
-            const values = { availableTime: menuItem?.availableTime || "", name: menuItem?.name || "" };
+            const values = {
+                availableTime: menuItem?.availableTime || "",
+                email: menuItem?.email || "",
+                message: menuItem?.message || "",
+                name: menuItem?.name || "",
+                telephone: menuItem?.telephone || "",
+            };
             setValues(values);
             resetDirty(values);
         }
@@ -96,6 +108,25 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         label={t("inputTimeLabel")}
                         placeholder={t("inputTimePlaceholder")}
                         {...getInputProps("availableTime")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputTelephoneLabel")}
+                        placeholder={t("inputTelephonePlaceholder")}
+                        {...getInputProps("telephone")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputEmailLabel")}
+                        placeholder={t("inputEmailPlaceholder")}
+                        type="email"
+                        {...getInputProps("email")}
+                    />
+                    <Textarea
+                        disabled={loading}
+                        label={t("inputMessageLabel")}
+                        placeholder={t("inputMessagePlaceholder")}
+                        {...getInputProps("message")}
                     />
                     <Group mt="md" position="right">
                         <Button data-testid="save-menu-form" loading={loading} px="xl" type="submit">
