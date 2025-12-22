@@ -10,10 +10,25 @@ export const categoryInput = z.object({
 });
 export const menuInput = z.object({
     availableTime: z.string().trim().max(20, "Available time cannot be longer than 20 characters"),
-    email: z.union([z.string().trim().email("Invalid email address"), z.literal("")]).optional(),
-    message: z.string().trim().max(200, "Message cannot be longer than 200 characters").optional(),
+    email: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().email("Invalid email address").optional()),
+    message: z
+        .string()
+        .trim()
+        .max(200, "Message cannot be longer than 200 characters")
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
-    telephone: z.string().trim().max(20, "Telephone cannot be longer than 20 characters").optional(),
+    telephone: z
+        .string()
+        .trim()
+        .max(20, "Telephone cannot be longer than 20 characters")
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
 });
 export const menuItemInput = z.object({
     currency: z.enum(["€", "$"]).default("€"),
