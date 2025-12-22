@@ -73,7 +73,7 @@ const RestaurantsListPage: NextPage = () => {
     const [restaurantFormOpen, setRestaurantFormOpen] = useState(false);
     const t = useTranslations("dashboard.venue");
     const { data: restaurants, isLoading } = api.restaurant.getAll.useQuery(undefined, {
-        onError: () => showErrorToast(t("fetchRestaurantsError")),
+        onError: () => showErrorToast(t("fetchVenuesError")),
     });
     const [gridItemParent] = useAutoAnimate<HTMLDivElement>();
     const [rootParent] = useAutoAnimate<HTMLDivElement>();

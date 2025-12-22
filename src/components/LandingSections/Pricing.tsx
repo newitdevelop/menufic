@@ -16,7 +16,7 @@ export const Pricing: FC<{ scrollToContactUs: () => void }> = ({ scrollToContact
     const t = useTranslations("landing.pricing");
 
     const pricingFreeCard = [
-        t("freeTier.maxRestaurantCount", { count: env.NEXT_PUBLIC_MAX_RESTAURANTS_PER_USER }),
+        t("freeTier.maxVenueCount", { count: env.NEXT_PUBLIC_MAX_RESTAURANTS_PER_USER }),
         t("freeTier.maxMenuCount", { count: env.NEXT_PUBLIC_MAX_MENUS_PER_RESTAURANT }),
         t("freeTier.maxCategoryCount", { count: env.NEXT_PUBLIC_MAX_CATEGORIES_PER_MENU }),
         t("freeTier.maxMenuItemCount", { count: env.NEXT_PUBLIC_MAX_MENU_ITEMS_PER_CATEGORY }),
@@ -25,7 +25,7 @@ export const Pricing: FC<{ scrollToContactUs: () => void }> = ({ scrollToContact
     ];
 
     const pricingEnterpriseCard = [
-        t("enterpriseTier.maxRestaurantCount"),
+        t("enterpriseTier.maxVenueCount"),
         t("enterpriseTier.maxMenuCount"),
         t("enterpriseTier.maxCategoryCount"),
         t("enterpriseTier.maxMenuItemCount"),

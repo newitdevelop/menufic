@@ -261,7 +261,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         </Box>
                     ))}
                 {restaurant?.menus?.length === 0 && !haveMenuItems && (
-                    <Empty height={400} text={t("noMenusForRestaurant")} />
+                    <Empty height={400} text={t("noMenusForVenue")} />
                 )}
                 {!!restaurant?.menus?.length && !haveMenuItems && <Empty height={400} text={t("noItemsForMenu")} />}
             </Box>
