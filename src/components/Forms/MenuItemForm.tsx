@@ -59,9 +59,16 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         },
     });
 
-    const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm({
+    const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm<{
+        currency: "€" | "$";
+        description: string;
+        imageBase64: string;
+        imagePath: string;
+        name: string;
+        price: string;
+    }>({
         initialValues: {
-            currency: menuItem?.currency || "€",
+            currency: (menuItem?.currency as "€" | "$") || "€",
             description: menuItem?.description || "",
             imageBase64: "",
             imagePath: menuItem?.image?.path || "",
@@ -74,7 +81,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     useEffect(() => {
         if (opened) {
             const newValues = {
-                currency: menuItem?.currency || "€",
+                currency: (menuItem?.currency as "€" | "$") || "€",
                 description: menuItem?.description || "",
                 imageBase64: "",
                 imagePath: menuItem?.image?.path || "",
