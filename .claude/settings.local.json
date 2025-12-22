@@ -6,7 +6,9 @@
       "Bash(docker compose:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
-      "Bash(docker build:*)"
+      "Bash(docker build:*)",
+      "Bash(test:*)",
+      "Bash(cat:*)"
     ]
   }
 }

@@ -18,6 +18,12 @@ RUN npm config set fetch-timeout 60000 && \
 
 COPY . .
 
+# Remove any cached build artifacts and verify structure
+RUN rm -rf .next && \
+    echo "Verifying source structure..." && \
+    ls -la src/pages/ && \
+    test -d src/pages/venue || (echo "ERROR: venue folder not found!" && exit 1)
+
 # Build the app
 RUN npm run build
 
