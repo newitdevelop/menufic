@@ -95,7 +95,7 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
                     <Droppable droppableId="dnd-menu-list">
                         {(provided) => (
                             <Box {...provided.droppableProps} ref={provided.innerRef}>
-                                {menus?.map((item) => (
+                                {menus?.map((item: any) => (
                                     <MenuElement
                                         key={item.id}
                                         item={item}

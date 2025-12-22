@@ -38,7 +38,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
             enabled: !!menuId,
             onError: () => showErrorToast(t("fetchError")),
             onSuccess: (data: any) => {
-                const newSelected = openedCategories.filter((item) =>
+                const newSelected = openedCategories.filter((item: any) =>
                     data.map((category: any) => category.id).includes(item)
                 );
                 if (newSelected.length === 0) {
@@ -113,7 +113,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
                                         (categoriesParent as any).current = ref;
                                     }}
                                 >
-                                    {categories.map((item) => (
+                                    {categories.map((item: any) => (
                                         <CategoryElement key={item.id} categoryItem={item} menuId={menuId} />
                                     ))}
                                     {provided.placeholder}

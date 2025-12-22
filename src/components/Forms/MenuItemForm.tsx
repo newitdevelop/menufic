@@ -34,8 +34,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) =>
-                categories?.map((item) => (item.id === categoryId ? { ...item, items: [...item.items, data] } : item))
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories: any) =>
+                categories?.map((item: any) => (item.id === categoryId ? { ...item, items: [...item.items, data] } : item))
             );
             showSuccessToast(tCommon("createSuccess"), t("createSuccessDesc", { name: data.name }));
         },
@@ -45,12 +45,12 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) =>
-                categories?.map((categoryItem) =>
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories: any) =>
+                categories?.map((categoryItem: any) =>
                     categoryItem.id === categoryId
                         ? {
                               ...categoryItem,
-                              items: categoryItem.items?.map((item) => (item.id === data.id ? data : item)),
+                              items: categoryItem.items?.map((item: any) => (item.id === data.id ? data : item)),
                           }
                         : categoryItem
                 )

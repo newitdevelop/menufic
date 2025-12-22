@@ -33,7 +33,7 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) => [...(categories || []), data]);
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories: any) => [...(categories || []), data]);
             if (onAddSuccess) {
                 onAddSuccess(data);
             }
@@ -45,8 +45,8 @@ export const CategoryForm: FC<Props> = ({ opened, onClose, menuId, categoryItem,
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) =>
-                categories?.map((item) => (item.id === data.id ? { ...item, ...data } : item))
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories: any) =>
+                categories?.map((item: any) => (item.id === data.id ? { ...item, ...data } : item))
             );
             showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc", { name: data.name }));
         },

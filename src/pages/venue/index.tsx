@@ -30,8 +30,8 @@ const RestaurantCard: FC<{ item: Restaurant & { image: Image | null } }> = ({ it
         onError: (err: unknown) => showErrorToast(t("deleteError"), err as { message: string }),
         onSettled: () => setDeleteFormOpen(false),
         onSuccess: (data: any) => {
-            (trpcCtx.restaurant as any).getAll.setData(undefined, (restaurants) =>
-                restaurants?.filter((restaurantItem) => restaurantItem.id !== data.id)
+            (trpcCtx.restaurant as any).getAll.setData(undefined, (restaurants: any) =>
+                restaurants?.filter((restaurantItem: any) => restaurantItem.id !== data.id)
             );
             showSuccessToast(tCommon("deleteSuccess"), t("deleteSuccessDesc", { name: data.name }));
         },

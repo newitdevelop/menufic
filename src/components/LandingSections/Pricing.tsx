@@ -42,7 +42,7 @@ export const Pricing: FC<{ scrollToContactUs: () => void }> = ({ scrollToContact
                     <Text className={classes.cardTitle} color={theme.black} mt="md" size="lg" weight={500}>
                         {t("freeTier.label")}
                     </Text>
-                    {pricingFreeCard.map((item) => (
+                    {pricingFreeCard.map((item: any) => (
                         <Flex key={item} align="center" gap={10} mt="sm">
                             <IconCheckbox color={theme.black} />
                             <Text color={theme.black} opacity={0.8} size="md">
@@ -62,7 +62,7 @@ export const Pricing: FC<{ scrollToContactUs: () => void }> = ({ scrollToContact
                     <Text className={classes.cardTitle} color={theme.black} mt="md" size="lg" weight={500}>
                         {t("enterpriseTier.label")}
                     </Text>
-                    {pricingEnterpriseCard.map((item) => (
+                    {pricingEnterpriseCard.map((item: any) => (
                         <Flex key={item} align="center" gap={10} mt="sm">
                             <IconCheckbox color={theme.black} />
                             <Text color={theme.black} opacity={0.8} size="md">

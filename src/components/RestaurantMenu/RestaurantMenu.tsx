@@ -254,7 +254,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 ]}
                                 mb={30}
                             >
-                                {category.items?.map((item) => (
+                                {category.items?.map((item: any) => (
                                     <MenuItemCard key={item.id} item={item} />
                                 ))}
                             </SimpleGrid>

@@ -41,7 +41,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
         onMutate: async (reorderedList) => {
             await (trpcCtx.category as any).getAll.cancel({ menuId });
             const previousCategories = (trpcCtx.category as any).getAll.getData({ menuId });
-            const reorderedCategories = previousCategories?.map((item) =>
+            const reorderedCategories = previousCategories?.map((item: any) =>
                 item.id === categoryId
                     ? {
                           ...item,
@@ -84,7 +84,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
                                 (itemsParent as any).current = ref;
                             }}
                         >
-                            {menuItems.map((item) => (
+                            {menuItems.map((item: any) => (
                                 <MenuItemElement
                                     key={item.id}
                                     categoryId={categoryId}
