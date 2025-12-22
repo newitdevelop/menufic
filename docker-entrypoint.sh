@@ -24,13 +24,23 @@ else
 
   # Check if migrations table exists
   if ! npx prisma db execute --schema=./prisma/schema.prisma --stdin <<< "SELECT 1 FROM _prisma_migrations LIMIT 1" > /dev/null 2>&1; then
-    echo "⚠️  Migrations table doesn't exist - baselining initial migration..."
+    echo "⚠️  Migrations table doesn't exist - baselining existing database..."
+
+    # Mark the initial migration as already applied (baseline)
+    echo "📋 Marking initial migration as applied..."
     npx prisma migrate resolve --applied 20240308151629_initial_migration --schema=./prisma/schema.prisma
+
+    echo "✅ Database baselined successfully"
   fi
 
   # Now deploy any new migrations
-  echo "📦 Deploying new migrations..."
-  npx prisma migrate deploy --schema=./prisma/schema.prisma
+  echo "📦 Deploying pending migrations..."
+  if npx prisma migrate deploy --schema=./prisma/schema.prisma; then
+    echo "✅ All migrations deployed successfully"
+  else
+    echo "❌ Migration deployment failed"
+    exit 1
+  fi
 
   echo "✅ Database migrations applied successfully!"
 fi

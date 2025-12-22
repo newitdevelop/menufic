@@ -38,9 +38,19 @@ export const serverSchema = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 export const clientSchema = z.object({
+    NEXT_PUBLIC_APP_NAME: z.string().optional().default("Menufic"),
+    NEXT_PUBLIC_APP_URL: z.string().optional().default("https://menufic.com"),
     NEXT_PUBLIC_CONTACT_EMAIL: z.string().optional().default("bob@email.com"),
     NEXT_PUBLIC_FORM_API_KEY: z.string().optional(),
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: z.string(),
+    // Logo path can be either a local path (/logo.svg) or absolute URL (https://...)
+    NEXT_PUBLIC_LOGO_PATH: z
+        .string()
+        .optional()
+        .default("/menufic_logo.svg")
+        .refine((val) => val.startsWith("/") || val.startsWith("http://") || val.startsWith("https://"), {
+            message: "Logo path must be a relative path (starting with /) or absolute URL (starting with http:// or https://)",
+        }),
     NEXT_PUBLIC_MAX_BANNERS_PER_RESTAURANT: z.string().regex(/^\d+$/).default("5"),
     NEXT_PUBLIC_MAX_CATEGORIES_PER_MENU: z.string().regex(/^\d+$/).default("10"),
     NEXT_PUBLIC_MAX_MENUS_PER_RESTAURANT: z.string().regex(/^\d+$/).default("5"),
@@ -60,9 +70,12 @@ export const clientSchema = z.object({
  * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
 export const clientEnv = {
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
     NEXT_PUBLIC_FORM_API_KEY: process.env.NEXT_PUBLIC_FORM_API_KEY,
     NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
+    NEXT_PUBLIC_LOGO_PATH: process.env.NEXT_PUBLIC_LOGO_PATH,
     NEXT_PUBLIC_MAX_BANNERS_PER_RESTAURANT: process.env.NEXT_PUBLIC_MAX_BANNERS_PER_RESTAURANT,
     NEXT_PUBLIC_MAX_CATEGORIES_PER_MENU: process.env.NEXT_PUBLIC_MAX_CATEGORIES_PER_MENU,
     NEXT_PUBLIC_MAX_MENUS_PER_RESTAURANT: process.env.NEXT_PUBLIC_MAX_MENUS_PER_RESTAURANT,

@@ -4,6 +4,8 @@ import { createStyles } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 
+import { env } from "src/env/client.mjs";
+
 const useStyles = createStyles((theme) => {
     return {
         image: {
@@ -22,13 +24,19 @@ const useStyles = createStyles((theme) => {
     };
 });
 
-/** Logo link component to be used to display Menufic branding */
+/** Logo link component to be used to display app branding */
 export const Logo: FC = () => {
     const { classes } = useStyles();
 
     return (
         <Link className={classes.titleLink} href="/">
-            <Image alt="logo" className={classes.image} height={50} src="/logo.png" width={200} />
+            <Image
+                alt={`${env.NEXT_PUBLIC_APP_NAME} logo`}
+                className={classes.image}
+                height={50}
+                src={env.NEXT_PUBLIC_LOGO_PATH}
+                width={200}
+            />
         </Link>
     );
 };
