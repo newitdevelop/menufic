@@ -14,6 +14,9 @@
 ### Language File
 5. **src/lang/en.json** - All 73 occurrences of "restaurant" changed to "venue"
 
+### Server/Backend
+6. **src/server/api/root.ts:4** - Fixed import path from `./routers/venue.router` → `./routers/restaurant.router`
+
 ## TypeScript Type Fixes
 
 ### 1. Global Configuration
