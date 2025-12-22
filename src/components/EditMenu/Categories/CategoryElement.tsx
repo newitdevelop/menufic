@@ -37,7 +37,7 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
         onError: (err: unknown) => showErrorToast(t("deleteCategoryError"), err as { message: string }),
         onSettled: () => setDeleteCategoryModalOpen(false),
         onSuccess: (data: any) => {
-            trpcCtx.category.getAll.setData({ menuId }, (categories) =>
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) =>
                 categories?.filter((item) => item.id !== data.id)
             );
             showSuccessToast(tCommon("deleteSuccess"), t("deleteSuccessToast", { name: data.name }));

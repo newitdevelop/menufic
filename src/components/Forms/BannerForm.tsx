@@ -31,7 +31,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, ...rest }
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            trpcCtx.restaurant.getBanners.setData({ id: restaurantId }, (banners = []) => [...banners, data]);
+            (trpcCtx.restaurant as any).getBanners.setData({ id: restaurantId }, (banners = []) => [...banners, data]);
             showSuccessToast(tCommon("createSuccess"), t("createSuccessDesc"));
         },
     });

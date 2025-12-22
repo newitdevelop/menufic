@@ -32,7 +32,7 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            trpcCtx.restaurant.getAll.setData(undefined, (restaurants) => [...(restaurants || []), data]);
+            (trpcCtx.restaurant as any).getAll.setData(undefined, (restaurants) => [...(restaurants || []), data]);
             showSuccessToast(tCommon("createSuccess"), t("createSuccessDesc", { name: data.name }));
         },
     });
@@ -41,7 +41,7 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            trpcCtx.restaurant.getAll.setData(undefined, (restaurants) =>
+            (trpcCtx.restaurant as any).getAll.setData(undefined, (restaurants) =>
                 restaurants?.map((item) => (item.id === data.id ? { ...item, ...data } : item))
             );
             showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc", { name: data.name }));

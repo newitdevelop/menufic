@@ -36,11 +36,11 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (err, _newItem, context: any) => {
             showErrorToast(t("positionUpdateError"), err);
-            trpcCtx.category.getAll.setData({ menuId }, context?.previousCategories);
+            (trpcCtx.category as any).getAll.setData({ menuId }, context?.previousCategories);
         },
         onMutate: async (reorderedList) => {
-            await trpcCtx.category.getAll.cancel({ menuId });
-            const previousCategories = trpcCtx.category.getAll.getData({ menuId });
+            await (trpcCtx.category as any).getAll.cancel({ menuId });
+            const previousCategories = (trpcCtx.category as any).getAll.getData({ menuId });
             const reorderedCategories = previousCategories?.map((item) =>
                 item.id === categoryId
                     ? {
@@ -55,7 +55,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
                       }
                     : item
             );
-            trpcCtx.category.getAll.setData({ menuId }, reorderedCategories);
+            (trpcCtx.category as any).getAll.setData({ menuId }, reorderedCategories);
             return { previousCategories };
         },
     });

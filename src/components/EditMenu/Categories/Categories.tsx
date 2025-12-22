@@ -52,11 +52,11 @@ export const Categories: FC<Props> = ({ menuId }) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (_err, _newItem, context: any) => {
             showErrorToast(t("positionUpdateError"));
-            trpcCtx.category.getAll.setData({ menuId }, context?.previousCategories);
+            (trpcCtx.category as any).getAll.setData({ menuId }, context?.previousCategories);
         },
         onMutate: async (reorderedList) => {
-            await trpcCtx.category.getAll.cancel({ menuId });
-            const previousCategories = trpcCtx.category.getAll.getData({ menuId });
+            await (trpcCtx.category as any).getAll.cancel({ menuId });
+            const previousCategories = (trpcCtx.category as any).getAll.getData({ menuId });
             const reorderedCategories = reorderedList?.reduce(
                 (
                     acc: (Category & {
@@ -72,7 +72,7 @@ export const Categories: FC<Props> = ({ menuId }) => {
                 },
                 []
             );
-            trpcCtx.category.getAll.setData({ menuId }, reorderedCategories);
+            (trpcCtx.category as any).getAll.setData({ menuId }, reorderedCategories);
             return { previousCategories };
         },
     });

@@ -46,13 +46,13 @@ export const PublishButton: FC<Props> = ({ restaurant }: Props) => {
     const { mutate: setPublished } = api.restaurant.setPublished.useMutation({
         onError: (err, _newItem, context: { previousRestaurant: Restaurant | undefined } | undefined) => {
             showErrorToast(t("statusUpdateError"), err);
-            trpcCtx.restaurant.get.setData({ id }, context?.previousRestaurant);
+            (trpcCtx.restaurant as any).get.setData({ id }, context?.previousRestaurant);
         },
         onMutate: async (setPublishedReq) => {
-            await trpcCtx.restaurant.get.cancel({ id });
-            const previousRestaurant = trpcCtx.restaurant.get.getData({ id });
+            await (trpcCtx.restaurant as any).get.cancel({ id });
+            const previousRestaurant = (trpcCtx.restaurant as any).get.getData({ id });
             if (previousRestaurant) {
-                trpcCtx.restaurant.get.setData(
+                (trpcCtx.restaurant as any).get.setData(
                     { id },
                     { ...previousRestaurant, isPublished: setPublishedReq.isPublished }
                 );

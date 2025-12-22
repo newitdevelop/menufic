@@ -31,7 +31,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            trpcCtx.menu.getAll.setData({ restaurantId }, (menus) => [...(menus || []), data]);
+            (trpcCtx.menu as any).getAll.setData({ restaurantId }, (menus) => [...(menus || []), data]);
             showSuccessToast(tCommon("createSuccess"), t("createSuccessDesc", { name: data.name }));
         },
     });
@@ -40,7 +40,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
-            trpcCtx.menu.getAll.setData({ restaurantId }, (menus) =>
+            (trpcCtx.menu as any).getAll.setData({ restaurantId }, (menus) =>
                 menus?.map((item) => (item.id === data.id ? { ...item, ...data } : item))
             );
             showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc", { name: data.name }));

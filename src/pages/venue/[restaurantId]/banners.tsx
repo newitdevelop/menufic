@@ -34,7 +34,7 @@ const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string }> =
         onError: (err: unknown) => showErrorToast(t("deleteError"), err as { message: string }),
         onSettled: () => setDeleteFormOpen(false),
         onSuccess: (data: any) => {
-            trpcCtx.restaurant.getBanners.setData({ id: restaurantId }, (banners = []) =>
+            (trpcCtx.restaurant as any).getBanners.setData({ id: restaurantId }, (banners = []) =>
                 banners.filter((bannerItem) => bannerItem.id !== data.id)
             );
             showSuccessToast(tCommon("deleteSuccess"), t("deleteSuccessDesc"));

@@ -57,12 +57,12 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
     const { mutate: updateMenuPositions } = api.menu.updatePosition.useMutation({
         onError: (err, _newItem, context: { previousMenus: Menu[] | undefined } | undefined) => {
             showErrorToast(t("positionUpdateError"), err);
-            trpcCtx.menu.getAll.setData({ restaurantId }, context?.previousMenus);
+            (trpcCtx.menu as any).getAll.setData({ restaurantId }, context?.previousMenus);
         },
         onMutate: async (reorderedList) => {
-            await trpcCtx.menu.getAll.cancel({ restaurantId });
+            await (trpcCtx.menu as any).getAll.cancel({ restaurantId });
 
-            const previousMenus = trpcCtx.menu.getAll.getData({ restaurantId });
+            const previousMenus = (trpcCtx.menu as any).getAll.getData({ restaurantId });
             const reorderedMenus: Menu[] = [];
             reorderedList.forEach((item) => {
                 const matchingItem = previousMenus?.find((prev) => prev.id === item.id);
@@ -71,7 +71,7 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
                 }
             });
 
-            trpcCtx.menu.getAll.setData({ restaurantId }, reorderedMenus);
+            (trpcCtx.menu as any).getAll.setData({ restaurantId }, reorderedMenus);
             return { previousMenus };
         },
     });

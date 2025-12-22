@@ -72,7 +72,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
         onError: (err: unknown) => showErrorToast(t("deleteMenuItemError"), err as { message: string }),
         onSettled: () => setDeleteMenuItemModalOpen(false),
         onSuccess: (data: any) => {
-            trpcCtx.category.getAll.setData({ menuId }, (categories) =>
+            (trpcCtx.category as any).getAll.setData({ menuId }, (categories) =>
                 categories?.map((categoryItem) =>
                     categoryItem.id === categoryId
                         ? {
