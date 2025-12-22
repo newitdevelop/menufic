@@ -10,7 +10,8 @@
       "Bash(test:*)",
       "Bash(cat:*)",
       "Bash(docker system:*)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(xargs sed:*)"
     ]
   }
 }

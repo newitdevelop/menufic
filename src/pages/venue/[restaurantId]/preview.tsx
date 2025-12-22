@@ -21,7 +21,7 @@ const RestaurantMenuPreviewPage: NextPage = () => {
     const theme = useMantineTheme();
     const t = useTranslations("preview");
 
-    const { data: restaurant } = api.restaurant.getDetails.useQuery(
+    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
         { id: router.query?.restaurantId as string },
         { enabled: false }
     );
@@ -68,7 +68,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext<{ re
 
     try {
         // Hydrate trpc context from server side
-        const restaurant = await ssg.restaurant.getDetails.fetch({ id: restaurantId });
+        const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
         if (restaurant.userId === session.user?.id) {
             // Preview page should only be accessible by the user who manages the restaurant
             return { props: { messages, trpcState: ssg.dehydrate() } };

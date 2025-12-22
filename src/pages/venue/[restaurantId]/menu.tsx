@@ -23,7 +23,7 @@ const RestaurantMenuPage: NextPage = () => {
     const restaurantId = router.query?.restaurantId as string;
     const t = useTranslations("menu");
 
-    const { data: restaurant } = api.restaurant.getDetails.useQuery(
+    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId },
         { enabled: status === "authenticated" && !!restaurantId }
     );
@@ -69,7 +69,7 @@ export async function getStaticProps(context: GetStaticPropsContext<{ restaurant
     const restaurantId = context.params?.restaurantId as string;
     const messages = (await import("src/lang/en.json")).default;
     try {
-        const restaurant = await ssg.restaurant.getDetails.fetch({ id: restaurantId });
+        const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
         if (restaurant.isPublished) {
             // Only return restaurants that are published
             return { props: { messages, restaurantId, trpcState: ssg.dehydrate() }, revalidate: 1800 }; // revalidate in 30 mins
