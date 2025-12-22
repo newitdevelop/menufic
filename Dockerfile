@@ -18,6 +18,7 @@ RUN npm config set fetch-timeout 60000 && \
 
 # Add build argument to bust cache for source copy
 ARG CACHEBUST=1
+RUN echo "Cache bust: $CACHEBUST"
 COPY . .
 
 # Remove any cached build artifacts and verify structure

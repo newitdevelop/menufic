@@ -1,0 +1,46 @@
+================================================================================
+                    IMPORTANT: DOCKER BUILD INSTRUCTIONS
+================================================================================
+
+The recent venue refactoring changed src/pages/restaurant/ to src/pages/venue/
+
+Docker's cache still has the OLD folder structure cached.
+
+YOU MUST USE ONE OF THESE COMMANDS:
+================================================================================
+
+YOUR CURRENT COMMAND (WITH FIX):
+-------------------------------
+Windows PowerShell:
+docker-compose down && git pull origin main && docker build --build-arg CACHEBUST=$(Get-Date -Format "yyyyMMddHHmmss") -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
+
+Windows Command Prompt:
+docker-compose down && git pull origin main && docker build --build-arg CACHEBUST=%RANDOM% -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
+
+Git Bash / WSL / Linux:
+docker-compose down && git pull origin main && docker build --build-arg CACHEBUST=$(date +%s) -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
+
+SIMPLE ALTERNATIVES:
+-------------------
+WINDOWS PowerShell:
+.\build-docker.ps1
+
+WINDOWS Command Prompt:
+build-docker.bat
+
+OR COMPLETE REBUILD (GUARANTEED TO WORK):
+-----------------------------------------
+docker-compose down && git pull origin main && docker build --no-cache -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
+
+================================================================================
+DO NOT USE: docker build -t menufic .
+This will fail with "restaurant folder not found" error!
+================================================================================
+
+EXPLANATION:
+- $(date +%s) only works in bash/Linux shells
+- In Windows CMD use %RANDOM% or a static number
+- In PowerShell use $(Get-Date -Format "yyyyMMddHHmmss")
+- OR just use --no-cache for guaranteed fresh build
+
+See DOCKER_BUILD.md for full documentation.

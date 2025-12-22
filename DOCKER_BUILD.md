@@ -1,34 +1,37 @@
 # Docker Build Instructions
 
-## Quick Start
+## IMPORTANT: How to Build
 
-### Windows
+You **MUST** use one of these methods to avoid Docker cache issues:
+
+### Method 1: Use the provided build script (EASIEST)
+
+**Windows:**
 ```bash
 build-docker.bat
 ```
 
-### Linux/Mac
+**Linux/Mac:**
 ```bash
 chmod +x build-docker.sh
 ./build-docker.sh
 ```
 
-## Manual Build Commands
-
-### Option 1: Using the cache-busting build argument (Recommended)
+### Method 2: Manual build with cache-busting argument
 ```bash
 docker build --build-arg CACHEBUST=$(date +%s) -t menufic .
 ```
 
-### Option 2: Complete cache bypass (slower but guaranteed fresh)
+### Method 3: Complete cache bypass (slower but guaranteed fresh)
 ```bash
 docker build --no-cache -t menufic .
 ```
 
-### Option 3: Normal build (may use cached layers)
+## ❌ DO NOT USE
 ```bash
 docker build -t menufic .
 ```
+This will use cached layers and fail with "restaurant folder not found" error.
 
 ## Understanding the Cache Issue
 
