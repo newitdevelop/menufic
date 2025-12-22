@@ -26,6 +26,7 @@ import { Black, White } from "src/styles/theme";
 import { MenuItemCard } from "./MenuItemCard";
 import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
+import { TranslateHelper } from "../TranslateHelper";
 
 const useStyles = createStyles((theme) => ({
     carousalOverlay: {
@@ -169,7 +170,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Carousel>
                 <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                     <Box className={classes.carousalTitle}>
-                        <Text className={classes.carousalTitleText}>{restaurant?.name}</Text>
+                        <Text className={classes.carousalTitleText} translate="no">{restaurant?.name}</Text>
                         <Box className={classes.carousalSubWrap}>
                             <Flex align="center" gap={10}>
                                 <IconMapPin />
@@ -180,28 +181,31 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                     rel="noopener noreferrer"
                                     target="_blank"
                                 >
-                                    <Text className={classes.carousalTitleSubText}>{restaurant?.location}</Text>
+                                    <Text className={classes.carousalTitleSubText} translate="yes">{restaurant?.location}</Text>
                                 </a>
                             </Flex>
                             {restaurant?.contactNo && (
                                 <Flex align="center" gap={10}>
                                     <IconPhone />
                                     <a href={`tel:${restaurant?.contactNo.replace(/\s/g, "")}`}>
-                                        <Text className={classes.carousalTitleSubText}>{restaurant?.contactNo}</Text>
+                                        <Text className={classes.carousalTitleSubText} translate="no">{restaurant?.contactNo}</Text>
                                     </a>
                                 </Flex>
                             )}
                         </Box>
                     </Box>
                 </MediaQuery>
-                <ActionIcon className={classes.themeSwitch} onClick={() => toggleColorScheme()} size="lg">
-                    {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
-                </ActionIcon>
+                <Box pos="absolute" right={12} top={10} sx={{ display: "flex", gap: 8, zIndex: 1 }}>
+                    <TranslateHelper />
+                    <ActionIcon className={classes.themeSwitch} onClick={() => toggleColorScheme()} size="lg" sx={{ position: "relative", right: "unset", top: "unset" }}>
+                        {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
+                    </ActionIcon>
+                </Box>
             </Box>
 
             <MediaQuery largerThan="xs" styles={{ display: "none" }}>
                 <Stack className={classes.mobileTitleWrap}>
-                    <Text className={classes.carousalTitleText}>{restaurant?.name}</Text>
+                    <Text className={classes.carousalTitleText} translate="no">{restaurant?.name}</Text>
                     <Flex align="center" gap={10} opacity={0.6}>
                         <IconMapPin />
                         <a
@@ -211,14 +215,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             rel="noopener noreferrer"
                             target="_blank"
                         >
-                            <Text className={classes.carousalTitleSubText}>{restaurant?.location}</Text>
+                            <Text className={classes.carousalTitleSubText} translate="yes">{restaurant?.location}</Text>
                         </a>
                     </Flex>
                     {restaurant?.contactNo && (
                         <Flex align="center" gap={10} opacity={0.6}>
                             <IconPhone />
                             <a href={`tel:${restaurant?.contactNo.replace(/\s/g, "")}`}>
-                                <Text className={classes.carousalTitleSubText}>{restaurant?.contactNo}</Text>
+                                <Text className={classes.carousalTitleSubText} translate="no">{restaurant?.contactNo}</Text>
                             </a>
                         </Flex>
                     )}
@@ -228,10 +232,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 <Tabs.List>
                     {restaurant?.menus?.map((menu) => (
                         <Tabs.Tab key={menu.id} px="lg" value={menu.id}>
-                            <Text color={theme.black} size="lg" weight={selectedMenu === menu.id ? "bold" : "normal"}>
+                            <Text color={theme.black} size="lg" translate="yes" weight={selectedMenu === menu.id ? "bold" : "normal"}>
                                 {menu.name}
                             </Text>
-                            <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs">
+                            <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">
                                 {menu.availableTime}
                             </Text>
                         </Tabs.Tab>
@@ -244,7 +248,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         <Flex align="center" gap={8}>
                             <IconPhone size={16} />
                             <a href={`tel:${menuDetails.telephone.replace(/\s/g, "")}`}>
-                                <Text size="sm">{menuDetails.telephone}</Text>
+                                <Text size="sm" translate="no">{menuDetails.telephone}</Text>
                             </a>
                         </Flex>
                     )}
@@ -252,14 +256,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         <Flex align="center" gap={8}>
                             <IconMail size={16} />
                             <a href={`mailto:${menuDetails.email}`}>
-                                <Text size="sm">{menuDetails.email}</Text>
+                                <Text size="sm" translate="no">{menuDetails.email}</Text>
                             </a>
                         </Flex>
                     )}
                     {menuDetails.message && (
                         <Flex align="center" gap={8}>
                             <IconMessage size={16} />
-                            <Text size="sm">{menuDetails.message}</Text>
+                            <Text size="sm" translate="yes">{menuDetails.message}</Text>
                         </Flex>
                     )}
                 </Stack>
@@ -269,7 +273,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     ?.filter((category) => category?.items.length)
                     ?.map((category) => (
                         <Box key={category.id}>
-                            <Text my="lg" size="lg" weight={600}>
+                            <Text my="lg" size="lg" translate="yes" weight={600}>
                                 {category.name}
                             </Text>
                             <SimpleGrid

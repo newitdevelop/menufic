@@ -97,13 +97,13 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                 )}
 
                 <Stack className={classes.cardDescWrap}>
-                    <Text className={cx(classes.cardText, classes.cardItemTitle)} size="lg" weight={700}>
+                    <Text className={cx(classes.cardText, classes.cardItemTitle)} size="lg" translate="yes" weight={700}>
                         {item.name}
                     </Text>
-                    <Text color="red" size="sm">
+                    <Text color="red" size="sm" translate="no">
                         {item.currency || "€"}{item.price}
                     </Text>
-                    <Text className={cx(classes.cardText, classes.cardItemDesc)} opacity={0.7} size="xs">
+                    <Text className={cx(classes.cardText, classes.cardItemDesc)} opacity={0.7} size="xs" translate="yes">
                         {item.description}
                     </Text>
                 </Stack>

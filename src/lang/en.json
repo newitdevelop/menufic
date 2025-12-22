@@ -14,7 +14,12 @@
         "footerCopyright": "© {year} Copyright: {appName}",
         "login": "Login",
         "logout": "Logout",
-        "openDashboard": "Go to Dashboard"
+        "openDashboard": "Go to Dashboard",
+        "translatePage": "Translate this page",
+        "translateInstructions": "Use your browser's built-in translation feature to view this menu in your language:",
+        "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
+        "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
+        "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
     },
     "auth": {
         "azureSignIn": "Sign in with Microsoft",

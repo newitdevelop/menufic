@@ -33,7 +33,7 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
             data-testid="menu-item-card-modal"
             styles={{ modal: { background: bgColor } }}
             title={
-                <Text color={theme.black} size="xl" weight="bold">
+                <Text color={theme.black} size="xl" translate="yes" weight="bold">
                     {menuItem?.name}
                 </Text>
             }
@@ -51,10 +51,10 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
                         />
                     </Box>
                 )}
-                <Text color="red" mt="sm" size="lg">
+                <Text color="red" mt="sm" size="lg" translate="no">
                     {menuItem?.currency || "€"}{menuItem?.price}
                 </Text>
-                <Text color={theme.black} opacity={0.6}>
+                <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}
                 </Text>
             </Stack>
