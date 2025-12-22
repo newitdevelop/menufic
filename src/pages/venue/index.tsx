@@ -23,7 +23,7 @@ const RestaurantCard: FC<{ item: Restaurant & { image: Image | null } }> = ({ it
     const trpcCtx = api.useContext();
     const [restaurantFormOpen, setRestaurantFormOpen] = useState(false);
     const [deleteFormOpen, setDeleteFormOpen] = useState(false);
-    const t = useTranslations("dashboard.restaurant");
+    const t = useTranslations("dashboard.venue");
     const tCommon = useTranslations("common");
 
     const { mutate: deleteRestaurant, isLoading: isDeleting } = api.restaurant.delete.useMutation({
@@ -71,7 +71,7 @@ const RestaurantCard: FC<{ item: Restaurant & { image: Image | null } }> = ({ it
 /** Page to view all the restaurants that were created by you */
 const RestaurantsListPage: NextPage = () => {
     const [restaurantFormOpen, setRestaurantFormOpen] = useState(false);
-    const t = useTranslations("dashboard.restaurant");
+    const t = useTranslations("dashboard.venue");
     const { data: restaurants, isLoading } = api.restaurant.getAll.useQuery(undefined, {
         onError: () => showErrorToast(t("fetchRestaurantsError")),
     });

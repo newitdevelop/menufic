@@ -68,7 +68,7 @@ const BannersPage: NextPage = () => {
     const restaurantId = router.query?.restaurantId as string;
     const [gridItemParent] = useAutoAnimate<HTMLDivElement>();
     const t = useTranslations("dashboard.banner");
-    const tRestaurant = useTranslations("dashboard.restaurantManage");
+    const tRestaurant = useTranslations("dashboard.venueManage");
 
     const { data: banners = [], isLoading: loadingBanners } = api.restaurant.getBanners.useQuery(
         { id: restaurantId },

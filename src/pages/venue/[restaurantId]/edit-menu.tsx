@@ -25,7 +25,7 @@ const EditMenuPage: NextPage = () => {
     const [rootParent] = useAutoAnimate<HTMLDivElement>();
     const restaurantId = router.query?.restaurantId as string;
     const t = useTranslations("dashboard.editMenu");
-    const tRestaurant = useTranslations("dashboard.restaurantManage");
+    const tRestaurant = useTranslations("dashboard.venueManage");
 
     const { data: restaurant, isLoading } = api.restaurant.get.useQuery(
         { id: restaurantId },

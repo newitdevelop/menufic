@@ -19,7 +19,7 @@ const RestaurantManagePage: NextPage = () => {
     const theme = useMantineTheme();
     const [itemsParent] = useAutoAnimate<HTMLDivElement>();
     const restaurantId = router.query?.restaurantId as string;
-    const t = useTranslations("dashboard.restaurantManage");
+    const t = useTranslations("dashboard.venueManage");
 
     const { data: restaurant, isLoading } = api.restaurant.get.useQuery(
         { id: restaurantId },

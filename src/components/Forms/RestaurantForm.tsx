@@ -25,7 +25,7 @@ interface Props extends ModalProps {
 export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest }) => {
     const trpcCtx = api.useContext();
     const theme = useMantineTheme();
-    const t = useTranslations("dashboard.restaurant");
+    const t = useTranslations("dashboard.venue");
     const tCommon = useTranslations("common");
 
     const { mutate: createRestaurant, isLoading: isCreating } = api.restaurant.create.useMutation({

@@ -88,7 +88,7 @@ export const NavHeader: FC<Props> = ({
     const t = useTranslations();
 
     const linkOptions = [
-        { icon: IconPizza, label: t("dashboard.restaurant.navTitle"), link: "/venue" },
+        { icon: IconPizza, label: t("dashboard.venue.navTitle"), link: "/venue" },
         { icon: IconEyeglass2, label: t("dashboard.explore.navTitle"), link: "/explore" },
     ];
 
