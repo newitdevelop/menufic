@@ -21,7 +21,7 @@ volumes:
 ```
 data/
 ├── translations/           # Translation files persist here
-│   ├── en.json            # English source (copied from src/lang/)
+│   ├── en.json            # English source (auto-restored from Docker image)
 │   ├── pt.json            # Portuguese (auto-generated)
 │   ├── es.json            # Spanish (auto-generated)
 │   ├── fr.json            # French (auto-generated)
@@ -30,6 +30,15 @@ data/
 └── translation-cache/      # DeepL API cache persists here
     └── .translation-cache.json  # MD5 hash cache
 ```
+
+### How en.json is Handled
+
+The volume mount overrides `/app/src/lang`, so we need to restore `en.json`:
+
+1. **Dockerfile** backs up `en.json` to `/tmp/en.json.backup` during build
+2. **docker-entrypoint.sh** checks if `en.json` exists in volume on startup
+3. If missing, it restores from backup: `cp /tmp/en.json.backup src/lang/en.json`
+4. Translation script can now read the English source file
 
 ## Lifecycle
 

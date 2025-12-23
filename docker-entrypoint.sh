@@ -53,6 +53,19 @@ npx prisma generate --schema=./prisma/schema.prisma
 if [ ! -z "$DEEPL_API_KEY" ]; then
   echo "🌍 DeepL API key detected - checking translations..."
 
+  # Ensure en.json exists in volume (copy from build if missing)
+  if [ ! -f "src/lang/en.json" ]; then
+    echo "📋 Copying English source file to volume..."
+    # en.json is in the Docker image at a temporary location
+    if [ -f "/tmp/en.json.backup" ]; then
+      cp /tmp/en.json.backup src/lang/en.json
+      echo "✅ English source file restored"
+    else
+      echo "❌ English source file not found - translations cannot be generated"
+      echo "   This is likely a Docker volume configuration issue"
+    fi
+  fi
+
   # Check if translation files exist
   if [ ! -f "src/lang/pt.json" ] || [ ! -f "src/lang/es.json" ]; then
     echo "📝 Translation files missing - generating translations..."

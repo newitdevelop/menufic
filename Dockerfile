@@ -33,6 +33,9 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 # Build the app
 RUN npm run build
 
+# Backup en.json for restoration after volume mount
+RUN cp src/lang/en.json /tmp/en.json.backup
+
 # Copy and make the entrypoint script executable
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
