@@ -1,15 +1,14 @@
 import type { FC } from "react";
 
-import { ActionIcon, Menu } from "@mantine/core";
-import { IconLanguage } from "@tabler/icons";
+import { Box, Menu, Text } from "@mantine/core";
 
 const LANGUAGES = [
-    { code: "EN", label: "English", flag: "🇬🇧" },
-    { code: "PT", label: "Português", flag: "🇵🇹" },
-    { code: "ES", label: "Español", flag: "🇪🇸" },
-    { code: "FR", label: "Français", flag: "🇫🇷" },
-    { code: "DE", label: "Deutsch", flag: "🇩🇪" },
-    { code: "IT", label: "Italiano", flag: "🇮🇹" },
+    { code: "PT", flag: "🇵🇹", label: "Português" },
+    { code: "EN", flag: "🇬🇧", label: "English" },
+    { code: "ES", flag: "🇪🇸", label: "Español" },
+    { code: "FR", flag: "🇫🇷", label: "Français" },
+    { code: "DE", flag: "🇩🇪", label: "Deutsch" },
+    { code: "IT", flag: "🇮🇹", label: "Italiano" },
 ];
 
 interface Props {
@@ -17,24 +16,35 @@ interface Props {
     onLanguageChange: (language: string) => void;
 }
 
-export const LanguageSelector: FC<Props> = ({ currentLanguage = "EN", onLanguageChange }) => {
+export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguageChange }) => {
     const current = LANGUAGES.find((l) => l.code === currentLanguage.toUpperCase()) || LANGUAGES[0];
 
     return (
         <Menu position="bottom-end" shadow="md" width={200}>
             <Menu.Target>
-                <ActionIcon
-                    size="lg"
+                <Box
                     sx={(theme) => ({
-                        "&:hover": { backgroundColor: theme.fn.rgba(theme.colors.dark[0], 0.8) },
+                        "&:hover": { backgroundColor: theme.fn.rgba(theme.colors.dark[0], 0.8), opacity: 1 },
+                        alignItems: "center",
                         backgroundColor: theme.fn.rgba(theme.colors.dark[0], 0.6),
-                        color: theme.colors.dark[9],
+                        borderRadius: theme.radius.md,
+                        boxShadow: theme.shadows.md,
+                        cursor: "pointer",
+                        display: "flex",
+                        gap: 6,
+                        opacity: 0.8,
+                        padding: "6px 10px",
                         transition: "all 500ms ease",
                     })}
                     title="Select Language"
                 >
-                    <IconLanguage size={18} strokeWidth={2.5} />
-                </ActionIcon>
+                    <Text size="lg" sx={{ lineHeight: 1 }}>
+                        {current?.flag}
+                    </Text>
+                    <Text size="sm" sx={{ color: "white", fontWeight: 600 }}>
+                        {current?.code}
+                    </Text>
+                </Box>
             </Menu.Target>
 
             <Menu.Dropdown>

@@ -122,12 +122,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(restaurant?.menus?.[0]?.id);
     const router = useRouter();
-    const language = (router.query?.lang as string) || "EN";
+    const language = (router.query?.lang as string) || "PT";
     const t = useTranslations("menu");
 
     const handleLanguageChange = (newLang: string) => {
         const currentQuery = { ...router.query };
-        if (newLang === "EN") {
+        if (newLang === "PT") {
             delete currentQuery.lang;
         } else {
             currentQuery.lang = newLang;
