@@ -11,7 +11,8 @@
         "start": "next start",
         "test:e2e": "playwright test",
         "tsc": "tsc --noEmit --incremental",
-        "format-rest": "npx prettier --ignore-path .gitignore --write \"**/*.{css,md,json,yml}\" \"!package-lock.json\""
+        "format-rest": "npx prettier --ignore-path .gitignore --write \"**/*.{css,md,json,yml}\" \"!package-lock.json\"",
+        "translate": "node scripts/generate-translations.js"
     },
     "dependencies": {
         "@emotion/react": "^11.10.5",

@@ -41,6 +41,9 @@ yarn-error.log*
 # Sentry
 .sentryclirc
 
+# Translation cache
+scripts/.translation-cache.json
+
 # Tests
 /coverage
 /test-results/
