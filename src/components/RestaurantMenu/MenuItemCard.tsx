@@ -5,6 +5,8 @@ import { Box, createStyles, Paper, Stack, Text } from "@mantine/core";
 
 import type { Image, MenuItem } from "@prisma/client";
 
+import { calculateVATInclusivePrice } from "src/utils/helpers";
+
 import { ViewMenuItemModal } from "./ViewMenuItemModal";
 import { ImageKitImage } from "../ImageKitImage";
 
@@ -73,6 +75,9 @@ interface Props {
 export const MenuItemCard: FC<Props> = ({ item }) => {
     const { classes, cx } = useStyles({ imageColor: item?.image?.color });
     const [modalVisible, setModalVisible] = useState(false);
+
+    const displayPrice = calculateVATInclusivePrice(item.price, item.vatRate || 23, item.vatIncluded ?? true);
+
     return (
         <>
             <Paper
@@ -101,7 +106,7 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         {item.name}
                     </Text>
                     <Text color="red" size="sm" translate="no">
-                        {item.currency || "€"}{item.price}
+                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% VAT included)
                     </Text>
                     <Text className={cx(classes.cardText, classes.cardItemDesc)} opacity={0.7} size="xs" translate="yes">
                         {item.description}

@@ -9,7 +9,7 @@ import { Draggable } from "react-beautiful-dnd";
 import type { Image, MenuItem } from "@prisma/client";
 
 import { api } from "src/utils/api";
-import { showErrorToast, showSuccessToast } from "src/utils/helpers";
+import { calculateVATInclusivePrice, showErrorToast, showSuccessToast } from "src/utils/helpers";
 
 import { DeleteConfirmModal } from "../../DeleteConfirmModal";
 import { MenuItemForm } from "../../Forms/MenuItemForm";
@@ -67,6 +67,8 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
     const [menuItemFormOpen, setMenuItemFormOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
+
+    const displayPrice = calculateVATInclusivePrice(menuItem.price, menuItem.vatRate || 23, menuItem.vatIncluded ?? true);
 
     const { mutate: deleteMenuItem, isLoading: isDeleting } = api.menuItem.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteMenuItemError"), err as { message: string }),
@@ -134,7 +136,10 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                         </Grid.Col>
                         <Grid.Col md={2} sm={3} span={3}>
                             <Text align="center" color="red" opacity={0.8}>
-                                {menuItem.currency || "€"}{menuItem.price}
+                                {menuItem.currency || "€"}{displayPrice}
+                            </Text>
+                            <Text align="center" size="xs" opacity={0.6}>
+                                ({menuItem.vatRate || 23}% VAT incl.)
                             </Text>
                         </Grid.Col>
                         <Grid.Col lg={5} sm={9} span={12}>

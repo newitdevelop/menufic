@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Group, SegmentedControl, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, SegmentedControl, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -66,6 +66,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         imagePath: string;
         name: string;
         price: string;
+        vatIncluded: boolean;
+        vatRate: 0 | 3 | 6 | 23;
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
@@ -74,6 +76,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             imagePath: menuItem?.image?.path || "",
             name: menuItem?.name || "",
             price: menuItem?.price || "",
+            vatIncluded: menuItem?.vatIncluded ?? true,
+            vatRate: (menuItem?.vatRate as 0 | 3 | 6 | 23) || 23,
         },
         validate: zodResolver(menuItemInput),
     });
@@ -87,6 +91,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                 imagePath: menuItem?.image?.path || "",
                 name: menuItem?.name || "",
                 price: menuItem?.price || "",
+                vatIncluded: menuItem?.vatIncluded ?? true,
+                vatRate: (menuItem?.vatRate as 0 | 3 | 6 | 23) || 23,
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -140,6 +146,28 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                             ]}
                             disabled={loading}
                             {...getInputProps("currency")}
+                        />
+                    </Group>
+                    <Group align="flex-start" grow>
+                        <Select
+                            data={[
+                                { label: "0%", value: "0" },
+                                { label: "3%", value: "3" },
+                                { label: "6%", value: "6" },
+                                { label: "23%", value: "23" },
+                            ]}
+                            disabled={loading}
+                            label="VAT Rate"
+                            value={String(values.vatRate)}
+                            withAsterisk
+                            onChange={(value) => setValues({ vatRate: Number(value) as 0 | 3 | 6 | 23 })}
+                        />
+                        <Checkbox
+                            checked={values.vatIncluded}
+                            disabled={loading}
+                            label="VAT included in price"
+                            mt="xl"
+                            onChange={(event) => setValues({ vatIncluded: event.currentTarget.checked })}
                         />
                     </Group>
                     <Textarea

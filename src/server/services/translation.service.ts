@@ -85,7 +85,7 @@ export async function translateMenuItem(
     menuItem: { id: string; name: string; description: string },
     targetLang: string
 ) {
-    if (!targetLang || targetLang.toUpperCase() === "EN") {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
         return menuItem;
     }
 
@@ -105,7 +105,7 @@ export async function translateMenuItem(
  * Translate a category with its name
  */
 export async function translateCategory(category: { id: string; name: string }, targetLang: string) {
-    if (!targetLang || targetLang.toUpperCase() === "EN") {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
         return category;
     }
 
@@ -124,7 +124,7 @@ export async function translateMenu(
     menu: { id: string; name: string; availableTime: string; message?: string | null },
     targetLang: string
 ) {
-    if (!targetLang || targetLang.toUpperCase() === "EN") {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
         return menu;
     }
 

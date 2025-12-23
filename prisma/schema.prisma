@@ -67,19 +67,21 @@ model Category {
 }
 
 model MenuItem {
-    id          String    @unique @default(cuid())
-    userId      String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    name        String
-    description String
-    price       String
-    currency    String    @default("€")
-    position    Int
-    category    Category? @relation("MenuItemsOfCategory", fields: [categoryId], references: [id])
-    categoryId  String?
-    image       Image?    @relation("ImageOfMenuItem", fields: [imageId], references: [id])
-    imageId     String?   @unique
+    id             String    @unique @default(cuid())
+    userId         String
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+    name           String
+    description    String
+    price          String
+    currency       String    @default("€")
+    vatRate        Int       @default(23) // VAT percentage: 0, 3, 6, or 23
+    vatIncluded    Boolean   @default(true) // Whether VAT is included in the price
+    position       Int
+    category       Category? @relation("MenuItemsOfCategory", fields: [categoryId], references: [id])
+    categoryId     String?
+    image          Image?    @relation("ImageOfMenuItem", fields: [imageId], references: [id])
+    imageId        String?   @unique
 
     @@id([id, userId])
     @@index([categoryId])

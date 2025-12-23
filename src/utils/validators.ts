@@ -37,6 +37,8 @@ export const menuItemInput = z.object({
     imagePath: z.string().optional(),
     name: z.string().trim().min(1, "Name is required").max(50, "Name cannot be longer than 50 characters"),
     price: z.string().trim().min(1, "Price is required").max(12, "Price cannot be longer than 12 characters"),
+    vatIncluded: z.boolean().default(true),
+    vatRate: z.enum([0, 3, 6, 23]).default(23),
 });
 export const restaurantInput = z.object({
     contactNo: z.union([

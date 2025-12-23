@@ -6,6 +6,8 @@ import { Box, Stack, Text, useMantineTheme } from "@mantine/core";
 import type { ModalProps } from "@mantine/core";
 import type { Image, MenuItem } from "@prisma/client";
 
+import { calculateVATInclusivePrice } from "src/utils/helpers";
+
 import { ImageKitImage } from "../ImageKitImage";
 import { Modal } from "../Modal";
 
@@ -26,6 +28,10 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
         }
         return theme.white;
     }, [menuItem?.image?.color, theme.colorScheme]);
+
+    const displayPrice = menuItem
+        ? calculateVATInclusivePrice(menuItem.price, menuItem.vatRate || 23, menuItem.vatIncluded ?? true)
+        : "0.00";
 
     return (
         <Modal
@@ -52,7 +58,7 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
                     </Box>
                 )}
                 <Text color="red" mt="sm" size="lg" translate="no">
-                    {menuItem?.currency || "€"}{menuItem?.price}
+                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% VAT included)
                 </Text>
                 <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}

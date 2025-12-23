@@ -16,6 +16,30 @@ export const showSuccessToast = (title: string, message?: string) => {
     showNotification({ color: "green", icon: <IconCheck />, message, title });
 };
 
+/**
+ * Calculate VAT-inclusive price
+ * @param price - Base price as string
+ * @param vatRate - VAT rate (0, 3, 6, or 23)
+ * @param vatIncluded - Whether VAT is already included in the price
+ * @returns Formatted VAT-inclusive price with max 2 decimal places
+ */
+export const calculateVATInclusivePrice = (price: string, vatRate: number, vatIncluded: boolean): string => {
+    const numericPrice = parseFloat(price);
+    if (isNaN(numericPrice)) {
+        return price;
+    }
+
+    if (vatIncluded) {
+        // VAT already included, just format the price
+        return numericPrice.toFixed(2);
+    }
+
+    // VAT not included, calculate VAT-inclusive price
+    const vatMultiplier = 1 + vatRate / 100;
+    const inclusivePrice = numericPrice * vatMultiplier;
+    return inclusivePrice.toFixed(2);
+};
+
 export function reorderList<T>(current: T[], from: number, to: number) {
     const cloned = [...current];
     const item = current[from];
