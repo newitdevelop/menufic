@@ -10,6 +10,7 @@ export const serverSchema = z.object({
     AZURE_AD_CLIENT_SECRET: z.string().optional(),
     AZURE_AD_TENANT_ID: z.string().optional(),
     DATABASE_URL: z.string().url(),
+    DEEPL_API_KEY: z.string().optional(),
     GITHUB_CLIENT_ID: z.string().optional(),
     GITHUB_CLIENT_SECRET: z.string().optional(),
     GOOGLE_CLIENT_ID: z.string().optional(),
