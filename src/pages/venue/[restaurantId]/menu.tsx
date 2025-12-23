@@ -52,13 +52,15 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
             />
             <main>
                 <Container py="lg" size="xl">
-                    {isLoading ? (
-                        <Empty height="calc(100vh - 100px)" text="Loading..." />
-                    ) : restaurant && restaurant?.isPublished === true ? (
-                        <RestaurantMenu restaurant={restaurant} />
-                    ) : (
-                        <Empty height="calc(100vh - 100px)" text={t("noDetailsAvailable")} />
-                    )}
+                    {(() => {
+                        if (isLoading) {
+                            return <Empty height="calc(100vh - 100px)" text="Loading..." />;
+                        }
+                        if (restaurant && restaurant?.isPublished === true) {
+                            return <RestaurantMenu restaurant={restaurant} />;
+                        }
+                        return <Empty height="calc(100vh - 100px)" text={t("noDetailsAvailable")} />;
+                    })()}
                 </Container>
             </main>
             <Footer />
