@@ -20,12 +20,10 @@ export async function getOrCreateTranslation(
     field: TranslatableField,
     originalText: string,
     targetLang: string,
-    sourceLang = "EN"
+    sourceLang = "auto"
 ): Promise<string> {
-    // If no translation needed (original language), return original
-    if (targetLang.toUpperCase() === sourceLang.toUpperCase()) {
-        return originalText;
-    }
+    // If source is auto-detect, we can't skip translation based on language match
+    // Let DeepL handle the detection
 
     // Check if translation exists in cache
     const cached = await prisma.translation.findUnique({
