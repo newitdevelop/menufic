@@ -14,7 +14,7 @@ services:
       - 3003:3000
     volumes:
       - ${DOCKER_VOLUME_STORAGE:-./data}/translations:/app/src/lang
-      - ${DOCKER_VOLUME_STORAGE:-./data}/translation-cache:/app/scripts
+      - ${DOCKER_VOLUME_STORAGE:-./data}/translation-cache/.translation-cache.json:/app/scripts/.translation-cache.json
     depends_on:
       postgres:
         condition: service_healthy

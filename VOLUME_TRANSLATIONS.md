@@ -11,8 +11,10 @@ Translation files and cache are stored in Docker volumes to persist between cont
 ```yaml
 volumes:
   - ./data/translations:/app/src/lang
-  - ./data/translation-cache:/app/scripts
+  - ./data/translation-cache/.translation-cache.json:/app/scripts/.translation-cache.json
 ```
+
+**Note**: We mount only the cache file (not the entire scripts directory) to avoid overriding the translation script itself.
 
 ### Directory Structure
 

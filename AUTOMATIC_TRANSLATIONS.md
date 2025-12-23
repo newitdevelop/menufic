@@ -152,7 +152,9 @@ docker compose up -d
 
 Translation files and cache are stored in Docker volumes at:
 - `./data/translations` → `/app/src/lang` (translation files: pt.json, es.json, etc.)
-- `./data/translation-cache` → `/app/scripts` (DeepL API cache: .translation-cache.json)
+- `./data/translation-cache/.translation-cache.json` → `/app/scripts/.translation-cache.json` (DeepL API cache)
+
+**Note**: Only the cache file is mounted (not the entire scripts directory) to avoid overriding the translation script.
 
 **Benefits:**
 - ✅ Translations persist between container rebuilds
