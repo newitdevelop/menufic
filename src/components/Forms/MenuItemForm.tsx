@@ -67,7 +67,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         name: string;
         price: string;
         vatIncluded: boolean;
-        vatRate: 0 | 3 | 6 | 23;
+        vatRate: 6 | 13 | 23;
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
@@ -77,7 +77,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             name: menuItem?.name || "",
             price: menuItem?.price || "",
             vatIncluded: menuItem?.vatIncluded ?? true,
-            vatRate: (menuItem?.vatRate as 0 | 3 | 6 | 23) || 23,
+            vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
         },
         validate: zodResolver(menuItemInput),
     });
@@ -92,7 +92,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                 name: menuItem?.name || "",
                 price: menuItem?.price || "",
                 vatIncluded: menuItem?.vatIncluded ?? true,
-                vatRate: (menuItem?.vatRate as 0 | 3 | 6 | 23) || 23,
+                vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -151,16 +151,15 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                     <Group align="flex-start" grow>
                         <Select
                             data={[
-                                { label: "0%", value: "0" },
-                                { label: "3%", value: "3" },
                                 { label: "6%", value: "6" },
+                                { label: "13%", value: "13" },
                                 { label: "23%", value: "23" },
                             ]}
                             disabled={loading}
                             label="VAT Rate"
                             value={String(values.vatRate)}
                             withAsterisk
-                            onChange={(value) => setValues({ vatRate: Number(value) as 0 | 3 | 6 | 23 })}
+                            onChange={(value) => setValues({ vatRate: Number(value) as 6 | 13 | 23 })}
                         />
                         <Checkbox
                             checked={values.vatIncluded}
