@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { ActionIcon, Box, createStyles, Grid, Text } from "@mantine/core";
+import { ActionIcon, Badge, Box, createStyles, Grid, Group, Text } from "@mantine/core";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 import { Draggable } from "react-beautiful-dnd";
@@ -67,6 +67,8 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
     const [menuItemFormOpen, setMenuItemFormOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
+
+    const hasAllergens = (menuItem as any)?.isEdible && (menuItem as any)?.allergens && (menuItem as any).allergens.length > 0 && (menuItem as any).allergens[0] !== "none";
 
     const displayPrice = calculateVATInclusivePrice(menuItem.price, menuItem.vatRate || 23, menuItem.vatIncluded ?? true);
 
@@ -146,6 +148,15 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                             <Text color={menuItem.description ? theme.colors.dark[6] : theme.colors.dark[3]}>
                                 {menuItem.description || t("noDescription")}
                             </Text>
+                            {hasAllergens && (
+                                <Group mt="xs" spacing="xs">
+                                    {(menuItem as any).allergens.map((allergen: string) => (
+                                        <Badge key={allergen} color="red" size="xs" variant="outline">
+                                            {tCommon(`allergens.${allergen}`)}
+                                        </Badge>
+                                    ))}
+                                </Group>
+                            )}
                         </Grid.Col>
                         <Grid.Col className={classes.actionButtons} lg={1} sm={3} span={12}>
                             <ActionIcon

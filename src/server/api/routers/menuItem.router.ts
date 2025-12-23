@@ -37,6 +37,8 @@ export const menuItemRouter = createTRPCRouter({
             userId: ctx.session.user.id,
             vatIncluded: input.vatIncluded ?? true,
             vatRate: input.vatRate ?? 23,
+            isEdible: input.isEdible ?? false,
+            allergens: input.allergens || [],
         };
 
         if (input.imageBase64) {
@@ -93,6 +95,8 @@ export const menuItemRouter = createTRPCRouter({
             price: input.price,
             vatIncluded: input.vatIncluded ?? true,
             vatRate: input.vatRate ?? 23,
+            isEdible: input.isEdible ?? false,
+            allergens: input.allergens || [],
         };
 
         const promiseList: any[] = [];

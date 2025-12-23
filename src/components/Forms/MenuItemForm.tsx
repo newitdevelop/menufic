@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Checkbox, Group, SegmentedControl, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, MultiSelect, SegmentedControl, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -10,7 +10,7 @@ import type { Image, MenuItem } from "@prisma/client";
 
 import { api } from "src/utils/api";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
-import { menuItemInput } from "src/utils/validators";
+import { allergenCodes, menuItemInput } from "src/utils/validators";
 
 import { ImageUpload } from "../ImageUpload";
 import { Modal } from "../Modal";
@@ -68,6 +68,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         price: string;
         vatIncluded: boolean;
         vatRate: 6 | 13 | 23;
+        isEdible: boolean;
+        allergens: string[];
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
@@ -78,6 +80,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             price: menuItem?.price || "",
             vatIncluded: menuItem?.vatIncluded ?? true,
             vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
+            isEdible: (menuItem as any)?.isEdible ?? false,
+            allergens: (menuItem as any)?.allergens || [],
         },
         validate: zodResolver(menuItemInput),
     });
@@ -93,6 +97,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                 price: menuItem?.price || "",
                 vatIncluded: menuItem?.vatIncluded ?? true,
                 vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
+                isEdible: (menuItem as any)?.isEdible ?? false,
+                allergens: (menuItem as any)?.allergens || [],
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -175,6 +181,33 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                         minRows={3}
                         {...getInputProps("description")}
                     />
+                    <Checkbox
+                        checked={values.isEdible}
+                        description={t("isEdibleDescription")}
+                        disabled={loading}
+                        label={t("isEdibleLabel")}
+                        onChange={(event) => {
+                            const isChecked = event.currentTarget.checked;
+                            setValues({ isEdible: isChecked, allergens: isChecked ? values.allergens : [] });
+                        }}
+                    />
+                    {values.isEdible && (
+                        <MultiSelect
+                            data={allergenCodes.map((code) => ({
+                                label: tCommon(`allergens.${code}`),
+                                value: code,
+                            }))}
+                            description={t("allergensDescription")}
+                            disabled={loading}
+                            label={t("allergensLabel")}
+                            placeholder={t("allergensRequired")}
+                            searchable
+                            value={values.allergens}
+                            withAsterisk
+                            onChange={(selected) => setValues({ allergens: selected })}
+                            {...getInputProps("allergens")}
+                        />
+                    )}
                     <ImageUpload
                         disabled={loading}
                         height={400}

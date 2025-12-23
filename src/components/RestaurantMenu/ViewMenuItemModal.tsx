@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 
-import { Box, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Badge, Box, Group, Stack, Text, useMantineTheme } from "@mantine/core";
+import { useTranslations } from "next-intl";
 
 import type { ModalProps } from "@mantine/core";
 import type { Image, MenuItem } from "@prisma/client";
@@ -19,6 +20,8 @@ interface Props extends ModalProps {
 /** Modal to view details of a selected menu item */
 export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
     const theme = useMantineTheme();
+    const tCommon = useTranslations("common");
+    const t = useTranslations("dashboard.editMenu.menuItem");
     const bgColor = useMemo(() => {
         if (menuItem?.image?.color) {
             if (theme.colorScheme === "light") {
@@ -63,6 +66,20 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
                 <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}
                 </Text>
+                {(menuItem as any)?.isEdible && (menuItem as any)?.allergens && (menuItem as any).allergens.length > 0 && (menuItem as any).allergens[0] !== "none" && (
+                    <Box mt="md">
+                        <Text color={theme.black} size="sm" weight={600}>
+                            {t("allergensInfo")}:
+                        </Text>
+                        <Group mt="xs" spacing="xs">
+                            {(menuItem as any).allergens.map((allergen: string) => (
+                                <Badge key={allergen} color="red" variant="outline">
+                                    {tCommon(`allergens.${allergen}`)}
+                                </Badge>
+                            ))}
+                        </Group>
+                    </Box>
+                )}
             </Stack>
         </Modal>
     );

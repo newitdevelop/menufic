@@ -75,8 +75,10 @@ model MenuItem {
     description    String
     price          String
     currency       String    @default("€")
-    vatRate        Int       @default(23) // VAT percentage: 0, 3, 6, or 23
+    vatRate        Int       @default(23) // VAT percentage: 6, 13, or 23
     vatIncluded    Boolean   @default(true) // Whether VAT is included in the price
+    isEdible       Boolean   @default(false) // Whether this is an edible product
+    allergens      String[]  @default([]) // List of allergen codes (portuguese law requires 14 allergens)
     position       Int
     category       Category? @relation("MenuItemsOfCategory", fields: [categoryId], references: [id])
     categoryId     String?

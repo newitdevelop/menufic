@@ -5,6 +5,25 @@ export const categoryId = z.object({ categoryId: z.string().cuid() });
 export const restaurantId = z.object({ restaurantId: z.string().cuid() });
 export const id = z.object({ id: z.string().cuid() });
 
+// Portuguese law allergens (EU Regulation 1169/2011) + "none" option
+export const allergenCodes = [
+    "cereals", // Cereais que contêm glúten
+    "crustaceans", // Crustáceos
+    "eggs", // Ovos
+    "fish", // Peixes
+    "peanuts", // Amendoins
+    "soybeans", // Soja
+    "milk", // Leite
+    "nuts", // Frutos de casca rija
+    "celery", // Aipo
+    "mustard", // Mostarda
+    "sesame", // Sementes de sésamo
+    "sulphites", // Dióxido de enxofre e sulfitos
+    "lupin", // Tremoço
+    "molluscs", // Moluscos
+    "none", // None / Nenhum
+] as const;
+
 export const categoryInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });
@@ -39,7 +58,21 @@ export const menuItemInput = z.object({
     price: z.string().trim().min(1, "Price is required").max(12, "Price cannot be longer than 12 characters"),
     vatIncluded: z.boolean().default(true),
     vatRate: z.union([z.literal(6), z.literal(13), z.literal(23)]).default(23),
-});
+    isEdible: z.boolean().default(false),
+    allergens: z.array(z.enum(allergenCodes)).default([]),
+}).refine(
+    (data) => {
+        // If isEdible is true, allergens array must not be empty
+        if (data.isEdible && data.allergens.length === 0) {
+            return false;
+        }
+        return true;
+    },
+    {
+        message: "Allergen selection is required for edible products",
+        path: ["allergens"],
+    }
+);
 export const restaurantInput = z.object({
     contactNo: z.union([
         z
