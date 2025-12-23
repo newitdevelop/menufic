@@ -83,7 +83,7 @@ export const menuItemRouter = createTRPCRouter({
     }),
 
     /** Update the details of a menu item */
-    update: protectedProcedure.input(menuItemInput.merge(id)).mutation(async ({ ctx, input }) => {
+    update: protectedProcedure.input(menuItemInputBase.merge(id)).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.menuItem.findUniqueOrThrow({
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
