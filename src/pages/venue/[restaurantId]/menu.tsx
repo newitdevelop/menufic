@@ -1,7 +1,6 @@
 import { Container } from "@mantine/core";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { NextSeo } from "next-seo";
 import superjson from "superjson";
@@ -22,10 +21,7 @@ const RestaurantMenuPage: NextPage = () => {
     const restaurantId = router.query?.restaurantId as string;
     const t = useTranslations("menu");
 
-    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
-        { id: restaurantId },
-        { enabled: !!restaurantId, refetchOnMount: false, refetchOnWindowFocus: false }
-    );
+    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery({ id: restaurantId });
 
     return (
         <>

@@ -17,7 +17,8 @@
       "Bash(npm audit:*)",
       "Bash(where npm:*)",
       "Bash(powershell -Command:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(docker-compose ps:*)"
     ]
   }
 }
