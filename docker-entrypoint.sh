@@ -49,6 +49,26 @@ fi
 echo "🔧 Generating Prisma Client..."
 npx prisma generate --schema=./prisma/schema.prisma
 
+# Optional: Generate translations if DeepL API key is available
+if [ ! -z "$DEEPL_API_KEY" ]; then
+  echo "🌍 DeepL API key detected - checking translations..."
+
+  # Check if translation files exist
+  if [ ! -f "src/lang/pt.json" ] || [ ! -f "src/lang/es.json" ]; then
+    echo "📝 Translation files missing - generating translations..."
+    if npm run translate; then
+      echo "✅ Translations generated successfully"
+    else
+      echo "⚠️  Translation generation failed, but continuing startup..."
+    fi
+  else
+    echo "✅ Translation files already exist (run 'npm run translate' to update)"
+  fi
+else
+  echo "ℹ️  DeepL API key not set - skipping translation generation"
+  echo "   Set DEEPL_API_KEY environment variable to enable automatic translations"
+fi
+
 echo "✅ Initialization complete!"
 echo "🎉 Starting Next.js application..."
 
