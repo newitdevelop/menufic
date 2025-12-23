@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Carousel } from "@mantine/carousel";
+import { useRouter } from "next/router";
 import {
     ActionIcon,
     Box,
@@ -26,7 +27,7 @@ import { Black, White } from "src/styles/theme";
 import { MenuItemCard } from "./MenuItemCard";
 import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
-import { TranslateHelper } from "../TranslateHelper";
+import { LanguageSelector } from "../LanguageSelector";
 
 const useStyles = createStyles((theme) => ({
     carousalOverlay: {
@@ -120,7 +121,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(restaurant?.menus?.[0]?.id);
+    const router = useRouter();
+    const language = (router.query?.lang as string) || "EN";
     const t = useTranslations("menu");
+
+    const handleLanguageChange = (newLang: string) => {
+        router.push(
+            {
+                pathname: router.pathname,
+                query: { ...router.query, lang: newLang },
+            },
+            undefined,
+            { shallow: false }
+        );
+    };
 
     const menuDetails = useMemo(
         () => restaurant?.menus?.find((item) => item.id === selectedMenu),
@@ -196,7 +210,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     </Box>
                 </MediaQuery>
                 <Box pos="absolute" right={12} top={10} sx={{ display: "flex", gap: 8, zIndex: 1 }}>
-                    <TranslateHelper />
+                    <LanguageSelector currentLanguage={language} onLanguageChange={handleLanguageChange} />
                     <ActionIcon className={classes.themeSwitch} onClick={() => toggleColorScheme()} size="lg" sx={{ position: "relative", right: "unset", top: "unset" }}>
                         {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
                     </ActionIcon>

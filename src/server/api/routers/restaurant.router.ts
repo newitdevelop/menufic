@@ -166,24 +166,68 @@ export const restaurantRouter = createTRPCRouter({
     }),
 
     /** Get all the details including items and images, for a given restaurant ID */
-    getDetails: publicProcedure.input(id).query(({ ctx, input }) =>
-        ctx.prisma.restaurant.findFirstOrThrow({
-            include: {
-                banners: true,
-                image: true,
-                menus: {
-                    include: {
-                        categories: {
-                            include: { items: { include: { image: true }, orderBy: { position: "asc" } } },
-                            orderBy: { position: "asc" },
+    getDetails: publicProcedure
+        .input(id.extend({ language: z.string().optional() }))
+        .query(async ({ ctx, input }) => {
+            const restaurant = await ctx.prisma.restaurant.findFirstOrThrow({
+                include: {
+                    banners: true,
+                    image: true,
+                    menus: {
+                        include: {
+                            categories: {
+                                include: { items: { include: { image: true }, orderBy: { position: "asc" } } },
+                                orderBy: { position: "asc" },
+                            },
                         },
+                        orderBy: { position: "asc" },
                     },
-                    orderBy: { position: "asc" },
                 },
-            },
-            where: { id: input.id },
-        })
-    ),
+                where: { id: input.id },
+            });
+
+            // If no language specified or language is English, return as-is
+            if (!input.language || input.language.toUpperCase() === "EN") {
+                return restaurant;
+            }
+
+            // Import translation services
+            const { translateMenu, translateCategory, translateMenuItem } = await import(
+                "src/server/services/translation.service"
+            );
+
+            // Translate all menus, categories, and items
+            const translatedMenus = await Promise.all(
+                restaurant.menus.map(async (menu) => {
+                    const translatedMenu = await translateMenu(menu, input.language!);
+
+                    const translatedCategories = await Promise.all(
+                        menu.categories.map(async (category) => {
+                            const translatedCategory = await translateCategory(category, input.language!);
+
+                            const translatedItems = await Promise.all(
+                                category.items.map((item) => translateMenuItem(item, input.language!))
+                            );
+
+                            return {
+                                ...translatedCategory,
+                                items: translatedItems,
+                            };
+                        })
+                    );
+
+                    return {
+                        ...translatedMenu,
+                        categories: translatedCategories,
+                    };
+                })
+            );
+
+            return {
+                ...restaurant,
+                menus: translatedMenus,
+            };
+        }),
 
     /** Update the published status of the restaurant */
     setPublished: protectedProcedure.input(id.extend({ isPublished: z.boolean() })).mutation(async ({ ctx, input }) => {

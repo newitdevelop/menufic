@@ -19,10 +19,11 @@ import { api } from "src/utils/api";
 const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId: restaurantIdProp }) => {
     const router = useRouter();
     const restaurantId = (restaurantIdProp || router.query?.restaurantId) as string;
+    const language = (router.query?.lang as string) || "EN";
     const t = useTranslations("menu");
 
     const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
-        { id: restaurantId },
+        { id: restaurantId, language },
         { enabled: !!restaurantId }
     );
 

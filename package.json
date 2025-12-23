@@ -6,6 +6,7 @@
         "build": "next build",
         "dev": "next dev",
         "postinstall": "patch-package && prisma generate --schema=./prisma/schema.prisma",
+        "prebuild": "prisma migrate deploy --schema=./prisma/schema.prisma",
         "lint": "next lint",
         "lint:fix": "next lint --fix",
         "start": "next start",

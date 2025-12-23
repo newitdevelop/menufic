@@ -97,3 +97,17 @@ model Image {
 
     @@index([restaurantId])
 }
+
+model Translation {
+    id         String   @id @default(cuid())
+    entityType String   // 'menuItem', 'category', 'menu'
+    entityId   String   // ID of the item being translated
+    language   String   // 'pt', 'es', 'fr', 'de', etc.
+    field      String   // 'name', 'description', 'availableTime', 'message'
+    translated String   @db.Text
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@unique([entityType, entityId, language, field])
+    @@index([entityType, entityId, language])
+}
