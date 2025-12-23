@@ -16,12 +16,15 @@ import { createInnerTRPCContext } from "src/server/api/trpc";
 import { api } from "src/utils/api";
 
 /** Restaurant menu page that will be shared publicly */
-const RestaurantMenuPage: NextPage = () => {
+const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId: restaurantIdProp }) => {
     const router = useRouter();
-    const restaurantId = router.query?.restaurantId as string;
+    const restaurantId = (restaurantIdProp || router.query?.restaurantId) as string;
     const t = useTranslations("menu");
 
-    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery({ id: restaurantId });
+    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
+        { id: restaurantId },
+        { enabled: !!restaurantId }
+    );
 
     return (
         <>
