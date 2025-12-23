@@ -21,10 +21,23 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
     const restaurantId = (restaurantIdProp || router.query?.restaurantId) as string;
     const t = useTranslations("menu");
 
-    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
+    const { data: restaurant, isLoading, error } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId },
         { enabled: !!restaurantId }
     );
+
+    // Debug logging
+    if (typeof window !== "undefined") {
+        console.log("RestaurantMenuPage Debug:", {
+            restaurantId,
+            restaurantIdProp,
+            routerQuery: router.query,
+            hasRestaurantData: !!restaurant,
+            isPublished: restaurant?.isPublished,
+            isLoading,
+            error,
+        });
+    }
 
     return (
         <>
@@ -46,7 +59,9 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
             />
             <main>
                 <Container py="lg" size="xl">
-                    {restaurant && restaurant?.isPublished === true ? (
+                    {isLoading ? (
+                        <Empty height="calc(100vh - 100px)" text={t("loading", "Loading...")} />
+                    ) : restaurant && restaurant?.isPublished === true ? (
                         <RestaurantMenu restaurant={restaurant} />
                     ) : (
                         <Empty height="calc(100vh - 100px)" text={t("noDetailsAvailable")} />
