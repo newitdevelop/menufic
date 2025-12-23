@@ -151,7 +151,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                             {hasAllergens && (
                                 <Group mt="xs" spacing="xs">
                                     {(menuItem as any).allergens.map((allergen: string) => (
-                                        <Badge key={allergen} color="red" size="xs" variant="outline">
+                                        <Badge key={allergen} color="orange" size="xs" variant="light">
                                             {tCommon(`allergens.${allergen}` as any)}
                                         </Badge>
                                     ))}

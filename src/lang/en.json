@@ -301,7 +301,7 @@
                 "allergensLabel": "Allergens",
                 "allergensDescription": "Select all allergens present in this product (required for edible items)",
                 "allergensRequired": "Please select allergens for edible products",
-                "allergensInfo": "Contains the following allergens"
+                "allergensInfo": "Might contain the following allergens"
             }
         },
         "venue": {
