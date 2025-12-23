@@ -42,6 +42,7 @@ const KEYS_TO_TRANSLATE = [
     "common.translateChrome",
     "common.translateSafari",
     "common.translateFirefox",
+    "dashboard.editMenu.menuItem.allergensInfo", // "Might contain the following allergens"
 ];
 
 // Cache file to track translations and avoid re-translating unchanged text
