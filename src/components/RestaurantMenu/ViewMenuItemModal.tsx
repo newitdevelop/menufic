@@ -74,7 +74,7 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
                         <Group mt="xs" spacing="xs">
                             {(menuItem as any).allergens.map((allergen: string) => (
                                 <Badge key={allergen} color="red" variant="outline">
-                                    {tCommon(`allergens.${allergen}`)}
+                                    {tCommon(`allergens.${allergen}` as any)}
                                 </Badge>
                             ))}
                         </Group>
