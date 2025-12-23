@@ -22,10 +22,15 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
     const language = (router.query?.lang as string) || "EN";
     const t = useTranslations("menu");
 
-    const { data: restaurant } = (api.restaurant as any).getDetails.useQuery(
+    const { data: restaurant, error, isLoading } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId, language },
         { enabled: !!restaurantId }
     );
+
+    // Debug logging
+    if (error) {
+        console.error("Restaurant query error:", error);
+    }
 
     return (
         <>
@@ -47,7 +52,9 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
             />
             <main>
                 <Container py="lg" size="xl">
-                    {restaurant && restaurant?.isPublished === true ? (
+                    {isLoading ? (
+                        <Empty height="calc(100vh - 100px)" text={t("loading")} />
+                    ) : restaurant && restaurant?.isPublished === true ? (
                         <RestaurantMenu restaurant={restaurant} />
                     ) : (
                         <Empty height="calc(100vh - 100px)" text={t("noDetailsAvailable")} />

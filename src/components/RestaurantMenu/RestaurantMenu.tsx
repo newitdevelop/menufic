@@ -126,10 +126,16 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const t = useTranslations("menu");
 
     const handleLanguageChange = (newLang: string) => {
+        const currentQuery = { ...router.query };
+        if (newLang === "EN") {
+            delete currentQuery.lang;
+        } else {
+            currentQuery.lang = newLang;
+        }
         router.push(
             {
                 pathname: router.pathname,
-                query: { ...router.query, lang: newLang },
+                query: currentQuery,
             },
             undefined,
             { shallow: false }
