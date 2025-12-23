@@ -69,7 +69,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         vatIncluded: boolean;
         vatRate: 6 | 13 | 23;
         isEdible: boolean;
-        allergens: string[];
+        allergens: (typeof allergenCodes)[number][];
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
