@@ -27,6 +27,9 @@ RUN rm -rf .next && \
     ls -la src/pages/ && \
     test -d src/pages/venue || (echo "ERROR: venue folder not found!" && exit 1)
 
+# Regenerate Prisma client with the updated schema
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 # Build the app
 RUN npm run build
 
