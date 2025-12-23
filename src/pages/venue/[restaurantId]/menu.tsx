@@ -26,17 +26,6 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
         { enabled: !!restaurantId }
     );
 
-    // Debug logging
-    if (typeof window !== "undefined") {
-        console.log("RestaurantMenuPage Debug:", {
-            restaurantId,
-            restaurantIdProp,
-            routerQuery: router.query,
-            hasRestaurantData: !!restaurant,
-            isPublished: restaurant?.isPublished,
-        });
-    }
-
     return (
         <>
             <NextSeo
