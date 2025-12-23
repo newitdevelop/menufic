@@ -25,7 +25,7 @@ export const showSuccessToast = (title: string, message?: string) => {
  */
 export const calculateVATInclusivePrice = (price: string, vatRate: number, vatIncluded: boolean): string => {
     const numericPrice = parseFloat(price);
-    if (isNaN(numericPrice)) {
+    if (Number.isNaN(numericPrice)) {
         return price;
     }
 
