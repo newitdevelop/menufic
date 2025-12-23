@@ -202,9 +202,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                             label={t("allergensLabel")}
                             placeholder={t("allergensRequired")}
                             searchable
-                            value={values.allergens}
                             withAsterisk
-                            onChange={(selected) => setValues({ allergens: selected })}
                             {...getInputProps("allergens")}
                         />
                     )}
