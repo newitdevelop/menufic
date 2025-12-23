@@ -6,11 +6,11 @@ import type { Image, MenuItem, Prisma } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
-import { categoryId, id, menuId, menuItemInput } from "src/utils/validators";
+import { categoryId, id, menuId, menuItemInput, menuItemInputBase } from "src/utils/validators";
 
 export const menuItemRouter = createTRPCRouter({
     /** Create a new menu item under a category of a restaurant menu */
-    create: protectedProcedure.input(menuItemInput.merge(categoryId).merge(menuId)).mutation(async ({ ctx, input }) => {
+    create: protectedProcedure.input(menuItemInputBase.merge(categoryId).merge(menuId)).mutation(async ({ ctx, input }) => {
         const [count, lastMenuItem] = await ctx.prisma.$transaction([
             ctx.prisma.menuItem.count({ where: { categoryId: input.categoryId } }),
             ctx.prisma.menuItem.findFirst({

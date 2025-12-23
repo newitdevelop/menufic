@@ -49,7 +49,7 @@ export const menuInput = z.object({
         .optional()
         .transform((val) => (val === "" ? undefined : val)),
 });
-export const menuItemInput = z.object({
+export const menuItemInputBase = z.object({
     currency: z.enum(["€", "$"]).default("€"),
     description: z.string().trim().max(185, "Description cannot be longer than 185 characters"),
     imageBase64: z.string().optional(),
@@ -60,7 +60,9 @@ export const menuItemInput = z.object({
     vatRate: z.union([z.literal(6), z.literal(13), z.literal(23)]).default(23),
     isEdible: z.boolean().default(false),
     allergens: z.array(z.enum(allergenCodes)).default([]),
-}).refine(
+});
+
+export const menuItemInput = menuItemInputBase.refine(
     (data) => {
         // If isEdible is true, allergens array must not be empty
         if (data.isEdible && data.allergens.length === 0) {
