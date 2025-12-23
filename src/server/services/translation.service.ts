@@ -20,7 +20,7 @@ export async function getOrCreateTranslation(
     field: TranslatableField,
     originalText: string,
     targetLang: string,
-    sourceLang: string = "EN"
+    sourceLang = "EN"
 ): Promise<string> {
     // If no translation needed (original language), return original
     if (targetLang.toUpperCase() === sourceLang.toUpperCase()) {

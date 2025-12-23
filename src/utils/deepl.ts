@@ -7,11 +7,7 @@ import { env } from "src/env/server.mjs";
  * @param sourceLang Source language code (default: 'EN', or 'auto' for auto-detect)
  * @returns Translated text
  */
-export async function translateWithDeepL(
-    text: string,
-    targetLang: string,
-    sourceLang: string = "EN"
-): Promise<string> {
+export async function translateWithDeepL(text: string, targetLang: string, sourceLang = "EN"): Promise<string> {
     if (!env.DEEPL_API_KEY) {
         console.warn("DEEPL_API_KEY not configured, returning original text");
         return text;
