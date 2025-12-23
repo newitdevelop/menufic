@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { ActionIcon, Badge, Box, createStyles, Grid, Group, Text } from "@mantine/core";
+import { ActionIcon, Badge, Box, createStyles, Grid, Group, Text, Tooltip } from "@mantine/core";
 import { IconEdit, IconGripVertical, IconTrash } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 import { Draggable } from "react-beautiful-dnd";
@@ -10,6 +10,7 @@ import type { Image, MenuItem } from "@prisma/client";
 
 import { api } from "src/utils/api";
 import { calculateVATInclusivePrice, showErrorToast, showSuccessToast } from "src/utils/helpers";
+import { allergenSymbols } from "src/utils/validators";
 
 import { DeleteConfirmModal } from "../../DeleteConfirmModal";
 import { MenuItemForm } from "../../Forms/MenuItemForm";
@@ -151,9 +152,17 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                             {hasAllergens && (
                                 <Group mt="xs" spacing="xs">
                                     {(menuItem as any).allergens.map((allergen: string) => (
-                                        <Badge key={allergen} color="orange" size="xs" variant="light">
-                                            {tCommon(`allergens.${allergen}` as any)}
-                                        </Badge>
+                                        <Tooltip key={allergen} label={tCommon(`allergens.${allergen}` as any)} withArrow>
+                                            <Text
+                                                style={{
+                                                    fontSize: "1.5rem",
+                                                    cursor: "help",
+                                                    lineHeight: 1,
+                                                }}
+                                            >
+                                                {allergenSymbols[allergen as keyof typeof allergenSymbols]}
+                                            </Text>
+                                        </Tooltip>
                                     ))}
                                 </Group>
                             )}

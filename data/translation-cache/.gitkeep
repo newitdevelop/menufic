@@ -1,0 +1,2 @@
+# Translation cache is stored in Docker volume
+# This preserves DeepL API cache between rebuilds

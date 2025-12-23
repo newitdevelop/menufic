@@ -1,0 +1,2 @@
+# Translation files are stored in Docker volume
+# This directory persists between container rebuilds

@@ -12,6 +12,9 @@ services:
       - 3000
     ports:
       - 3003:3000
+    volumes:
+      - ${DOCKER_VOLUME_STORAGE:-./data}/translations:/app/src/lang
+      - ${DOCKER_VOLUME_STORAGE:-./data}/translation-cache:/app/scripts
     depends_on:
       postgres:
         condition: service_healthy

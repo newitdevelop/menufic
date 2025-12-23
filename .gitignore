@@ -41,8 +41,8 @@ yarn-error.log*
 # Sentry
 .sentryclirc
 
-# Translation cache
-scripts/.translation-cache.json
+# Translation cache (kept if you want to commit it for faster first builds)
+# scripts/.translation-cache.json
 
 # Tests
 /coverage

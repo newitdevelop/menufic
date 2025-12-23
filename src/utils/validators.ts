@@ -24,6 +24,25 @@ export const allergenCodes = [
     "none", // None / Nenhum
 ] as const;
 
+// Allergen symbol/emoji mapping for visual display
+export const allergenSymbols: Record<(typeof allergenCodes)[number], string> = {
+    cereals: "🌾",
+    crustaceans: "🦐",
+    eggs: "🥚",
+    fish: "🐟",
+    peanuts: "🥜",
+    soybeans: "🫘",
+    milk: "🥛",
+    nuts: "🌰",
+    celery: "🥬",
+    mustard: "🌭",
+    sesame: "🫘",
+    sulphites: "🍷",
+    lupin: "🫘",
+    molluscs: "🦪",
+    none: "✓",
+};
+
 export const categoryInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });

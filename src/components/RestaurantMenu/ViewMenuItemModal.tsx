@@ -1,13 +1,14 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 
-import { Badge, Box, Group, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Badge, Box, Group, Stack, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useTranslations } from "next-intl";
 
 import type { ModalProps } from "@mantine/core";
 import type { Image, MenuItem } from "@prisma/client";
 
 import { calculateVATInclusivePrice } from "src/utils/helpers";
+import { allergenSymbols } from "src/utils/validators";
 
 import { ImageKitImage } from "../ImageKitImage";
 import { Modal } from "../Modal";
@@ -71,11 +72,19 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
                         <Text color={theme.black} size="sm" weight={600}>
                             {t("allergensInfo")}:
                         </Text>
-                        <Group mt="xs" spacing="xs">
+                        <Group mt="xs" spacing="sm">
                             {(menuItem as any).allergens.map((allergen: string) => (
-                                <Badge key={allergen} color="orange" variant="light">
-                                    {tCommon(`allergens.${allergen}` as any)}
-                                </Badge>
+                                <Tooltip key={allergen} label={tCommon(`allergens.${allergen}` as any)} withArrow>
+                                    <Text
+                                        style={{
+                                            fontSize: "2rem",
+                                            cursor: "help",
+                                            lineHeight: 1,
+                                        }}
+                                    >
+                                        {allergenSymbols[allergen as keyof typeof allergenSymbols]}
+                                    </Text>
+                                </Tooltip>
                             ))}
                         </Group>
                     </Box>

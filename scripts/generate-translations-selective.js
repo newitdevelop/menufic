@@ -33,7 +33,10 @@ const KEYS_TO_TRANSLATE = [
     "common.createSuccess",
     "common.updateSuccess",
     "common.allergens", // All allergen labels (MAIN FEATURE)
-    "common.complaintBook", // Footer link text (URL stays the same)
+    "common.privacyPolicy", // Footer link name (URL stays the same)
+    "common.terms&Conditions", // Footer link name (URL stays the same)
+    "common.complaintBook", // Footer link name (URL stays the same)
+    "common.footerCopyright", // Footer copyright text with {year} and {appName} placeholders
     "common.login",
     "common.logout",
     "common.openDashboard",

@@ -14,13 +14,14 @@ The original translation script was translating **everything** including:
 Only translates **menu-viewing content** that users actually see:
 
 ✅ Common UI labels (Save, Edit, Delete, etc.)
-✅ Footer links (Privacy Policy, Terms, Complaint Book)
+✅ **Footer link names** (Privacy Policy, Terms, Complaint Book) - URLs stay the same
 ✅ **All allergen labels** (Cereals, Fish, Nuts, etc.)
 ✅ Translation helper text
 ✅ Login/Logout buttons
+✅ Footer copyright text
 
-❌ Keeps legal text in English (Terms & Conditions)
-❌ Keeps privacy policy in English
+❌ Keeps legal **page content** in English (Terms & Conditions full text)
+❌ Keeps privacy policy **page content** in English (full text)
 ❌ Keeps disclaimers in English
 
 ## Usage
@@ -66,11 +67,11 @@ const KEYS_TO_TRANSLATE = [
     "common.deleteSuccess",
     "common.createSuccess",
     "common.updateSuccess",
-    "common.privacyPolicy",
-    "common.terms&Conditions",
-    "common.complaintBook",
-    "common.footerCopyright",
-    "common.allergens",           // 🎯 All allergen labels
+    "common.allergens",           // 🎯 All allergen labels (MAIN FEATURE)
+    "common.privacyPolicy",       // Footer link name (URL stays the same)
+    "common.terms&Conditions",    // Footer link name (URL stays the same)
+    "common.complaintBook",       // Footer link name (URL stays the same)
+    "common.footerCopyright",     // Footer copyright text with {year} and {appName}
     "common.login",
     "common.logout",
     "common.openDashboard",
@@ -79,6 +80,7 @@ const KEYS_TO_TRANSLATE = [
     "common.translateChrome",
     "common.translateSafari",
     "common.translateFirefox",
+    "dashboard.editMenu.menuItem.allergensInfo", // "Might contain the following allergens"
 ];
 ```
 
@@ -88,9 +90,9 @@ Everything else stays in English.
 
 | Approach | Content Translated | Tokens Used | Rate Limit Risk |
 |----------|-------------------|-------------|-----------------|
-| **Selective** (new) | Menu-related only | ~25,000 | ✅ Safe |
+| **Selective** (new) | Menu-related only | ~30,000 | ✅ Safe |
 | **Full** (old) | Everything including legal | ~250,000 | ⚠️ High risk |
-| **Savings** | - | **90% reduction** | - |
+| **Savings** | - | **88% reduction** | - |
 
 ## Adding New Translatable Content
 
@@ -134,7 +136,10 @@ $ npm run translate
    • common.save
    • common.edit
    • common.allergens
-   • ... (and 15 more)
+   • common.privacyPolicy
+   • common.terms&Conditions
+   • common.complaintBook
+   • ... (and 16 more)
 
 🔒 All other content will remain in English (legal text, etc.)
 
@@ -171,11 +176,12 @@ $ npm run translate
 ### User Experience
 - ✅ Users see allergen labels in their language
 - ✅ Menu UI is translated
-- ✅ Legal text in English is standard practice (enforceable)
+- ✅ Footer link names are translated (URLs stay the same)
+- ✅ Legal page content in English is standard practice (enforceable)
 
 ### Cost Efficiency
-- ✅ 90% token savings
-- ✅ Can run 20x more often on free tier
+- ✅ 88% token savings
+- ✅ Can run 16x more often on free tier
 - ✅ Faster execution
 
 ### Rate Limit Safety
@@ -227,9 +233,10 @@ Only legal text will revert to English.
 The selective translation system:
 - ✅ Translates allergen labels (main goal)
 - ✅ Translates all menu-viewing UI
-- ✅ 90% cost reduction
+- ✅ Translates footer link names (URLs stay fixed)
+- ✅ 88% cost reduction
 - ✅ Rate-limit safe
 - ✅ Faster execution
 - ✅ Easier to maintain
 
-Perfect for restaurant menu applications where legal text doesn't need translation!
+Perfect for restaurant menu applications where legal page content doesn't need translation!

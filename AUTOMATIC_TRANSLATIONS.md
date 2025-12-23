@@ -142,31 +142,58 @@ docker compose up -d
 
 | Scenario | DeepL Key | Translation Files | Behavior |
 |----------|-----------|-------------------|----------|
-| **First Deploy** | ✅ Set | ❌ Missing | Auto-generates on startup (~250k tokens) |
-| **Subsequent Restarts** | ✅ Set | ✅ Exist | Skips generation (0 tokens) |
+| **First Deploy** | ✅ Set | ❌ Missing | Auto-generates on startup (~30k tokens) |
+| **Subsequent Restarts** | ✅ Set | ✅ Exist in volume | Skips generation (0 tokens) |
+| **Subsequent Rebuilds** | ✅ Set | ✅ Exist in volume | Skips generation (0 tokens) - volume persists! |
 | **No API Key** | ❌ Not Set | ❌ Missing | Continues without translations |
 | **Manual Update** | ✅ Set | ✅ Exist | Run `npm run translate` manually |
+
+## Volume-Based Persistence
+
+Translation files and cache are stored in Docker volumes at:
+- `./data/translations` → `/app/src/lang` (translation files: pt.json, es.json, etc.)
+- `./data/translation-cache` → `/app/scripts` (DeepL API cache: .translation-cache.json)
+
+**Benefits:**
+- ✅ Translations persist between container rebuilds
+- ✅ Cache persists between rebuilds (99% cost savings on updates)
+- ✅ Only first deployment uses DeepL API (~30k tokens)
+- ✅ All subsequent rebuilds: 0 tokens
+- ✅ When you update `en.json`, only changed items are translated
 
 ## Best Practices
 
 ### For Development
 
+**Option A: Volume-Based (Recommended)**
 1. **Set DeepL API key** in `.env` file
-2. **Run translations locally** before committing:
+2. **First container start** generates translations in volume
+3. **Subsequent rebuilds** use cached translations (0 cost)
+4. **Volume persists** between rebuilds in `./data/translations/`
+
+**Option B: Commit to Git**
+1. **Set DeepL API key** in `.env` file
+2. **Run translations locally**:
    ```bash
    npm run translate
    git add src/lang/*.json
+   git add scripts/.translation-cache.json  # Optional: commit cache too
    git commit -m "Update translations"
    ```
-3. **Commit translation files** to repository
-4. **Team benefits** from shared translations (no API usage)
+3. **Team benefits** from shared translations (no API usage)
 
 ### For Production
 
+**With Volume Persistence:**
 1. **Include DeepL key** in production environment
-2. **Commit translation files** to repository (pre-generated)
-3. **Container starts instantly** (no generation needed)
-4. **Zero startup cost** (translations already exist)
+2. **First deployment** generates translations (~30k tokens)
+3. **All subsequent deployments/rebuilds** use volume (0 tokens)
+4. **Backup volume** periodically: `./data/translations/`
+
+**Without Volumes (commit to git):**
+1. **Pre-generate translations** locally and commit
+2. **Container starts instantly** (no generation needed)
+3. **Zero startup cost** (translations in Docker image)
 
 ### For CI/CD
 
