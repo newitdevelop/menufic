@@ -11,6 +11,7 @@
         "updateSuccess": "Successfully updated",
         "privacyPolicy": "Privacy Policy",
         "terms&Conditions": "Terms & Conditions",
+        "complaintBook": "Complaint Book",
         "footerCopyright": "© {year} Copyright: {appName}",
         "login": "Login",
         "logout": "Logout",

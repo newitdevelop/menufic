@@ -35,6 +35,7 @@ export const CustomFooter: FC = () => {
     const footerLinks = [
         { label: t("privacyPolicy"), link: env.NEXT_PUBLIC_PRIVACY_POLICY_URL },
         { label: t("terms&Conditions"), link: env.NEXT_PUBLIC_TERMS_CONDITIONS_URL },
+        { label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" },
     ];
 
     const items = footerLinks.map((link) => (

@@ -22,7 +22,8 @@
       "Bash(ls:*)",
       "Bash(echo:*)",
       "Bash(docker exec:*)",
-      "Bash(npx next build:*)"
+      "Bash(npx next build:*)",
+      "Bash(docker-compose:*)"
     ]
   }
 }
