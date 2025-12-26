@@ -58,7 +58,7 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
 
     const currentYear = new Date().getFullYear();
 
-    const footerLinks = [];
+    const footerLinks: Array<{ label: string; link: string }> = [];
 
     // Only add Privacy Policy if configured for this venue OR if default URL exists
     const privacyUrl = restaurant?.privacyPolicyUrl || env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
