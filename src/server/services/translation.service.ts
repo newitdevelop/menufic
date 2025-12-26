@@ -14,6 +14,35 @@ type TranslatableField = "name" | "description" | "availableTime" | "message" | 
  * @param sourceLang Source language code (default: 'EN')
  * @returns Translated text
  */
+/**
+ * Validate if a translation is correct
+ * Returns true if the translation appears to be valid
+ */
+function isTranslationValid(originalText: string, translatedText: string, targetLang: string, sourceLang: string): boolean {
+    // If target language is same as source language, translation should match original
+    if (targetLang.toUpperCase() === sourceLang.toUpperCase() ||
+        (sourceLang.toUpperCase() === "PT" && targetLang.toUpperCase() === "PT")) {
+        return true;
+    }
+
+    // Check if translation is identical to source (likely failed translation)
+    // Allow some tolerance for proper nouns and short words
+    if (translatedText === originalText && originalText.length > 10) {
+        console.warn(`[Translation] INVALID: Translation is identical to source for target language ${targetLang}`);
+        return false;
+    }
+
+    // Check if translation contains Portuguese-specific characters when it shouldn't
+    // This catches cases where DeepL returned the original Portuguese text
+    const portuguesePattern = /[ãõçáéíóúâêôà]/i;
+    if (targetLang.toUpperCase() !== "PT" && portuguesePattern.test(translatedText) && originalText === translatedText) {
+        console.warn(`[Translation] INVALID: Translation contains Portuguese characters for language ${targetLang}: "${translatedText}"`);
+        return false;
+    }
+
+    return true;
+}
+
 export async function getOrCreateTranslation(
     entityType: EntityType,
     entityId: string,
@@ -38,14 +67,44 @@ export async function getOrCreateTranslation(
     });
 
     if (cached) {
-        console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
-        return cached.translated;
+        // Validate cached translation
+        const isValid = isTranslationValid(originalText, cached.translated, targetLang, sourceLang);
+
+        if (isValid) {
+            console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
+            return cached.translated;
+        }
+
+        // Invalid translation found - delete it and retranslate
+        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
+        console.log(`[Translation] Deleting invalid translation and retranslating...`);
+
+        await prisma.translation.delete({
+            where: {
+                entityType_entityId_language_field: {
+                    entityType,
+                    entityId,
+                    language: targetLang.toUpperCase(),
+                    field,
+                },
+            },
+        }).catch(() => {
+            // Ignore deletion errors
+        });
     }
 
     console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${targetLang} - calling DeepL with source: "${originalText}"`);
     // Translation not cached, call DeepL
     const translated = await translateWithDeepL(originalText, targetLang, sourceLang);
     console.log(`[Translation] DeepL returned: "${translated}"`);
+
+    // Validate new translation before caching
+    const isValid = isTranslationValid(originalText, translated, targetLang, sourceLang);
+    if (!isValid) {
+        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${targetLang}. Returning original text.`);
+        // Don't cache invalid translations
+        return translated; // Return anyway, but don't cache
+    }
 
     // Save to cache
     try {
@@ -58,6 +117,7 @@ export async function getOrCreateTranslation(
                 translated,
             },
         });
+        console.log(`[Translation] Cached new translation for ${entityType}/${entityId}/${field}/${targetLang}`);
     } catch (error) {
         // Ignore unique constraint violations (race condition)
         console.warn("Failed to cache translation:", error);
