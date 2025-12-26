@@ -68,14 +68,18 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
 
     const footerLinks: Array<{ label: string; link: string }> = [];
 
-    // Only add Privacy Policy if configured for this venue OR if default URL exists
-    const privacyUrl = restaurant?.privacyPolicyUrl || env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
+    // If restaurant is provided, only use venue-specific URLs (no fallback to defaults)
+    // If restaurant is not provided, use default URLs from environment
+    const privacyUrl = restaurant !== undefined
+        ? restaurant.privacyPolicyUrl
+        : env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
     if (privacyUrl) {
         footerLinks.push({ label: t("privacyPolicy"), link: privacyUrl });
     }
 
-    // Only add Terms & Conditions if configured for this venue OR if default URL exists
-    const termsUrl = restaurant?.termsAndConditionsUrl || env.NEXT_PUBLIC_TERMS_CONDITIONS_URL;
+    const termsUrl = restaurant !== undefined
+        ? restaurant.termsAndConditionsUrl
+        : env.NEXT_PUBLIC_TERMS_CONDITIONS_URL;
     if (termsUrl) {
         footerLinks.push({ label: t("terms&Conditions"), link: termsUrl });
     }

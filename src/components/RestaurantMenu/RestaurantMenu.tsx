@@ -24,6 +24,7 @@ import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client
 
 import { Black, White } from "src/styles/theme";
 import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
+import { getInitialMenuSelection } from "src/utils/detectSmartTV";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { Empty } from "../Empty";
@@ -125,7 +126,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const bannerCarousalRef = useRef(Autoplay({ delay: 5000 }));
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
-    const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(restaurant?.menus?.[0]?.id);
+
+    // Smart TV detection: Auto-select "Room*" menu if accessing from TV
+    const initialMenu = useMemo(
+        () => getInitialMenuSelection(restaurant?.menus || [], restaurant?.menus?.[0]?.id),
+        [restaurant?.menus]
+    );
+    const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(initialMenu);
+
     const router = useRouter();
     const language = (router.query?.lang as string) || "PT";
     const t = useTranslations("menu");
