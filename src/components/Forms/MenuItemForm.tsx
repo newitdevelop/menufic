@@ -78,9 +78,23 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     // AI image generation mutation
     const { mutate: generateImageAI, isLoading: isGeneratingImage } = api.menuItem.generateImageAI.useMutation({
         onError: (err: unknown) => showErrorToast(t("aiImageGenerationError"), err as { message: string }),
-        onSuccess: (data: any) => {
-            setValues({ imageBase64: data.imageBase64, imagePath: "" });
-            showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
+        onSuccess: async (data: any) => {
+            try {
+                // Download the image from OpenAI's temporary URL
+                const response = await fetch(data.imageUrl);
+                const blob = await response.blob();
+
+                // Convert to base64 data URL
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result as string;
+                    setValues({ imageBase64: base64String, imagePath: "" });
+                    showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
+                };
+                reader.readAsDataURL(blob);
+            } catch (error) {
+                showErrorToast(t("aiImageGenerationError"), { message: "Failed to download generated image" });
+            }
         },
     });
 

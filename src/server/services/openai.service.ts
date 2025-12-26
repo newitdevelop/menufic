@@ -181,17 +181,9 @@ appetizing presentation, Michelin-star quality, photorealistic.`;
             throw new Error("No image URL returned from OpenAI API");
         }
 
-        // Download the image from OpenAI's temporary URL
-        const imageResponse = await fetch(imageUrl);
-        if (!imageResponse.ok) {
-            throw new Error(`Failed to download generated image: ${imageResponse.statusText}`);
-        }
-
-        const imageBuffer = await imageResponse.arrayBuffer();
-        const base64 = Buffer.from(imageBuffer).toString("base64");
-
-        // Return as base64 data URL (same format as user uploads)
-        return `data:image/png;base64,${base64}`;
+        // Return the temporary URL directly (valid for 1 hour from OpenAI)
+        // Frontend will download and convert to base64 to avoid API response size limits
+        return imageUrl;
     } catch (error) {
         console.error("Error generating image with DALL-E:", error);
         throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : "Unknown error"}`);

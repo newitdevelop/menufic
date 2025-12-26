@@ -80,18 +80,20 @@ export async function invalidateTranslations(entityType: EntityType, entityId: s
 
 /**
  * Translate a menu item with all its fields
+ * Source language is Portuguese (PT) - the default content language
  */
 export async function translateMenuItem(
     menuItem: { id: string; name: string; description: string },
     targetLang: string
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Don't translate if target is Portuguese (source language)
         return menuItem;
     }
 
     const [name, description] = await Promise.all([
-        getOrCreateTranslation("menuItem", menuItem.id, "name", menuItem.name, targetLang),
-        getOrCreateTranslation("menuItem", menuItem.id, "description", menuItem.description, targetLang),
+        getOrCreateTranslation("menuItem", menuItem.id, "name", menuItem.name, targetLang, "PT"),
+        getOrCreateTranslation("menuItem", menuItem.id, "description", menuItem.description, targetLang, "PT"),
     ]);
 
     return {
@@ -103,13 +105,15 @@ export async function translateMenuItem(
 
 /**
  * Translate a category with its name
+ * Source language is Portuguese (PT) - the default content language
  */
 export async function translateCategory(category: { id: string; name: string }, targetLang: string) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Don't translate if target is Portuguese (source language)
         return category;
     }
 
-    const name = await getOrCreateTranslation("category", category.id, "name", category.name, targetLang);
+    const name = await getOrCreateTranslation("category", category.id, "name", category.name, targetLang, "PT");
 
     return {
         ...category,
@@ -119,19 +123,21 @@ export async function translateCategory(category: { id: string; name: string }, 
 
 /**
  * Translate a menu with its fields
+ * Source language is Portuguese (PT) - the default content language
  */
 export async function translateMenu(
     menu: { id: string; name: string; availableTime: string; message?: string | null },
     targetLang: string
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Don't translate if target is Portuguese (source language)
         return menu;
     }
 
     const translations = await Promise.all([
-        getOrCreateTranslation("menu", menu.id, "name", menu.name, targetLang),
-        getOrCreateTranslation("menu", menu.id, "availableTime", menu.availableTime, targetLang),
-        menu.message ? getOrCreateTranslation("menu", menu.id, "message", menu.message, targetLang) : Promise.resolve(menu.message),
+        getOrCreateTranslation("menu", menu.id, "name", menu.name, targetLang, "PT"),
+        getOrCreateTranslation("menu", menu.id, "availableTime", menu.availableTime, targetLang, "PT"),
+        menu.message ? getOrCreateTranslation("menu", menu.id, "message", menu.message, targetLang, "PT") : Promise.resolve(menu.message),
     ]);
 
     return {
