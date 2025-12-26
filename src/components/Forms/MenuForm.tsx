@@ -51,6 +51,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         initialValues: {
             availableTime: menuItem?.availableTime || "",
             email: menuItem?.email || "",
+            reservations: (menuItem as any)?.reservations || "",
             message: menuItem?.message || "",
             name: menuItem?.name || "",
             telephone: menuItem?.telephone || "",
@@ -63,6 +64,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             const values = {
                 availableTime: menuItem?.availableTime || "",
                 email: menuItem?.email || "",
+                reservations: (menuItem as any)?.reservations || "",
                 message: menuItem?.message || "",
                 name: menuItem?.name || "",
                 telephone: menuItem?.telephone || "",
@@ -121,6 +123,13 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         placeholder={t("inputEmailPlaceholder")}
                         type="email"
                         {...getInputProps("email")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputReservationsLabel")}
+                        placeholder={t("inputReservationsPlaceholder")}
+                        type="url"
+                        {...getInputProps("reservations")}
                     />
                     <Textarea
                         disabled={loading}

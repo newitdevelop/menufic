@@ -16,7 +16,7 @@ import {
     Text,
     useMantineColorScheme,
 } from "@mantine/core";
-import { IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
+import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
 import Autoplay from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 
@@ -277,6 +277,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             <IconMail size={16} />
                             <a href={`mailto:${menuDetails.email}`}>
                                 <Text size="sm" translate="no">{menuDetails.email}</Text>
+                            </a>
+                        </Flex>
+                    )}
+                    {(menuDetails as any).reservations && (
+                        <Flex align="center" gap={8}>
+                            <IconCalendar size={16} />
+                            <a href={(menuDetails as any).reservations} rel="noopener noreferrer" target="_blank">
+                                <Text size="sm" translate="yes">{t("reservations")}</Text>
                             </a>
                         </Flex>
                     )}

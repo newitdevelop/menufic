@@ -31,6 +31,7 @@ export const menuRouter = createTRPCRouter({
             data: {
                 availableTime: input.availableTime,
                 email: input.email,
+                reservations: input.reservations,
                 message: input.message,
                 name: input.name,
                 position: lastMenuItem ? lastMenuItem.position + 1 : 0,
@@ -91,6 +92,7 @@ export const menuRouter = createTRPCRouter({
             data: {
                 availableTime: input.availableTime,
                 email: input.email,
+                reservations: input.reservations,
                 message: input.message,
                 name: input.name,
                 telephone: input.telephone,

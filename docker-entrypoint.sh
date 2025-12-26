@@ -56,13 +56,11 @@ if [ ! -z "$DEEPL_API_KEY" ]; then
   # Ensure en.json exists in volume (copy from build if missing)
   if [ ! -f "src/lang/en.json" ]; then
     echo "📋 Copying English source file to volume..."
-    # en.json is in the Docker image at a temporary location
     if [ -f "/tmp/en.json.backup" ]; then
       cp /tmp/en.json.backup src/lang/en.json
       echo "✅ English source file restored"
     else
       echo "❌ English source file not found - translations cannot be generated"
-      echo "   This is likely a Docker volume configuration issue"
     fi
   fi
 

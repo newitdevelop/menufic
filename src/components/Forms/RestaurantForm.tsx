@@ -55,6 +55,8 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
             imagePath: restaurant?.image?.path || "",
             location: restaurant?.location || "",
             name: restaurant?.name || "",
+            privacyPolicyUrl: (restaurant as any)?.privacyPolicyUrl || "",
+            termsAndConditionsUrl: (restaurant as any)?.termsAndConditionsUrl || "",
         },
         validate: zodResolver(restaurantInput),
     });
@@ -67,6 +69,8 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
                 imagePath: restaurant?.image?.path || "",
                 location: restaurant?.location || "",
                 name: restaurant?.name || "",
+                privacyPolicyUrl: (restaurant as any)?.privacyPolicyUrl || "",
+                termsAndConditionsUrl: (restaurant as any)?.termsAndConditionsUrl || "",
             };
             setValues(formValues);
             resetDirty(formValues);
@@ -119,6 +123,20 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
                         label={t("inputContactNoLabel")}
                         placeholder={t("inputContactNoPlaceholder")}
                         {...getInputProps("contactNo")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputPrivacyPolicyUrlLabel")}
+                        placeholder={t("inputPrivacyPolicyUrlPlaceholder")}
+                        type="url"
+                        {...getInputProps("privacyPolicyUrl")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputTermsAndConditionsUrlLabel")}
+                        placeholder={t("inputTermsAndConditionsUrlPlaceholder")}
+                        type="url"
+                        {...getInputProps("termsAndConditionsUrl")}
                     />
                     <ImageUpload
                         disabled={loading}

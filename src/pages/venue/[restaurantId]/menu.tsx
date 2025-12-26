@@ -63,7 +63,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                     })()}
                 </Container>
             </main>
-            <Footer />
+            <Footer restaurant={restaurant} />
         </>
     );
 };

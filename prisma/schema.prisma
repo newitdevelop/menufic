@@ -15,18 +15,20 @@ datasource db {
 }
 
 model Restaurant {
-    id          String   @unique @default(cuid())
-    userId      String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    name        String
-    location    String
-    contactNo   String
-    isPublished Boolean
-    menus       Menu[]   @relation("MenusOfRestaurant")
-    image       Image?   @relation("ImageOfRestaurant", fields: [imageId], references: [id], onDelete: SetNull, onUpdate: SetNull)
-    imageId     String?  @unique
-    banners     Image[]  @relation("BannersOfRestaurant")
+    id                    String   @unique @default(cuid())
+    userId                String
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    name                  String
+    location              String
+    contactNo             String
+    isPublished           Boolean
+    privacyPolicyUrl      String?  // Optional URL to venue-specific privacy policy
+    termsAndConditionsUrl String?  // Optional URL to venue-specific terms & conditions
+    menus                 Menu[]   @relation("MenusOfRestaurant")
+    image                 Image?   @relation("ImageOfRestaurant", fields: [imageId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+    imageId               String?  @unique
+    banners               Image[]  @relation("BannersOfRestaurant")
 
     @@id([id, userId])
     @@index([isPublished])
@@ -41,6 +43,7 @@ model Menu {
     availableTime String
     telephone     String?
     email         String?
+    reservations  String?     // URL for reservations
     message       String?
     position      Int
     categories    Category[]  @relation("CategoriesOfMenu")

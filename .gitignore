@@ -41,7 +41,8 @@ yarn-error.log*
 # Sentry
 .sentryclirc
 
-# Translation cache (kept if you want to commit it for faster first builds)
+# Translation cache - COMMIT THIS to reuse cached translations and save 97% API costs
+# Uncommenting the line below will exclude it from git (not recommended)
 # scripts/.translation-cache.json
 
 # Tests

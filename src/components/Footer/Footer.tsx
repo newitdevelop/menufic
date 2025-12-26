@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Container, createStyles, Footer, Group } from "@mantine/core";
+import { Container, createStyles, Footer, Group, Stack, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -18,39 +18,90 @@ const useStyles = createStyles((theme) => ({
         opacity: 0.6,
         paddingBottom: theme.spacing.md,
         paddingTop: theme.spacing.md,
-        [theme.fn.smallerThan("xs")]: { flexDirection: "column" },
+        [theme.fn.smallerThan("sm")]: {
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: theme.spacing.md,
+        },
     },
-    linkItem: { marginLeft: 10, marginRight: 10 },
-    links: { color: theme.colors.dark[9], [theme.fn.smallerThan("xs")]: { marginTop: theme.spacing.md } },
+    linkItem: {
+        marginLeft: 10,
+        marginRight: 10,
+        [theme.fn.smallerThan("sm")]: {
+            marginLeft: 0,
+            marginRight: 0,
+            display: "block",
+        },
+    },
+    links: {
+        color: theme.colors.dark[9],
+        [theme.fn.smallerThan("sm")]: {
+            marginTop: 0,
+            width: "100%",
+        },
+    },
 }));
 
+interface Props {
+    /** Optional restaurant data for venue-specific footer URLs */
+    restaurant?: {
+        privacyPolicyUrl?: string | null;
+        termsAndConditionsUrl?: string | null;
+    };
+}
+
 /** Footer to be shown throughout the app */
-export const CustomFooter: FC = () => {
+export const CustomFooter: FC<Props> = ({ restaurant }) => {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
     const t = useTranslations("common");
 
     const currentYear = new Date().getFullYear();
 
-    const footerLinks = [
-        { label: t("privacyPolicy"), link: env.NEXT_PUBLIC_PRIVACY_POLICY_URL },
-        { label: t("terms&Conditions"), link: env.NEXT_PUBLIC_TERMS_CONDITIONS_URL },
-        { label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" },
-    ];
+    const footerLinks = [];
 
-    const items = footerLinks.map((link) => (
-        <Link key={link.label} className={classes.linkItem} href={link.link}>
-            {link.label}
-        </Link>
-    ));
+    // Only add Privacy Policy if configured for this venue OR if default URL exists
+    const privacyUrl = restaurant?.privacyPolicyUrl || env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
+    if (privacyUrl) {
+        footerLinks.push({ label: t("privacyPolicy"), link: privacyUrl });
+    }
+
+    // Only add Terms & Conditions if configured for this venue OR if default URL exists
+    const termsUrl = restaurant?.termsAndConditionsUrl || env.NEXT_PUBLIC_TERMS_CONDITIONS_URL;
+    if (termsUrl) {
+        footerLinks.push({ label: t("terms&Conditions"), link: termsUrl });
+    }
+
+    // Complaint Book is always shown for Portuguese venues
+    footerLinks.push({ label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" });
+
+    const items = isMobile ? (
+        <Stack spacing="xs">
+            {footerLinks.map((link) => (
+                <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
+                    <Text size="sm">{link.label}</Text>
+                </Link>
+            ))}
+        </Stack>
+    ) : (
+        footerLinks.map((link) => (
+            <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
+                {link.label}
+            </Link>
+        ))
+    );
 
     return (
-        <Footer className={classes.footer} height={isMobile ? 90 : 50}>
+        <Footer className={classes.footer} height={isMobile ? "auto" : 50}>
             <Container className={classes.inner} size="xl">
                 <Link className={classes.copyRights} href={env.NEXT_PUBLIC_APP_URL}>
                     {t("footerCopyright", { appName: env.NEXT_PUBLIC_APP_NAME, year: currentYear })}
                 </Link>
-                <Group className={classes.links}>{items}</Group>
+                {isMobile ? (
+                    <div className={classes.links}>{items}</div>
+                ) : (
+                    <Group className={classes.links}>{items}</Group>
+                )}
             </Container>
         </Footer>
     );
