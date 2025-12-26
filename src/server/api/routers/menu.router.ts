@@ -104,11 +104,11 @@ export const menuRouter = createTRPCRouter({
             ctx.prisma.menu.update({
                 data: {
                     availableTime: input.availableTime,
-                    email: input.email,
-                    reservations: input.reservations,
-                    message: input.message,
+                    email: input.email ?? null,
+                    reservations: input.reservations ?? null,
+                    message: input.message ?? null,
                     name: input.name,
-                    telephone: input.telephone,
+                    telephone: input.telephone ?? null,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),

@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Container, createStyles, Footer, Group, Stack, Text } from "@mantine/core";
+import { Container, createStyles, Footer, Group, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -87,21 +87,11 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
     // Complaint Book is always shown for Portuguese venues
     footerLinks.push({ label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" });
 
-    const items = isMobile ? (
-        <Stack spacing="xs">
-            {footerLinks.map((link) => (
-                <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
-                    <Text size="sm">{link.label}</Text>
-                </Link>
-            ))}
-        </Stack>
-    ) : (
-        footerLinks.map((link) => (
-            <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
-                {link.label}
-            </Link>
-        ))
-    );
+    const items = footerLinks.map((link) => (
+        <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
+            {isMobile ? <Text size="sm">{link.label}</Text> : link.label}
+        </Link>
+    ));
 
     return (
         <Footer className={classes.footer} height={isMobile ? "auto" : 50}>
@@ -109,11 +99,7 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
                 <Link className={classes.copyRights} href={env.NEXT_PUBLIC_APP_URL}>
                     {t("footerCopyright", { appName: env.NEXT_PUBLIC_APP_NAME, year: currentYear })}
                 </Link>
-                {isMobile ? (
-                    <div className={classes.links}>{items}</div>
-                ) : (
-                    <Group className={classes.links}>{items}</Group>
-                )}
+                <Group className={classes.links}>{items}</Group>
             </Container>
         </Footer>
     );
