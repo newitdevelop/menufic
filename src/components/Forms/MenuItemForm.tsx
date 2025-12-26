@@ -30,6 +30,34 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
 
+    // Form hook - must be declared before mutations that use setValues
+    const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm<{
+        currency: "€" | "$";
+        description: string;
+        imageBase64: string;
+        imagePath: string;
+        name: string;
+        price: string;
+        vatIncluded: boolean;
+        vatRate: 6 | 13 | 23;
+        isEdible: boolean;
+        allergens: (typeof allergenCodes)[number][];
+    }>({
+        initialValues: {
+            currency: (menuItem?.currency as "€" | "$") || "€",
+            description: menuItem?.description || "",
+            imageBase64: "",
+            imagePath: menuItem?.image?.path || "",
+            name: menuItem?.name || "",
+            price: menuItem?.price || "",
+            vatIncluded: menuItem?.vatIncluded ?? true,
+            vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
+            isEdible: (menuItem as any)?.isEdible ?? false,
+            allergens: (menuItem as any)?.allergens || [],
+        },
+        validate: zodResolver(menuItemInput),
+    });
+
     // Check if AI allergen detection is available
     const { data: aiAvailability } = api.menuItem.isAllergenAIAvailable.useQuery();
     const isAIAvailable = aiAvailability?.available ?? false;
@@ -70,33 +98,6 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             );
             showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc", { name: data.name }));
         },
-    });
-
-    const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm<{
-        currency: "€" | "$";
-        description: string;
-        imageBase64: string;
-        imagePath: string;
-        name: string;
-        price: string;
-        vatIncluded: boolean;
-        vatRate: 6 | 13 | 23;
-        isEdible: boolean;
-        allergens: (typeof allergenCodes)[number][];
-    }>({
-        initialValues: {
-            currency: (menuItem?.currency as "€" | "$") || "€",
-            description: menuItem?.description || "",
-            imageBase64: "",
-            imagePath: menuItem?.image?.path || "",
-            name: menuItem?.name || "",
-            price: menuItem?.price || "",
-            vatIncluded: menuItem?.vatIncluded ?? true,
-            vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
-            isEdible: (menuItem as any)?.isEdible ?? false,
-            allergens: (menuItem as any)?.allergens || [],
-        },
-        validate: zodResolver(menuItemInput),
     });
 
     useEffect(() => {
