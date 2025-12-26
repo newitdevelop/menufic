@@ -6,6 +6,7 @@ import type { PrismaPromise } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { imageKit } from "src/server/imageUtil";
+import { invalidateTranslations } from "src/server/services/translation.service";
 import { id, menuInput, restaurantId } from "src/utils/validators";
 
 export const menuRouter = createTRPCRouter({
@@ -88,17 +89,34 @@ export const menuRouter = createTRPCRouter({
 
     /** Update the details of a restaurant menu */
     update: protectedProcedure.input(menuInput.merge(id)).mutation(async ({ ctx, input }) => {
-        return ctx.prisma.menu.update({
-            data: {
-                availableTime: input.availableTime,
-                email: input.email,
-                reservations: input.reservations,
-                message: input.message,
-                name: input.name,
-                telephone: input.telephone,
-            },
+        // Get current menu to check what changed
+        const currentMenu = await ctx.prisma.menu.findUniqueOrThrow({
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
+
+        // Check if any translatable field changed
+        const shouldInvalidate =
+            input.name !== currentMenu.name ||
+            input.availableTime !== currentMenu.availableTime ||
+            input.message !== currentMenu.message;
+
+        const [updatedMenu] = await Promise.all([
+            ctx.prisma.menu.update({
+                data: {
+                    availableTime: input.availableTime,
+                    email: input.email,
+                    reservations: input.reservations,
+                    message: input.message,
+                    name: input.name,
+                    telephone: input.telephone,
+                },
+                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            }),
+            // Invalidate translations if any translatable field changed
+            shouldInvalidate ? invalidateTranslations("menu", input.id) : Promise.resolve(),
+        ]);
+
+        return updatedMenu;
     }),
 
     /** Update the position the menus of the restaurant */

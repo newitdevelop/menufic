@@ -6,6 +6,7 @@ import type { PrismaPromise } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { imageKit } from "src/server/imageUtil";
+import { invalidateTranslations } from "src/server/services/translation.service";
 import { categoryInput, id, menuId } from "src/utils/validators";
 
 export const categoryRouter = createTRPCRouter({
@@ -81,10 +82,21 @@ export const categoryRouter = createTRPCRouter({
 
     /** Update the details of a menu category */
     update: protectedProcedure.input(categoryInput.merge(id)).mutation(async ({ ctx, input }) => {
-        return ctx.prisma.category.update({
-            data: { name: input.name },
+        // Get current category to check if name changed
+        const currentCategory = await ctx.prisma.category.findUniqueOrThrow({
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
+
+        const [updatedCategory] = await Promise.all([
+            ctx.prisma.category.update({
+                data: { name: input.name },
+                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            }),
+            // Invalidate translations if name changed
+            input.name !== currentCategory.name ? invalidateTranslations("category", input.id) : Promise.resolve(),
+        ]);
+
+        return updatedCategory;
     }),
 
     /** Update the position of the categories within a restaurant menu */

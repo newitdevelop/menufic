@@ -29,7 +29,8 @@
       "Bash(npm help:*)",
       "Bash(npx prisma generate:*)",
       "Bash(npm install:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(curl:*)"
     ]
   }
 }

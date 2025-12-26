@@ -7,6 +7,7 @@ import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
 import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
+import { invalidateTranslations } from "src/server/services/translation.service";
 import { allergenCodes, categoryId, id, menuId, menuItemInput, menuItemInputBase } from "src/utils/validators";
 
 export const menuItemRouter = createTRPCRouter({
@@ -136,6 +137,12 @@ export const menuItemRouter = createTRPCRouter({
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             })
         );
+
+        // Invalidate translations when name or description changes
+        if (input.name !== currentItem.name || input.description !== currentItem.description) {
+            promiseList.push(invalidateTranslations("menuItem", input.id));
+        }
+
         const [transactionRes] = await Promise.all([ctx.prisma.$transaction(transactions), promiseList]);
         return transactionRes.pop() as MenuItem & { image: Image | null };
     }),
