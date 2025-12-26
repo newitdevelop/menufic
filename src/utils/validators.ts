@@ -79,6 +79,7 @@ export const menuItemInputBase = z.object({
     description: z.string().trim().max(185, "Description cannot be longer than 185 characters"),
     imageBase64: z.string().optional(),
     imagePath: z.string().optional(),
+    isAiGeneratedImage: z.boolean().default(false),
     name: z.string().trim().min(1, "Name is required").max(50, "Name cannot be longer than 50 characters"),
     price: z.string().trim().min(1, "Price is required").max(12, "Price cannot be longer than 12 characters"),
     vatIncluded: z.boolean().default(true),

@@ -147,3 +147,97 @@ export async function translateMenu(
         message: translations[2],
     };
 }
+
+/**
+ * Get translated disclaimer text for images
+ * Uses a special entity type "ui" to cache UI translations
+ * @param isAiGenerated Whether the image is AI-generated
+ * @param targetLang Target language code
+ * @returns Translated disclaimer text
+ */
+export async function getImageDisclaimer(isAiGenerated: boolean, targetLang: string): Promise<string> {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Return Portuguese (source language) disclaimers
+        return isAiGenerated
+            ? "Imagem gerada por IA - o prato real pode variar"
+            : "A apresentação real pode variar";
+    }
+
+    // Use different field names for AI vs regular disclaimers
+    const field = isAiGenerated ? "aiImageDisclaimer" : "imageDisclaimer";
+    const sourceText = isAiGenerated
+        ? "Imagem gerada por IA - o prato real pode variar"
+        : "A apresentação real pode variar";
+
+    // Use a static entity ID for UI translations
+    const cached = await getOrCreateTranslation("menu", "ui-disclaimers", field, sourceText, targetLang, "PT");
+
+    return cached;
+}
+
+/**
+ * UI text translations in Portuguese (source language)
+ */
+const UI_TRANSLATIONS_PT = {
+    vatIncluded: "IVA incluído",
+    allergensInfo: "Pode conter os seguintes alergénios",
+    allergens: {
+        cereals: "Cereais que contêm glúten",
+        crustaceans: "Crustáceos",
+        eggs: "Ovos",
+        fish: "Peixe",
+        peanuts: "Amendoins",
+        soybeans: "Soja",
+        milk: "Leite",
+        nuts: "Frutos de casca rija",
+        celery: "Aipo",
+        mustard: "Mostarda",
+        sesame: "Sementes de sésamo",
+        sulphites: "Dióxido de enxofre e sulfitos",
+        lupin: "Tremoço",
+        molluscs: "Moluscos",
+        none: "Nenhum",
+    },
+} as const;
+
+/**
+ * Get translated UI text
+ * @param key UI translation key (e.g., "vatIncluded", "allergensInfo")
+ * @param targetLang Target language code
+ * @returns Translated text
+ */
+export async function getUITranslation(key: string, targetLang: string): Promise<string> {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Return Portuguese (source language)
+        return (UI_TRANSLATIONS_PT as any)[key] || key;
+    }
+
+    const sourceText = (UI_TRANSLATIONS_PT as any)[key];
+    if (!sourceText) return key;
+
+    // Use a static entity ID for UI translations
+    const cached = await getOrCreateTranslation("menu", "ui-text", key, sourceText, targetLang, "PT");
+
+    return cached;
+}
+
+/**
+ * Get translated allergen name
+ * @param allergenCode Allergen code (e.g., "cereals", "milk")
+ * @param targetLang Target language code
+ * @returns Translated allergen name
+ */
+export async function getAllergenTranslation(allergenCode: string, targetLang: string): Promise<string> {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Return Portuguese (source language)
+        return UI_TRANSLATIONS_PT.allergens[allergenCode as keyof typeof UI_TRANSLATIONS_PT.allergens] || allergenCode;
+    }
+
+    const sourceText = UI_TRANSLATIONS_PT.allergens[allergenCode as keyof typeof UI_TRANSLATIONS_PT.allergens];
+    if (!sourceText) return allergenCode;
+
+    // Use a static entity ID for allergen translations
+    const cached = await getOrCreateTranslation("menu", "ui-allergens", allergenCode, sourceText, targetLang, "PT");
+
+    return cached;
+}

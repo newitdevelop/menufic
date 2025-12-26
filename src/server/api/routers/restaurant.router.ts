@@ -188,15 +188,92 @@ export const restaurantRouter = createTRPCRouter({
                 where: { id: input.id },
             });
 
-            // If no language specified or language is English, return as-is
-            if (!input.language || input.language.toUpperCase() === "EN") {
-                return restaurant;
-            }
-
             // Import translation services
-            const { translateMenu, translateCategory, translateMenuItem } = await import(
+            const { translateMenu, translateCategory, translateMenuItem, getImageDisclaimer, getUITranslation, getAllergenTranslation } = await import(
                 "src/server/services/translation.service"
             );
+
+            // Get UI translations
+            const targetLang = input.language || "PT";
+            const [vatIncluded, allergensInfo, allergenTranslations] = await Promise.all([
+                getUITranslation("vatIncluded", targetLang),
+                getUITranslation("allergensInfo", targetLang),
+                Promise.all([
+                    getAllergenTranslation("cereals", targetLang),
+                    getAllergenTranslation("crustaceans", targetLang),
+                    getAllergenTranslation("eggs", targetLang),
+                    getAllergenTranslation("fish", targetLang),
+                    getAllergenTranslation("peanuts", targetLang),
+                    getAllergenTranslation("soybeans", targetLang),
+                    getAllergenTranslation("milk", targetLang),
+                    getAllergenTranslation("nuts", targetLang),
+                    getAllergenTranslation("celery", targetLang),
+                    getAllergenTranslation("mustard", targetLang),
+                    getAllergenTranslation("sesame", targetLang),
+                    getAllergenTranslation("sulphites", targetLang),
+                    getAllergenTranslation("lupin", targetLang),
+                    getAllergenTranslation("molluscs", targetLang),
+                    getAllergenTranslation("none", targetLang),
+                ]),
+            ]);
+
+            const uiTranslations = {
+                vatIncluded,
+                allergensInfo,
+                allergens: {
+                    cereals: allergenTranslations[0],
+                    crustaceans: allergenTranslations[1],
+                    eggs: allergenTranslations[2],
+                    fish: allergenTranslations[3],
+                    peanuts: allergenTranslations[4],
+                    soybeans: allergenTranslations[5],
+                    milk: allergenTranslations[6],
+                    nuts: allergenTranslations[7],
+                    celery: allergenTranslations[8],
+                    mustard: allergenTranslations[9],
+                    sesame: allergenTranslations[10],
+                    sulphites: allergenTranslations[11],
+                    lupin: allergenTranslations[12],
+                    molluscs: allergenTranslations[13],
+                    none: allergenTranslations[14],
+                },
+            };
+
+            // If no language specified or language is English/Portuguese, add disclaimers but don't translate
+            if (!input.language || input.language.toUpperCase() === "EN" || input.language.toUpperCase() === "PT") {
+                const menusWithDisclaimers = await Promise.all(
+                    restaurant.menus.map(async (menu) => {
+                        const categoriesWithDisclaimers = await Promise.all(
+                            menu.categories.map(async (category) => {
+                                const itemsWithDisclaimers = await Promise.all(
+                                    category.items.map(async (item) => {
+                                        const updates: any = { uiTranslations };
+
+                                        if (item.image) {
+                                            const disclaimer = await getImageDisclaimer(
+                                                item.image.isAiGenerated ?? false,
+                                                input.language || "PT"
+                                            );
+                                            updates.image = {
+                                                ...item.image,
+                                                disclaimer,
+                                            };
+                                        }
+
+                                        return {
+                                            ...item,
+                                            ...updates,
+                                        };
+                                    })
+                                );
+                                return { ...category, items: itemsWithDisclaimers };
+                            })
+                        );
+                        return { ...menu, categories: categoriesWithDisclaimers };
+                    })
+                );
+                return { ...restaurant, menus: menusWithDisclaimers, uiTranslations };
+            }
 
             // Translate all menus, categories, and items
             const translatedMenus = await Promise.all(
@@ -208,7 +285,28 @@ export const restaurantRouter = createTRPCRouter({
                             const translatedCategory = await translateCategory(category, input.language!);
 
                             const translatedItems = await Promise.all(
-                                category.items.map((item) => translateMenuItem(item, input.language!))
+                                category.items.map(async (item) => {
+                                    const translatedItem = await translateMenuItem(item, input.language!);
+
+                                    const updates: any = { uiTranslations };
+
+                                    // Add translated disclaimer if item has an image
+                                    if (item.image) {
+                                        const disclaimer = await getImageDisclaimer(
+                                            item.image.isAiGenerated ?? false,
+                                            input.language!
+                                        );
+                                        updates.image = {
+                                            ...item.image,
+                                            disclaimer,
+                                        };
+                                    }
+
+                                    return {
+                                        ...translatedItem,
+                                        ...updates,
+                                    };
+                                })
                             );
 
                             return {
@@ -228,6 +326,7 @@ export const restaurantRouter = createTRPCRouter({
             return {
                 ...restaurant,
                 menus: translatedMenus,
+                uiTranslations,
             };
         }),
 

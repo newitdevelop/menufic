@@ -97,6 +97,7 @@ model Image {
     path             String
     blurHash         String
     color            String
+    isAiGenerated    Boolean     @default(false)
     menuItem         MenuItem?   @relation("ImageOfMenuItem")
     restaurant       Restaurant? @relation("ImageOfRestaurant")
     restaurantBanner Restaurant? @relation("BannersOfRestaurant", fields: [restaurantId], references: [id], onDelete: Restrict, onUpdate: Restrict)

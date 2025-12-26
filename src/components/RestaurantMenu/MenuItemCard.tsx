@@ -100,7 +100,13 @@ interface Props {
 export const MenuItemCard: FC<Props> = ({ item }) => {
     const { classes, cx } = useStyles({ imageColor: item?.image?.color });
     const [modalVisible, setModalVisible] = useState(false);
-    const t = useTranslations("dashboard.editMenu.menuItem");
+
+    // Get UI translations from menu item (server-side translated via DeepL)
+    const uiTranslations = (item as any)?.uiTranslations || {
+        vatIncluded: "IVA incluído",
+        allergensInfo: "Pode conter os seguintes alergénios",
+        allergens: {},
+    };
 
     const displayPrice = calculateVATInclusivePrice(item.price, item.vatRate || 23, item.vatIncluded ?? true);
 
@@ -130,6 +136,11 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                                 width={150}
                             />
                         </Box>
+                        {(item?.image as any)?.disclaimer && (
+                            <Text align="center" color="dimmed" fs="italic" mt={4} size="xs">
+                                {(item?.image as any).disclaimer}
+                            </Text>
+                        )}
                     </Box>
                 )}
 
@@ -154,7 +165,7 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                             "@media (min-width: 240em)": { fontSize: "30px" }, // 3840px 4K TV
                         }}
                     >
-                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {t("vatIncluded")})
+                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
                     </Text>
                     <Text
                         className={cx(classes.cardText, classes.cardItemDesc)}

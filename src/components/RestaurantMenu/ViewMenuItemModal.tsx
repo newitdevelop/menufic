@@ -21,8 +21,13 @@ interface Props extends ModalProps {
 /** Modal to view details of a selected menu item */
 export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...rest }) => {
     const theme = useMantineTheme();
-    const tCommon = useTranslations("common");
-    const t = useTranslations("dashboard.editMenu.menuItem");
+
+    // Get UI translations from menu item (server-side translated via DeepL)
+    const uiTranslations = (menuItem as any)?.uiTranslations || {
+        vatIncluded: "IVA incluído",
+        allergensInfo: "Pode conter os seguintes alergénios",
+        allergens: {},
+    };
 
     // Dispatch events for Smart TV navigation
     useEffect(() => {
@@ -63,18 +68,25 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
         >
             <Stack spacing="sm">
                 {menuItem?.image?.path && (
-                    <Box sx={{ borderRadius: theme.radius.lg, overflow: "hidden" }}>
-                        <ImageKitImage
-                            blurhash={menuItem?.image?.blurHash}
-                            height={400}
-                            imageAlt={menuItem?.name}
-                            imagePath={menuItem?.image?.path}
-                            width={400}
-                        />
-                    </Box>
+                    <>
+                        <Box sx={{ borderRadius: theme.radius.lg, overflow: "hidden" }}>
+                            <ImageKitImage
+                                blurhash={menuItem?.image?.blurHash}
+                                height={400}
+                                imageAlt={menuItem?.name}
+                                imagePath={menuItem?.image?.path}
+                                width={400}
+                            />
+                        </Box>
+                        {(menuItem?.image as any)?.disclaimer && (
+                            <Text align="center" color="dimmed" fs="italic" size="xs">
+                                {(menuItem?.image as any).disclaimer}
+                            </Text>
+                        )}
+                    </>
                 )}
                 <Text color="red" mt="sm" size="lg">
-                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% {t("vatIncluded")})
+                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% {uiTranslations.vatIncluded})
                 </Text>
                 <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}
@@ -82,12 +94,12 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                 {(menuItem as any)?.isEdible && (menuItem as any)?.allergens && (menuItem as any).allergens.length > 0 && (menuItem as any).allergens[0] !== "none" && (
                     <Box mt="md">
                         <Text color={theme.black} size="sm" weight={600}>
-                            {t("allergensInfo")}:
+                            {uiTranslations.allergensInfo}:
                         </Text>
                         <Group mt="xs" spacing="md">
                             {(menuItem as any).allergens.map((allergen: string) => (
                                 <Stack key={allergen} align="center" spacing={4}>
-                                    <Tooltip events={{ hover: true, focus: true, touch: true }} label={tCommon(`allergens.${allergen}` as any)} withArrow>
+                                    <Tooltip events={{ hover: true, focus: true, touch: true }} label={uiTranslations.allergens[allergen] || allergen} withArrow>
                                         <Text
                                             style={{
                                                 fontSize: "2rem",
@@ -99,7 +111,7 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                                         </Text>
                                     </Tooltip>
                                     <Text align="center" color={theme.black} size="xs" sx={{ maxWidth: 80 }}>
-                                        {tCommon(`allergens.${allergen}` as any)}
+                                        {uiTranslations.allergens[allergen] || allergen}
                                     </Text>
                                 </Stack>
                             ))}

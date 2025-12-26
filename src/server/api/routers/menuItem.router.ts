@@ -56,6 +56,7 @@ export const menuItemRouter = createTRPCRouter({
                     color: rgba2hex(color[0], color[1], color[2]),
                     id: uploadedResponse.fileId,
                     path: uploadedResponse.filePath,
+                    isAiGenerated: input.isAiGeneratedImage ?? false,
                 },
             };
         }
@@ -124,6 +125,7 @@ export const menuItemRouter = createTRPCRouter({
                         color: rgba2hex(color[0], color[1], color[2]),
                         id: uploadedResponse.fileId,
                         path: uploadedResponse.filePath,
+                        isAiGenerated: input.isAiGeneratedImage ?? false,
                     },
                 })
             );

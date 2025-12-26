@@ -3,13 +3,14 @@ import { useEffect } from "react";
 
 import { Button, Checkbox, Group, MultiSelect, SegmentedControl, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import imageCompression from "browser-image-compression";
 import { useTranslations } from "next-intl";
 
 import type { ModalProps } from "@mantine/core";
 import type { Image, MenuItem } from "@prisma/client";
 
 import { api } from "src/utils/api";
-import { showErrorToast, showSuccessToast } from "src/utils/helpers";
+import { showErrorToast, showSuccessToast, toBase64 } from "src/utils/helpers";
 import { allergenCodes, menuItemInput } from "src/utils/validators";
 
 import { ImageUpload } from "../ImageUpload";
@@ -48,6 +49,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             description: menuItem?.description || "",
             imageBase64: "",
             imagePath: menuItem?.image?.path || "",
+            isAiGeneratedImage: menuItem?.image?.isAiGenerated || false,
             name: menuItem?.name || "",
             price: menuItem?.price || "",
             vatIncluded: menuItem?.vatIncluded ?? true,
@@ -80,18 +82,25 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         onError: (err: unknown) => showErrorToast(t("aiImageGenerationError"), err as { message: string }),
         onSuccess: async (data: any) => {
             try {
-                // Backend returns base64 data URL - convert to blob URL for display
+                // Backend returns base64 data URL - convert to blob for compression
                 const base64Data = data.imageDataUrl;
 
                 // Convert base64 data URL to blob
                 const response = await fetch(base64Data);
                 const blob = await response.blob();
 
-                // Create blob URL for temporary display (same workflow as crop completion)
-                const blobUrl = URL.createObjectURL(blob);
+                // Compress image using same settings as drag & drop workflow (400px max, 0.75 quality)
+                const compressedFile = await imageCompression(
+                    new File([blob], "ai-generated.png", { type: blob.type }),
+                    { initialQuality: 0.75, maxWidthOrHeight: 400, useWebWorker: true }
+                );
 
-                // Set both base64 and blob URL (mimics the crop modal completion flow)
-                setValues({ imageBase64: base64Data, imagePath: blobUrl });
+                // Convert compressed image to base64 and blob URL
+                const compressedBase64 = await toBase64(compressedFile);
+                const blobUrl = URL.createObjectURL(compressedFile);
+
+                // Set both base64 and blob URL, and mark as AI-generated
+                setValues({ imageBase64: compressedBase64 as string, imagePath: blobUrl, isAiGeneratedImage: true });
                 showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
             } catch (error) {
                 showErrorToast(t("aiImageGenerationError"), { message: "Failed to process generated image" });
@@ -279,8 +288,8 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                             height={400}
                             imageHash={menuItem?.image?.blurHash}
                             imageUrl={values?.imagePath}
-                            onImageCrop={(imageBase64, imagePath) => setValues({ imageBase64, imagePath })}
-                            onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "" })}
+                            onImageCrop={(imageBase64, imagePath) => setValues({ imageBase64, imagePath, isAiGeneratedImage: false })}
+                            onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "", isAiGeneratedImage: false })}
                             width={400}
                         />
                         {isImageAIAvailable && values.name && values.description && (
