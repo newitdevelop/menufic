@@ -19,6 +19,7 @@ import { BannerForm } from "src/components/Forms/BannerForm";
 import { PublishButton } from "src/components/PublishButton";
 import { env } from "src/env/client.mjs";
 import { api } from "src/utils/api";
+import { loadTranslations } from "src/utils/loadTranslations";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 
 /** ImageCard component that represents each banner with delete functionality */
@@ -157,7 +158,7 @@ const BannersPage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: (await import("src/lang/en.json")).default } });
+export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export const getStaticPaths = async () => ({ fallback: "blocking", paths: [] });
 

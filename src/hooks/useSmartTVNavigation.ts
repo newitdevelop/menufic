@@ -31,7 +31,9 @@ export const useSmartTVNavigation = ({
     const isModalOpenRef = useRef<boolean>(false);
 
     useEffect(() => {
-        if (!enabled) return;
+        if (!enabled) {
+            return () => {}; // Return empty cleanup function for consistent return type
+        }
 
         const handleKeyDown = (event: KeyboardEvent) => {
             // Get all menu item cards

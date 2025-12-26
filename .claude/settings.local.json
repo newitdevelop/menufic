@@ -27,7 +27,9 @@
       "Bash(npm outdated:*)",
       "Bash(node:*)",
       "Bash(npm help:*)",
-      "Bash(npx prisma generate:*)"
+      "Bash(npx prisma generate:*)",
+      "Bash(npm install:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

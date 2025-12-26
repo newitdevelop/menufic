@@ -8,6 +8,7 @@ import { AppShell } from "src/components/AppShell";
 import { ImageCard } from "src/components/Cards";
 import { Empty } from "src/components/Empty";
 import { api } from "src/utils/api";
+import { loadTranslations } from "src/utils/loadTranslations";
 import { showErrorToast } from "src/utils/helpers";
 
 /** Page that will allow logged in users to view all of the published restaurant menus */
@@ -61,6 +62,6 @@ const ExplorePage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: (await import("src/lang/en.json")).default } });
+export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export default ExplorePage;

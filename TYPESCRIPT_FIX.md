@@ -157,5 +157,59 @@ Using **hardcoded media query strings** is the cleanest solution that:
 ---
 
 **Date:** 2025-12-26
-**Status:** ✅ Fixed
+**Status:** ✅ Fixed - All TypeScript/ESLint Errors Resolved
 **Impact:** Build now compiles successfully
+
+## Additional Fix: ESLint consistent-return
+
+### Issue
+After implementing Smart TV navigation hook, ESLint reported:
+```
+./src/hooks/useSmartTVNavigation.ts
+136:9  Error: Arrow function expected no return value.  consistent-return
+```
+
+### Root Cause
+The `useEffect` hook had inconsistent return types:
+- Early return when disabled: `return;` (returns `undefined`)
+- Normal execution: `return () => { ... };` (returns cleanup function)
+
+### Solution
+Changed early return to return an empty cleanup function:
+```typescript
+// Before (ERROR):
+useEffect(() => {
+    if (!enabled) return; // Returns undefined
+
+    // ... setup code ...
+
+    return () => {  // Returns cleanup function
+        // ... cleanup code ...
+    };
+}, [dependencies]);
+
+// After (FIXED):
+useEffect(() => {
+    if (!enabled) {
+        return () => {}; // Returns empty cleanup function
+    }
+
+    // ... setup code ...
+
+    return () => {
+        // ... cleanup code ...
+    };
+}, [dependencies]);
+```
+
+### Why This Works
+- Both code paths now return a function (consistent return type)
+- When disabled, returns empty cleanup (no-op, no performance impact)
+- When enabled, returns actual cleanup function
+- ESLint's `consistent-return` rule is satisfied
+
+---
+
+**Date:** 2025-12-26
+**Status:** ✅ All Build Errors Fixed
+**Impact:** TypeScript compiles successfully, ESLint passes, ready for Docker build

@@ -266,7 +266,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 <Tabs.List>
                     {restaurant?.menus?.map((menu) => (
                         <Tabs.Tab key={menu.id} px="lg" value={menu.id}>
-                            <Text color={theme.black} size="lg" translate="yes" weight={selectedMenu === menu.id ? "bold" : "normal"}>
+                            <Text color={theme.black} size="lg" translate="no" weight={selectedMenu === menu.id ? "bold" : "normal"}>
                                 {menu.name}
                             </Text>
                             <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">
@@ -315,7 +315,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     ?.filter((category) => category?.items.length)
                     ?.map((category) => (
                         <Box key={category.id}>
-                            <Text my="lg" size="lg" translate="yes" weight={600}>
+                            <Text my="lg" size="lg" translate="no" weight={600}>
                                 {category.name}
                             </Text>
                             <SimpleGrid

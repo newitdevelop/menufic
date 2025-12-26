@@ -8,6 +8,7 @@ import { NextSeo } from "next-seo";
 import { Footer } from "src/components/Footer";
 import { NavHeader } from "src/components/Header";
 import { env } from "src/env/client.mjs";
+import { loadTranslations } from "src/utils/loadTranslations";
 
 /**
  * Privacy policy generated using freeprivacypolicy.com
@@ -180,6 +181,6 @@ const PrivacyPolicyPage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: (await import("src/lang/en.json")).default } });
+export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export default PrivacyPolicyPage;

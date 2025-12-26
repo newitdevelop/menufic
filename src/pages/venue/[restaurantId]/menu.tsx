@@ -14,6 +14,7 @@ import { env } from "src/env/client.mjs";
 import { appRouter } from "src/server/api/root";
 import { createInnerTRPCContext } from "src/server/api/trpc";
 import { api } from "src/utils/api";
+import { loadTranslations } from "src/utils/loadTranslations";
 
 /** Restaurant menu page that will be shared publicly */
 const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId: restaurantIdProp }) => {
@@ -75,7 +76,7 @@ export async function getStaticProps(context: GetStaticPropsContext<{ restaurant
         transformer: superjson,
     });
     const restaurantId = context.params?.restaurantId as string;
-    const messages = (await import("src/lang/en.json")).default;
+    const messages = await loadTranslations("en");
     try {
         const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
         if (restaurant.isPublished) {

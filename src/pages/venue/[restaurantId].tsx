@@ -11,6 +11,7 @@ import { AppShell } from "src/components/AppShell";
 import { IconCard } from "src/components/Cards";
 import { PublishButton } from "src/components/PublishButton";
 import { api } from "src/utils/api";
+import { loadTranslations } from "src/utils/loadTranslations";
 import { showErrorToast } from "src/utils/helpers";
 
 /** Page to manage all the options under the restaurant */
@@ -98,7 +99,7 @@ const RestaurantManagePage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: (await import("src/lang/en.json")).default } });
+export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export const getStaticPaths = async () => ({ fallback: "blocking", paths: [] });
 

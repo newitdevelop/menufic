@@ -16,6 +16,7 @@ import { DeleteConfirmModal } from "src/components/DeleteConfirmModal";
 import { RestaurantForm } from "src/components/Forms/RestaurantForm";
 import { env } from "src/env/client.mjs";
 import { api } from "src/utils/api";
+import { loadTranslations } from "src/utils/loadTranslations";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 
 /** Image card that will represent each restaurant that the user created */
@@ -125,6 +126,6 @@ const RestaurantsListPage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: (await import("src/lang/en.json")).default } });
+export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export default RestaurantsListPage;
