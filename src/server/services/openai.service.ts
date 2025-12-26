@@ -27,71 +27,45 @@ export async function detectAllergensWithAI(
 
     const availableAllergens = allergenCodes.filter((code) => code !== "none");
 
-    const systemPrompt = `You are an expert food allergen detection assistant specializing in European food safety regulations. Your job is to analyze menu items and identify ALL allergens that are likely present based on EU Regulation 1169/2011.
+    const systemPrompt = `You are an expert food allergen detection assistant. Analyze menu items and identify ALL allergens present according to EU Regulation 1169/2011.
 
-CRITICAL RULES:
-1. Be ACCURATE - Only detect allergens that are actually in the dish
-2. Be THOROUGH - Don't miss any allergens in explicitly mentioned ingredients
-3. Consider TRADITIONAL RECIPES - Know what typically goes into classic dishes
-4. Be SPECIFIC to the exact dish described - don't make assumptions beyond what's reasonable
-
-The 14 EU mandatory allergens you must detect:
-1. cereals - Cereals containing gluten (wheat, rye, barley, oats, spelt, kamut, khorasan)
-   Examples: bread, pasta, pizza dough, breaded items, soy sauce, beer batter
-2. crustaceans - Crustaceans and products thereof
-   Examples: crab, lobster, prawns, shrimp, langoustine, crayfish
-3. eggs - Eggs and egg products
-   Examples: mayonnaise, pasta (fresh), meringue, batter, aioli
-4. fish - Fish and fish products
-   Examples: all fish species, fish sauce, worcestershire sauce, caesar dressing
+The 14 EU mandatory allergens:
+1. cereals - Gluten-containing cereals (wheat, rye, barley, oats, spelt, kamut). Note: Rice, corn, quinoa are gluten-free.
+2. crustaceans - Crab, lobster, prawns, shrimp, crayfish
+3. eggs - All egg products
+4. fish - All fish and fish-based products (including fish sauce, worcestershire sauce)
 5. peanuts - Peanuts and peanut products
-   Examples: peanut butter, satay sauce, peanut oil
-6. soybeans - Soybeans and soy products
-   Examples: soy sauce, tofu, edamame, tempeh, miso
-7. milk - Milk and dairy products (including lactose)
-   Examples: cheese, butter, cream, yogurt, whey, milk powder
-8. nuts - Tree nuts (almonds, hazelnuts, walnuts, cashews, pecans, pistachios, macadamia, brazil nuts, pine nuts)
-   Examples: pesto (pine nuts), almond milk, nut oils
+6. soybeans - Soy products (soy sauce, tofu, tempeh, miso)
+7. milk - All dairy products (cheese, butter, cream, yogurt, whey)
+8. nuts - Tree nuts (almonds, hazelnuts, walnuts, cashews, pecans, pistachios, pine nuts, etc.)
 9. celery - Celery and celery products
-   Examples: celery stalks, celery salt, celery in stocks/broths
-10. mustard - Mustard and mustard products
-    Examples: mustard sauce, mustard powder, vinaigrette
-11. sesame - Sesame seeds and sesame products
-    Examples: tahini, sesame oil, hamburger buns with seeds
-12. sulphites - Sulphur dioxide and sulphites at >10mg/kg or >10mg/litre
-    Examples: wine, dried fruits, some vinegars, processed potatoes
-13. lupin - Lupin and lupin products
-    Examples: lupin flour, lupin seeds (rare but check)
-14. molluscs - Molluscs and mollusc products
-    Examples: mussels, oysters, clams, squid, octopus, snails
+10. mustard - Mustard seeds, powder, sauce
+11. sesame - Sesame seeds and products
+12. sulphites - In wine, dried fruits, vinegars (>10mg/kg)
+13. lupin - Lupin flour and products
+14. molluscs - Mussels, oysters, clams, squid, octopus, snails
 
-Return ONLY a JSON object:
+Use your culinary knowledge to detect allergens from:
+- Explicitly mentioned ingredients
+- Traditional recipe components
+- Common preparation methods
+- Typical sauces and condiments
+- Hidden ingredients in standard dishes
+
+Return JSON format:
 {
   "allergens": ["code1", "code2"],
-  "reasoning": "Concise explanation of detected allergens"
+  "reasoning": "Brief explanation"
 }
 
-If NO allergens are present, return: {"allergens": [], "reasoning": "No major allergens detected"}`;
+If no allergens detected: {"allergens": [], "reasoning": "No allergens detected"}`;
 
-    const userPrompt = `Analyze this EXACT menu item for allergens:
+    const userPrompt = `Analyze this menu item for all allergens:
 
 NAME: "${itemName}"
 DESCRIPTION: "${itemDescription}"
 
-Detect allergens by analyzing:
-1. EXPLICIT INGREDIENTS mentioned in the description
-2. TRADITIONAL/TYPICAL ingredients for dishes with this name
-3. PREPARATION METHODS that introduce allergens (e.g., "creamy" = milk, "breaded" = cereals)
-4. SAUCES AND CONDIMENTS that commonly contain allergens
-5. HIDDEN INGREDIENTS in standard recipes
-
-IMPORTANT:
-- Focus on what THIS SPECIFIC DISH contains based on its name and description
-- Don't flag allergens from unlikely cross-contamination
-- If the description says "gluten-free" or explicitly excludes something, don't flag it
-- Be precise to the actual ingredients mentioned or typically used
-
-Return ONLY the JSON response with allergen codes and brief reasoning.`;
+Identify all allergens using your knowledge of ingredients and traditional recipes.`;
 
     try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -139,7 +113,7 @@ Return ONLY the JSON response with allergen codes and brief reasoning.`;
             console.log(`AI Allergen Detection - ${itemName}:`, result.reasoning);
         }
 
-        // If no allergens detected, return ["none"]
+        // If no allergens detected, return ["none"] (required field for edible items)
         if (validAllergens.length === 0) {
             return ["none"];
         }
