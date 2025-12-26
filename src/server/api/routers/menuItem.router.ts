@@ -6,7 +6,8 @@ import type { Image, MenuItem, Prisma } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
-import { categoryId, id, menuId, menuItemInput, menuItemInputBase } from "src/utils/validators";
+import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
+import { allergenCodes, categoryId, id, menuId, menuItemInput, menuItemInputBase } from "src/utils/validators";
 
 export const menuItemRouter = createTRPCRouter({
     /** Create a new menu item under a category of a restaurant menu */
@@ -151,4 +152,31 @@ export const menuItemRouter = createTRPCRouter({
                 )
             )
         ),
+
+    /** Detect allergens using AI for a menu item */
+    detectAllergensAI: protectedProcedure
+        .input(z.object({ name: z.string(), description: z.string() }))
+        .mutation(async ({ input }) => {
+            if (!isAllergenAIAvailable()) {
+                throw new TRPCError({
+                    code: "PRECONDITION_FAILED",
+                    message: "AI allergen detection is not available. OpenAI API key not configured.",
+                });
+            }
+
+            try {
+                const allergens = await detectAllergensWithAI(input.name, input.description);
+                return { allergens };
+            } catch (error) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: error instanceof Error ? error.message : "Failed to detect allergens",
+                });
+            }
+        }),
+
+    /** Check if AI allergen detection is available */
+    isAllergenAIAvailable: protectedProcedure.query(() => ({
+        available: isAllergenAIAvailable(),
+    })),
 });

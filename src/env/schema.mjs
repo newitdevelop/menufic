@@ -27,6 +27,7 @@ export const serverSchema = z.object({
         process.env.VERCEL ? z.string() : z.string().url()
     ),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    OPENAI_API_KEY: z.string().optional(), // OpenAI API key for AI-powered allergen detection
     SENTRY_AUTH_TOKEN: z.string().optional(),
     SENTRY_ORG: z.string().optional(),
     SENTRY_PROJECT: z.string().optional(),

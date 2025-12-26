@@ -30,6 +30,19 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
 
+    // Check if AI allergen detection is available
+    const { data: aiAvailability } = api.menuItem.isAllergenAIAvailable.useQuery();
+    const isAIAvailable = aiAvailability?.available ?? false;
+
+    // AI allergen detection mutation
+    const { mutate: detectAllergensAI, isLoading: isDetectingAllergens } = api.menuItem.detectAllergensAI.useMutation({
+        onError: (err: unknown) => showErrorToast(t("aiDetectionError"), err as { message: string }),
+        onSuccess: (data: any) => {
+            setValues({ allergens: data.allergens });
+            showSuccessToast(tCommon("success"), t("aiDetectionSuccess"));
+        },
+    });
+
     const { mutate: createMenuItem, isLoading: isCreating } = api.menuItem.create.useMutation({
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
@@ -192,19 +205,44 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                         }}
                     />
                     {values.isEdible && (
-                        <MultiSelect
-                            data={allergenCodes.map((code) => ({
-                                label: tCommon(`allergens.${code}`),
-                                value: code,
-                            }))}
-                            description={t("allergensDescription")}
-                            disabled={loading}
-                            label={t("allergensLabel")}
-                            placeholder={t("allergensRequired")}
-                            searchable
-                            withAsterisk
-                            {...getInputProps("allergens")}
-                        />
+                        <Stack spacing="xs">
+                            <MultiSelect
+                                data={allergenCodes.map((code) => ({
+                                    label: tCommon(`allergens.${code}`),
+                                    value: code,
+                                }))}
+                                description={t("allergensDescription")}
+                                disabled={loading || isDetectingAllergens}
+                                label={t("allergensLabel")}
+                                placeholder={t("allergensRequired")}
+                                searchable
+                                withAsterisk
+                                {...getInputProps("allergens")}
+                            />
+                            {isAIAvailable && values.name && values.description && (
+                                <Button
+                                    compact
+                                    disabled={loading || isDetectingAllergens}
+                                    loading={isDetectingAllergens}
+                                    onClick={() => {
+                                        // If allergens are already selected, confirm before overriding
+                                        if (values.allergens.length > 0) {
+                                            // eslint-disable-next-line no-alert
+                                            if (!window.confirm(t("aiDetectConfirmOverride"))) {
+                                                return;
+                                            }
+                                        }
+                                        detectAllergensAI({
+                                            name: values.name,
+                                            description: values.description,
+                                        });
+                                    }}
+                                    variant="light"
+                                >
+                                    {t("aiDetectAllergensButton")}
+                                </Button>
+                            )}
+                        </Stack>
                     )}
                     <ImageUpload
                         disabled={loading}

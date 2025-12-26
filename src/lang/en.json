@@ -304,7 +304,11 @@
                 "allergensLabel": "Allergens",
                 "allergensDescription": "Select all allergens present in this product (required for edible items)",
                 "allergensRequired": "Please select allergens for edible products",
-                "allergensInfo": "Might contain the following allergens"
+                "allergensInfo": "Might contain the following allergens",
+                "aiDetectAllergensButton": "🤖 Detect Allergens with AI",
+                "aiDetectionError": "Failed to detect allergens with AI",
+                "aiDetectionSuccess": "Allergens detected successfully",
+                "aiDetectConfirmOverride": "This will replace your current allergen selections with AI-detected allergens. Continue?"
             }
         },
         "venue": {
