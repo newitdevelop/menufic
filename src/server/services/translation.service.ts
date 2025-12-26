@@ -101,12 +101,30 @@ export async function getOrCreateTranslation(
     // Validate new translation before caching
     const isValid = isTranslationValid(originalText, translated, targetLang, sourceLang);
     if (!isValid) {
-        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${targetLang}. Returning original text.`);
-        // Don't cache invalid translations
-        return translated; // Return anyway, but don't cache
+        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${targetLang}.`);
+        console.log(`[Translation] Caching invalid translation to prevent repeated API calls. Will be auto-corrected when DeepL works.`);
+
+        // Cache the invalid translation anyway to prevent repeated API calls
+        // This saves money by not calling DeepL repeatedly for the same failing translation
+        // The validation will catch it next time and retry if DeepL is working again
+        try {
+            await prisma.translation.create({
+                data: {
+                    entityType,
+                    entityId,
+                    language: targetLang.toUpperCase(),
+                    field,
+                    translated,
+                },
+            });
+        } catch (error) {
+            console.warn("Failed to cache invalid translation:", error);
+        }
+
+        return translated;
     }
 
-    // Save to cache
+    // Save valid translation to cache
     try {
         await prisma.translation.create({
             data: {
