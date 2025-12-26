@@ -278,6 +278,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             </Tabs>
             {menuDetails && (
                 <Stack spacing="xs" mb="lg">
+                    {(menuDetails as any).reservations && (
+                        <Flex align="center" gap={8}>
+                            <IconCalendar size={16} color={theme.colors.primary[6]} />
+                            <a href={(menuDetails as any).reservations} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'underline' }}>
+                                <Text size="sm" translate="yes" weight={600} color={theme.colors.primary[6]}>{t("reservations")}</Text>
+                            </a>
+                        </Flex>
+                    )}
                     {menuDetails.telephone && (
                         <Flex align="center" gap={8}>
                             <IconPhone size={16} />
@@ -291,14 +299,6 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             <IconMail size={16} />
                             <a href={`mailto:${menuDetails.email}`}>
                                 <Text size="sm" translate="no">{menuDetails.email}</Text>
-                            </a>
-                        </Flex>
-                    )}
-                    {(menuDetails as any).reservations && (
-                        <Flex align="center" gap={8}>
-                            <IconCalendar size={16} />
-                            <a href={(menuDetails as any).reservations} rel="noopener noreferrer" target="_blank">
-                                <Text size="sm" translate="yes">{t("reservations")}</Text>
                             </a>
                         </Flex>
                     )}

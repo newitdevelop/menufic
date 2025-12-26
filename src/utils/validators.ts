@@ -115,15 +115,15 @@ export const restaurantInput = z.object({
     privacyPolicyUrl: z
         .string()
         .trim()
-        .optional()
         .transform((val) => (val === "" ? undefined : val))
-        .pipe(z.string().url("Invalid URL").optional()),
+        .pipe(z.string().url("Invalid URL").optional())
+        .optional(),
     termsAndConditionsUrl: z
         .string()
         .trim()
-        .optional()
         .transform((val) => (val === "" ? undefined : val))
-        .pipe(z.string().url("Invalid URL").optional()),
+        .pipe(z.string().url("Invalid URL").optional())
+        .optional(),
 });
 export const bannerInput = z.object({
     imageBase64: z.string().min(1, "Image is required"),
