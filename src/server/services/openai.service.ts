@@ -2,8 +2,45 @@ import { env } from "src/env/server.mjs";
 import { allergenCodes } from "src/utils/validators";
 
 /**
- * OpenAI Service for AI-powered allergen detection
+ * OpenAI Service Configuration
+ * Centralized configuration for all OpenAI API calls
+ *
+ * Model Selection Rationale (as of January 2025):
+ * - Text Analysis: gpt-4o-mini - Best cost/performance for structured outputs like allergen detection
+ * - Image Generation: dall-e-3 - Latest DALL-E model with best quality
+ *
+ * Update these models as newer versions become available
  */
+export const OPENAI_CONFIG = {
+    /**
+     * Model for text analysis tasks (allergen detection, content analysis, etc.)
+     * gpt-4o-mini: Affordable and intelligent - ideal for structured JSON outputs
+     * Cost: ~$0.00006 per request for allergen detection
+     */
+    TEXT_MODEL: "gpt-4o-mini" as const,
+
+    /**
+     * Model for image generation tasks
+     * dall-e-3: Latest DALL-E model with superior quality and prompt following
+     * Cost: $0.04 per standard 1024x1024 image, $0.08 for HD
+     */
+    IMAGE_MODEL: "dall-e-3" as const,
+
+    /**
+     * Image generation settings optimized for menu item display (400x400px in app)
+     */
+    IMAGE_SETTINGS: {
+        size: "1024x1024" as const, // Smallest DALL-E 3 size, sufficient for 400x400 display
+        quality: "standard" as const, // Standard quality ($0.04) vs HD ($0.08)
+    },
+} as const;
+
+/**
+ * Check if OpenAI API is available
+ */
+export function isOpenAIAvailable(): boolean {
+    return !!env.OPENAI_API_KEY;
+}
 
 interface AllergenDetectionResponse {
     allergens: (typeof allergenCodes)[number][];
@@ -20,8 +57,7 @@ export async function detectAllergensWithAI(
     itemName: string,
     itemDescription: string
 ): Promise<(typeof allergenCodes)[number][]> {
-    // Check if OpenAI API key is configured
-    if (!env.OPENAI_API_KEY) {
+    if (!isOpenAIAvailable()) {
         throw new Error("OpenAI API key not configured. Set OPENAI_API_KEY environment variable.");
     }
 
@@ -75,7 +111,7 @@ Identify all allergens using your knowledge of ingredients and traditional recip
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini", // Using mini for cost-effectiveness
+                model: OPENAI_CONFIG.TEXT_MODEL,
                 messages: [
                     { role: "system", content: systemPrompt },
                     { role: "user", content: userPrompt },
@@ -130,18 +166,18 @@ Identify all allergens using your knowledge of ingredients and traditional recip
  * @returns true if OpenAI API key is configured
  */
 export function isAllergenAIAvailable(): boolean {
-    return !!env.OPENAI_API_KEY;
+    return isOpenAIAvailable();
 }
 
 /**
  * Generate a realistic food image using DALL-E 3
+ * Downloads the image from OpenAI and converts to base64 data URL
  * @param itemName Name of the menu item
  * @param itemDescription Description of the menu item
- * @returns Base64 encoded image data
+ * @returns Base64 data URL (data:image/png;base64,...)
  */
 export async function generateFoodImage(itemName: string, itemDescription: string): Promise<string> {
-    // Check if OpenAI API key is configured
-    if (!env.OPENAI_API_KEY) {
+    if (!isOpenAIAvailable()) {
         throw new Error("OpenAI API key not configured. Set OPENAI_API_KEY environment variable.");
     }
 
@@ -159,11 +195,11 @@ appetizing presentation, Michelin-star quality, photorealistic.`;
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                model: "dall-e-3",
+                model: OPENAI_CONFIG.IMAGE_MODEL,
                 prompt,
                 n: 1,
-                size: "1024x1024", // DALL-E 3 only supports 1024x1024, 1792x1024, 1024x1792. Using 1024x1024 for efficiency (app displays at 400x400)
-                quality: "standard", // Standard quality ($0.04) vs HD ($0.08) - sufficient for 400x400 display
+                size: OPENAI_CONFIG.IMAGE_SETTINGS.size,
+                quality: OPENAI_CONFIG.IMAGE_SETTINGS.quality,
             }),
         });
 
@@ -181,9 +217,19 @@ appetizing presentation, Michelin-star quality, photorealistic.`;
             throw new Error("No image URL returned from OpenAI API");
         }
 
-        // Return the temporary URL directly (valid for 1 hour from OpenAI)
-        // Frontend will download and convert to base64 to avoid API response size limits
-        return imageUrl;
+        // Download the image from OpenAI on the backend to avoid CORS issues
+        const imageResponse = await fetch(imageUrl);
+
+        if (!imageResponse.ok) {
+            throw new Error(`Failed to download generated image: ${imageResponse.status} ${imageResponse.statusText}`);
+        }
+
+        // Convert to buffer and then to base64 data URL
+        const imageBuffer = await imageResponse.arrayBuffer();
+        const base64 = Buffer.from(imageBuffer).toString('base64');
+        const dataUrl = `data:image/png;base64,${base64}`;
+
+        return dataUrl;
     } catch (error) {
         console.error("Error generating image with DALL-E:", error);
         throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -195,5 +241,5 @@ appetizing presentation, Michelin-star quality, photorealistic.`;
  * @returns true if OpenAI API key is configured
  */
 export function isImageAIAvailable(): boolean {
-    return !!env.OPENAI_API_KEY;
+    return isOpenAIAvailable();
 }

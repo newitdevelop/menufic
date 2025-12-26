@@ -199,8 +199,8 @@ export const menuItemRouter = createTRPCRouter({
             }
 
             try {
-                const imageUrl = await generateFoodImage(input.name, input.description);
-                return { imageUrl };
+                const imageDataUrl = await generateFoodImage(input.name, input.description);
+                return { imageDataUrl };
             } catch (error) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

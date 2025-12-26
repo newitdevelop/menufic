@@ -80,20 +80,21 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         onError: (err: unknown) => showErrorToast(t("aiImageGenerationError"), err as { message: string }),
         onSuccess: async (data: any) => {
             try {
-                // Download the image from OpenAI's temporary URL
-                const response = await fetch(data.imageUrl);
+                // Backend returns base64 data URL - convert to blob URL for display
+                const base64Data = data.imageDataUrl;
+
+                // Convert base64 data URL to blob
+                const response = await fetch(base64Data);
                 const blob = await response.blob();
 
-                // Convert to base64 data URL
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    const base64String = reader.result as string;
-                    setValues({ imageBase64: base64String, imagePath: "" });
-                    showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
-                };
-                reader.readAsDataURL(blob);
+                // Create blob URL for temporary display (same workflow as crop completion)
+                const blobUrl = URL.createObjectURL(blob);
+
+                // Set both base64 and blob URL (mimics the crop modal completion flow)
+                setValues({ imageBase64: base64Data, imagePath: blobUrl });
+                showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
             } catch (error) {
-                showErrorToast(t("aiImageGenerationError"), { message: "Failed to download generated image" });
+                showErrorToast(t("aiImageGenerationError"), { message: "Failed to process generated image" });
             }
         },
     });
