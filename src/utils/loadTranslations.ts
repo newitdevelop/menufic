@@ -11,13 +11,13 @@ export async function loadTranslations(locale?: string): Promise<AbstractIntlMes
     // Default to English
     if (!locale || locale.toLowerCase() === "en") {
         const enMessages = await import("src/lang/en.json");
-        return enMessages.default as AbstractIntlMessages;
+        return enMessages.default as unknown as AbstractIntlMessages;
     }
 
     // Try to load the requested language
     try {
         const messages = await import(`src/lang/${locale.toLowerCase()}.json`);
-        return messages.default as AbstractIntlMessages;
+        return messages.default as unknown as AbstractIntlMessages;
     } catch (error) {
         // Language file doesn't exist, fall back to English
         console.warn(
@@ -25,6 +25,6 @@ export async function loadTranslations(locale?: string): Promise<AbstractIntlMes
                 `Run "npm run translate" to generate missing translations.`
         );
         const enMessages = await import("src/lang/en.json");
-        return enMessages.default as AbstractIntlMessages;
+        return enMessages.default as unknown as AbstractIntlMessages;
     }
 }
