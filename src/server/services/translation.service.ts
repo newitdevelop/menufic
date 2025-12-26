@@ -205,6 +205,8 @@ export async function translateCategory(category: { id: string; name: string }, 
 /**
  * Translate a menu with its fields
  * Source language is Portuguese (PT) - the default content language
+ * NOTE: Menu name and availableTime are NOT translated (brand names and times should stay as-is)
+ * Only the message field is translated
  */
 export async function translateMenu(
     menu: { id: string; name: string; availableTime: string; message?: string | null },
@@ -215,17 +217,16 @@ export async function translateMenu(
         return menu;
     }
 
-    const translations = await Promise.all([
-        getOrCreateTranslation("menu", menu.id, "name", menu.name, targetLang, "PT"),
-        getOrCreateTranslation("menu", menu.id, "availableTime", menu.availableTime, targetLang, "PT"),
-        menu.message ? getOrCreateTranslation("menu", menu.id, "message", menu.message, targetLang, "PT") : Promise.resolve(menu.message),
-    ]);
+    // Only translate the message field, keep name and availableTime unchanged
+    const translatedMessage = menu.message
+        ? await getOrCreateTranslation("menu", menu.id, "message", menu.message, targetLang, "PT")
+        : menu.message;
 
     return {
         ...menu,
-        name: translations[0],
-        availableTime: translations[1],
-        message: translations[2],
+        // name: keep original (brand names should not be translated)
+        // availableTime: keep original (time formats should stay consistent)
+        message: translatedMessage,
     };
 }
 
