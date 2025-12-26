@@ -37,6 +37,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         description: string;
         imageBase64: string;
         imagePath: string;
+        isAiGeneratedImage: boolean;
         name: string;
         price: string;
         vatIncluded: boolean;
