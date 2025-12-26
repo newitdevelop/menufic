@@ -252,8 +252,8 @@ export const restaurantRouter = createTRPCRouter({
             contactNo: input.contactNo,
             location: input.location,
             name: input.name,
-            privacyPolicyUrl: input.privacyPolicyUrl,
-            termsAndConditionsUrl: input.termsAndConditionsUrl,
+            privacyPolicyUrl: input.privacyPolicyUrl ?? null,
+            termsAndConditionsUrl: input.termsAndConditionsUrl ?? null,
         };
 
         const transactions: (Prisma.Prisma__ImageClient<Image> | Prisma.Prisma__RestaurantClient<Restaurant>)[] = [];
