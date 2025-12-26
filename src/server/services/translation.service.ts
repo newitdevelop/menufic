@@ -2,7 +2,7 @@ import { prisma } from "src/server/db";
 import { translateWithDeepL } from "src/utils/deepl";
 
 type EntityType = "menuItem" | "category" | "menu";
-type TranslatableField = "name" | "description" | "availableTime" | "message";
+type TranslatableField = "name" | "description" | "availableTime" | "message" | "aiImageDisclaimer" | "imageDisclaimer" | string;
 
 /**
  * Get or create translation for a specific entity field

@@ -145,6 +145,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                 description: menuItem?.description || "",
                 imageBase64: "",
                 imagePath: menuItem?.image?.path || "",
+                isAiGeneratedImage: menuItem?.image?.isAiGenerated || false,
                 name: menuItem?.name || "",
                 price: menuItem?.price || "",
                 vatIncluded: menuItem?.vatIncluded ?? true,
