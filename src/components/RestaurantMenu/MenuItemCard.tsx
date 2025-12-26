@@ -33,16 +33,16 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             gap: 0,
             overflow: "hidden",
             padding: theme.spacing.lg,
-            [`@media (min-width: ${theme.breakpoints.tv})`]: { padding: theme.spacing.xl * 1.5 },
-            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { padding: theme.spacing.xl * 2 },
+            "@media (min-width: 120em)": { padding: theme.spacing.xl * 1.5 }, // 1920px Smart TV
+            "@media (min-width: 240em)": { padding: theme.spacing.xl * 2 }, // 3840px 4K TV
         },
         cardImage: {
             height: 150,
             ref: image,
             transition: "transform 500ms ease",
             width: 150,
-            [`@media (min-width: ${theme.breakpoints.tv})`]: { height: 240, width: 240 },
-            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { height: 360, width: 360 },
+            "@media (min-width: 120em)": { height: 240, width: 240 }, // 1920px Smart TV
+            "@media (min-width: 240em)": { height: 360, width: 360 }, // 3840px 4K TV
         },
         cardImageWrap: {
             borderRadius: theme.radius.lg,
@@ -50,8 +50,8 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             overflow: "hidden",
             position: "relative",
             width: 150,
-            [`@media (min-width: ${theme.breakpoints.tv})`]: { height: 240, width: 240 },
-            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { height: 360, width: 360 },
+            "@media (min-width: 120em)": { height: 240, width: 240 }, // 1920px Smart TV
+            "@media (min-width: 240em)": { height: 360, width: 360 }, // 3840px 4K TV
         },
         cardItem: {
             "&:hover": {
@@ -110,10 +110,10 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                 data-testid="menu-item-card"
                 h={150}
                 onClick={() => setModalVisible(true)}
-                sx={(theme) => ({
-                    [`@media (min-width: ${theme.breakpoints.tv})`]: { height: 240 },
-                    [`@media (min-width: ${theme.breakpoints["4k"]})`]: { height: 360 },
-                })}
+                sx={{
+                    "@media (min-width: 120em)": { height: 240 }, // 1920px Smart TV
+                    "@media (min-width: 240em)": { height: 360 }, // 3840px 4K TV
+                }}
                 tabIndex={0}
             >
                 {item?.image?.path && (
@@ -137,10 +137,10 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         size="lg"
                         translate="yes"
                         weight={700}
-                        sx={(theme) => ({
-                            [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "28px" },
-                            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "42px" },
-                        })}
+                        sx={{
+                            "@media (min-width: 120em)": { fontSize: "28px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "42px" }, // 3840px 4K TV
+                        }}
                     >
                         {item.name}
                     </Text>
@@ -148,10 +148,10 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         color="red"
                         size="sm"
                         translate="no"
-                        sx={(theme) => ({
-                            [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "20px" },
-                            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "30px" },
-                        })}
+                        sx={{
+                            "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "30px" }, // 3840px 4K TV
+                        }}
                     >
                         {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% VAT included)
                     </Text>
@@ -160,10 +160,10 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         opacity={0.7}
                         size="xs"
                         translate="yes"
-                        sx={(theme) => ({
-                            [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "18px" },
-                            [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "26px" },
-                        })}
+                        sx={{
+                            "@media (min-width: 120em)": { fontSize: "18px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "26px" }, // 3840px 4K TV
+                        }}
                     >
                         {item.description}
                     </Text>

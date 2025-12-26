@@ -11,8 +11,8 @@ const useStyles = createStyles((theme) => ({
     copyRights: {
         color: theme.colors.dark[9],
         fontSize: theme.fontSizes.sm,
-        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "20px" },
-        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "32px" },
+        "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: "32px" }, // 3840px 4K TV
     },
     footer: { background: theme.colors.dark[0], height: "100%" },
     inner: {
@@ -41,8 +41,8 @@ const useStyles = createStyles((theme) => ({
     links: {
         color: theme.colors.dark[9],
         fontSize: theme.fontSizes.sm,
-        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "18px" },
-        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "28px" },
+        "@media (min-width: 120em)": { fontSize: "18px" }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: "28px" }, // 3840px 4K TV
         [theme.fn.smallerThan("sm")]: {
             marginTop: 0,
             width: "100%",

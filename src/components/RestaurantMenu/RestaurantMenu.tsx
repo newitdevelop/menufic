@@ -72,16 +72,16 @@ const useStyles = createStyles((theme) => ({
     carousalTitleSubText: {
         flex: 1,
         fontSize: 22,
-        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: 36 }, // Smart TV
-        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: 48 }, // 4K TV
+        "@media (min-width: 120em)": { fontSize: 36 }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: 48 }, // 3840px 4K TV
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 18 },
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 14 },
     },
     carousalTitleText: {
         fontSize: 40,
         fontWeight: "bold",
-        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: 64 }, // Smart TV
-        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: 96 }, // 4K TV
+        "@media (min-width: 120em)": { fontSize: 64 }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: 96 }, // 3840px 4K TV
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 30 },
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 24 },
     },
