@@ -72,14 +72,8 @@ export const getMantineTheme = (colorScheme: ColorScheme): MantineThemeOverride 
     loader: "dots",
     primaryColor: "primary",
     white: colorScheme === "light" ? White : Black,
-    // Custom breakpoints for responsive design including Smart TVs (in pixels)
-    breakpoints: {
-        xs: 576,    // Small phones
-        sm: 768,    // Tablets and larger phones
-        md: 992,    // Small laptops
-        lg: 1200,   // Desktops
-        xl: 1408,   // Large desktops
-        tv: 1920,   // Full HD Smart TVs
-        "4k": 3840, // 4K Ultra HD Smart TVs
-    },
+    // Note: Custom Smart TV breakpoints (tv: 1920px, 4k: 3840px) are implemented
+    // directly in component styles using hardcoded media queries like:
+    // "@media (min-width: 120em)" for Full HD TVs (1920px)
+    // "@media (min-width: 240em)" for 4K TVs (3840px)
 });
