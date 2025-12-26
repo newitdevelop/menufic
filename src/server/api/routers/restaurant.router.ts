@@ -239,8 +239,8 @@ export const restaurantRouter = createTRPCRouter({
                 },
             };
 
-            // If no language specified or language is English/Portuguese, add disclaimers but don't translate
-            if (!input.language || input.language.toUpperCase() === "EN" || input.language.toUpperCase() === "PT") {
+            // If no language specified or language is Portuguese, add disclaimers but don't translate
+            if (!input.language || input.language.toUpperCase() === "PT") {
                 const menusWithDisclaimers = await Promise.all(
                     restaurant.menus.map(async (menu) => {
                         const categoriesWithDisclaimers = await Promise.all(
