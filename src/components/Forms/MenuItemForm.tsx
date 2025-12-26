@@ -39,7 +39,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         onError: (err: unknown) => showErrorToast(t("aiDetectionError"), err as { message: string }),
         onSuccess: (data: any) => {
             setValues({ allergens: data.allergens });
-            showSuccessToast(tCommon("success"), t("aiDetectionSuccess"));
+            showSuccessToast(t("aiDetectionSuccess"), t("aiDetectionSuccess"));
         },
     });
 
