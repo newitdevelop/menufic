@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { Badge, Box, Group, Stack, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useTranslations } from "next-intl";
@@ -19,10 +19,20 @@ interface Props extends ModalProps {
 }
 
 /** Modal to view details of a selected menu item */
-export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
+export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...rest }) => {
     const theme = useMantineTheme();
     const tCommon = useTranslations("common");
     const t = useTranslations("dashboard.editMenu.menuItem");
+
+    // Dispatch events for Smart TV navigation
+    useEffect(() => {
+        if (opened) {
+            window.dispatchEvent(new Event("modal:open"));
+        } else {
+            window.dispatchEvent(new Event("modal:close"));
+        }
+    }, [opened]);
+
     const bgColor = useMemo(() => {
         if (menuItem?.image?.color) {
             if (theme.colorScheme === "light") {
@@ -41,6 +51,8 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, ...rest }) => {
         <Modal
             centered
             data-testid="menu-item-card-modal"
+            onClose={onClose}
+            opened={opened}
             styles={{ modal: { background: bgColor } }}
             title={
                 <Text color={theme.black} size="xl" translate="yes" weight="bold">

@@ -23,6 +23,7 @@ import { useTranslations } from "next-intl";
 import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client";
 
 import { Black, White } from "src/styles/theme";
+import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { Empty } from "../Empty";
@@ -71,14 +72,18 @@ const useStyles = createStyles((theme) => ({
     carousalTitleSubText: {
         flex: 1,
         fontSize: 22,
-        [`@media (max-width: ${theme.breakpoints.lg}px)`]: { fontSize: 18 },
-        [`@media (max-width: ${theme.breakpoints.sm}px)`]: { fontSize: 14 },
+        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: 36 }, // Smart TV
+        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: 48 }, // 4K TV
+        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 18 },
+        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 14 },
     },
     carousalTitleText: {
         fontSize: 40,
         fontWeight: "bold",
-        [`@media (max-width: ${theme.breakpoints.lg}px)`]: { fontSize: 30 },
-        [`@media (max-width: ${theme.breakpoints.sm}px)`]: { fontSize: 24 },
+        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: 64 }, // Smart TV
+        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: 96 }, // 4K TV
+        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 30 },
+        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 24 },
     },
     darkFontColor: { color: theme.colors.dark[7] },
     headerImageBox: {
@@ -156,6 +161,15 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     }, [restaurant]);
 
     const haveMenuItems = menuDetails?.categories?.some((category) => category?.items?.length > 0);
+
+    // Smart TV remote control navigation
+    const menuIds = useMemo(() => restaurant?.menus?.map(m => m.id) || [], [restaurant]);
+    useSmartTVNavigation({
+        currentMenuId: selectedMenu,
+        menuIds,
+        onMenuChange: setSelectedMenu,
+        enabled: true,
+    });
 
     return (
         <Box mih="calc(100vh - 100px)">

@@ -8,7 +8,12 @@ import { useTranslations } from "next-intl";
 import { env } from "src/env/client.mjs";
 
 const useStyles = createStyles((theme) => ({
-    copyRights: { color: theme.colors.dark[9], fontSize: theme.fontSizes.sm },
+    copyRights: {
+        color: theme.colors.dark[9],
+        fontSize: theme.fontSizes.sm,
+        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "20px" },
+        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "32px" },
+    },
     footer: { background: theme.colors.dark[0], height: "100%" },
     inner: {
         alignItems: "center",
@@ -35,6 +40,9 @@ const useStyles = createStyles((theme) => ({
     },
     links: {
         color: theme.colors.dark[9],
+        fontSize: theme.fontSizes.sm,
+        [`@media (min-width: ${theme.breakpoints.tv})`]: { fontSize: "18px" },
+        [`@media (min-width: ${theme.breakpoints["4k"]})`]: { fontSize: "28px" },
         [theme.fn.smallerThan("sm")]: {
             marginTop: 0,
             width: "100%",

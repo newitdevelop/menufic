@@ -2,11 +2,25 @@
 
 ## 🚀 Deploy with New Features
 
-Run this command to deploy all the new changes:
+### First Time Deployment (with security fixes):
+Run this command to deploy with automatic security patches:
 
 ```bash
 docker-compose down && git pull origin main && docker build --no-cache -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
 ```
+
+### Subsequent Deployments (skip security fixes):
+After the first build, you can skip the audit fix step for faster builds:
+
+```bash
+docker-compose down && git pull origin main && docker build --no-cache --build-arg SKIP_AUDIT_FIX=1 -t ghcr.io/newitdevelop/menufic:latest . && docker-compose up -d
+```
+
+The security audit fix:
+- ✅ Only runs when safe patches are available
+- ✅ Shows detailed output of what's being fixed
+- ✅ Skips if no vulnerabilities or only breaking changes exist
+- ✅ Can be disabled with `SKIP_AUDIT_FIX=1` build arg
 
 ## What This Does
 
