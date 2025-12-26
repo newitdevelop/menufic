@@ -132,3 +132,76 @@ Identify all allergens using your knowledge of ingredients and traditional recip
 export function isAllergenAIAvailable(): boolean {
     return !!env.OPENAI_API_KEY;
 }
+
+/**
+ * Generate a realistic food image using DALL-E 3
+ * @param itemName Name of the menu item
+ * @param itemDescription Description of the menu item
+ * @returns Base64 encoded image data
+ */
+export async function generateFoodImage(itemName: string, itemDescription: string): Promise<string> {
+    // Check if OpenAI API key is configured
+    if (!env.OPENAI_API_KEY) {
+        throw new Error("OpenAI API key not configured. Set OPENAI_API_KEY environment variable.");
+    }
+
+    // Craft a detailed prompt for professional food photography
+    const prompt = `Professional food photography: ${itemName}. ${itemDescription}.
+High-quality restaurant menu photo, beautifully plated on white dish,
+shot from 45-degree angle, natural lighting, shallow depth of field,
+appetizing presentation, Michelin-star quality, photorealistic.`;
+
+    try {
+        const response = await fetch("https://api.openai.com/v1/images/generations", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${env.OPENAI_API_KEY}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                model: "dall-e-3",
+                prompt,
+                n: 1,
+                size: "1024x1024", // DALL-E 3 only supports 1024x1024, 1792x1024, 1024x1792. Using 1024x1024 for efficiency (app displays at 400x400)
+                quality: "standard", // Standard quality ($0.04) vs HD ($0.08) - sufficient for 400x400 display
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+                `OpenAI API error: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`
+            );
+        }
+
+        const data = await response.json();
+        const imageUrl = data.data?.[0]?.url;
+
+        if (!imageUrl) {
+            throw new Error("No image URL returned from OpenAI API");
+        }
+
+        // Download the image from OpenAI's temporary URL
+        const imageResponse = await fetch(imageUrl);
+        if (!imageResponse.ok) {
+            throw new Error(`Failed to download generated image: ${imageResponse.statusText}`);
+        }
+
+        const imageBuffer = await imageResponse.arrayBuffer();
+        const base64 = Buffer.from(imageBuffer).toString("base64");
+
+        // Return as base64 data URL (same format as user uploads)
+        return `data:image/png;base64,${base64}`;
+    } catch (error) {
+        console.error("Error generating image with DALL-E:", error);
+        throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+}
+
+/**
+ * Check if AI image generation is available
+ * @returns true if OpenAI API key is configured
+ */
+export function isImageAIAvailable(): boolean {
+    return !!env.OPENAI_API_KEY;
+}

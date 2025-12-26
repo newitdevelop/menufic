@@ -6,7 +6,7 @@ import type { Image, MenuItem, Prisma } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
-import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
+import { detectAllergensWithAI, generateFoodImage, isAllergenAIAvailable, isImageAIAvailable } from "src/server/services/openai.service";
 import { invalidateTranslations } from "src/server/services/translation.service";
 import { allergenCodes, categoryId, id, menuId, menuItemInput, menuItemInputBase } from "src/utils/validators";
 
@@ -185,5 +185,32 @@ export const menuItemRouter = createTRPCRouter({
     /** Check if AI allergen detection is available */
     isAllergenAIAvailable: protectedProcedure.query(() => ({
         available: isAllergenAIAvailable(),
+    })),
+
+    /** Generate food image using AI (DALL-E 3) */
+    generateImageAI: protectedProcedure
+        .input(z.object({ name: z.string(), description: z.string() }))
+        .mutation(async ({ input }) => {
+            if (!isImageAIAvailable()) {
+                throw new TRPCError({
+                    code: "PRECONDITION_FAILED",
+                    message: "AI image generation is not available. OpenAI API key not configured.",
+                });
+            }
+
+            try {
+                const imageBase64 = await generateFoodImage(input.name, input.description);
+                return { imageBase64 };
+            } catch (error) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: error instanceof Error ? error.message : "Failed to generate image",
+                });
+            }
+        }),
+
+    /** Check if AI image generation is available */
+    isImageAIAvailable: protectedProcedure.query(() => ({
+        available: isImageAIAvailable(),
     })),
 });

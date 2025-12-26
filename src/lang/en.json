@@ -305,10 +305,15 @@
                 "allergensDescription": "Select all allergens present in this product (required for edible items)",
                 "allergensRequired": "Please select allergens for edible products",
                 "allergensInfo": "Might contain the following allergens",
+                "vatIncluded": "VAT included",
                 "aiDetectAllergensButton": "🤖 Detect Allergens with AI",
                 "aiDetectionError": "Failed to detect allergens with AI",
                 "aiDetectionSuccess": "Allergens detected successfully",
-                "aiDetectConfirmOverride": "This will replace your current allergen selections with AI-detected allergens. Continue?"
+                "aiDetectConfirmOverride": "This will replace your current allergen selections with AI-detected allergens. Continue?",
+                "aiImageGenerationButton": "🎨 Generate Image with AI",
+                "aiImageGenerationError": "Failed to generate image with AI",
+                "aiImageGenerationSuccess": "Image generated successfully",
+                "aiImageConfirmOverride": "This will replace your current image with an AI-generated image. Continue?"
             }
         },
         "venue": {

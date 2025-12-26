@@ -62,12 +62,25 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
     const { data: aiAvailability } = api.menuItem.isAllergenAIAvailable.useQuery();
     const isAIAvailable = aiAvailability?.available ?? false;
 
+    // Check if AI image generation is available
+    const { data: aiImageAvailability } = api.menuItem.isImageAIAvailable.useQuery();
+    const isImageAIAvailable = aiImageAvailability?.available ?? false;
+
     // AI allergen detection mutation
     const { mutate: detectAllergensAI, isLoading: isDetectingAllergens } = api.menuItem.detectAllergensAI.useMutation({
         onError: (err: unknown) => showErrorToast(t("aiDetectionError"), err as { message: string }),
         onSuccess: (data: any) => {
             setValues({ allergens: data.allergens });
             showSuccessToast(t("aiDetectionSuccess"), t("aiDetectionSuccess"));
+        },
+    });
+
+    // AI image generation mutation
+    const { mutate: generateImageAI, isLoading: isGeneratingImage } = api.menuItem.generateImageAI.useMutation({
+        onError: (err: unknown) => showErrorToast(t("aiImageGenerationError"), err as { message: string }),
+        onSuccess: (data: any) => {
+            setValues({ imageBase64: data.imageBase64, imagePath: "" });
+            showSuccessToast(t("aiImageGenerationSuccess"), t("aiImageGenerationSuccess"));
         },
     });
 
@@ -245,15 +258,40 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                             )}
                         </Stack>
                     )}
-                    <ImageUpload
-                        disabled={loading}
-                        height={400}
-                        imageHash={menuItem?.image?.blurHash}
-                        imageUrl={values?.imagePath}
-                        onImageCrop={(imageBase64, imagePath) => setValues({ imageBase64, imagePath })}
-                        onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "" })}
-                        width={400}
-                    />
+                    <Stack spacing="xs">
+                        <ImageUpload
+                            disabled={loading}
+                            height={400}
+                            imageHash={menuItem?.image?.blurHash}
+                            imageUrl={values?.imagePath}
+                            onImageCrop={(imageBase64, imagePath) => setValues({ imageBase64, imagePath })}
+                            onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "" })}
+                            width={400}
+                        />
+                        {isImageAIAvailable && values.name && values.description && (
+                            <Button
+                                compact
+                                disabled={loading || isGeneratingImage}
+                                loading={isGeneratingImage}
+                                onClick={() => {
+                                    // If image already exists, confirm before overriding
+                                    if (values.imagePath || values.imageBase64) {
+                                        // eslint-disable-next-line no-alert
+                                        if (!window.confirm(t("aiImageConfirmOverride"))) {
+                                            return;
+                                        }
+                                    }
+                                    generateImageAI({
+                                        name: values.name,
+                                        description: values.description,
+                                    });
+                                }}
+                                variant="light"
+                            >
+                                {t("aiImageGenerationButton")}
+                            </Button>
+                        )}
+                    </Stack>
                     <Group mt="md" position="right">
                         <Button data-testid="save-menu-item-form" loading={loading} px="xl" type="submit">
                             {tCommon("save")}

@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { useMemo, useState } from "react";
 
 import { Box, createStyles, Paper, Stack, Text } from "@mantine/core";
+import { useTranslations } from "next-intl";
 
 import type { Image, MenuItem } from "@prisma/client";
 
@@ -99,6 +100,7 @@ interface Props {
 export const MenuItemCard: FC<Props> = ({ item }) => {
     const { classes, cx } = useStyles({ imageColor: item?.image?.color });
     const [modalVisible, setModalVisible] = useState(false);
+    const t = useTranslations("dashboard.editMenu.menuItem");
 
     const displayPrice = calculateVATInclusivePrice(item.price, item.vatRate || 23, item.vatIncluded ?? true);
 
@@ -147,13 +149,12 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                     <Text
                         color="red"
                         size="sm"
-                        translate="no"
                         sx={{
                             "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
                             "@media (min-width: 240em)": { fontSize: "30px" }, // 3840px 4K TV
                         }}
                     >
-                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% VAT included)
+                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {t("vatIncluded")})
                     </Text>
                     <Text
                         className={cx(classes.cardText, classes.cardItemDesc)}

@@ -73,8 +73,8 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                         />
                     </Box>
                 )}
-                <Text color="red" mt="sm" size="lg" translate="no">
-                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% VAT included)
+                <Text color="red" mt="sm" size="lg">
+                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% {t("vatIncluded")})
                 </Text>
                 <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}
@@ -84,19 +84,24 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                         <Text color={theme.black} size="sm" weight={600}>
                             {t("allergensInfo")}:
                         </Text>
-                        <Group mt="xs" spacing="sm">
+                        <Group mt="xs" spacing="md">
                             {(menuItem as any).allergens.map((allergen: string) => (
-                                <Tooltip key={allergen} label={tCommon(`allergens.${allergen}` as any)} withArrow>
-                                    <Text
-                                        style={{
-                                            fontSize: "2rem",
-                                            cursor: "help",
-                                            lineHeight: 1,
-                                        }}
-                                    >
-                                        {allergenSymbols[allergen as keyof typeof allergenSymbols]}
+                                <Stack key={allergen} align="center" spacing={4}>
+                                    <Tooltip events={{ hover: true, focus: true, touch: true }} label={tCommon(`allergens.${allergen}` as any)} withArrow>
+                                        <Text
+                                            style={{
+                                                fontSize: "2rem",
+                                                cursor: "help",
+                                                lineHeight: 1,
+                                            }}
+                                        >
+                                            {allergenSymbols[allergen as keyof typeof allergenSymbols]}
+                                        </Text>
+                                    </Tooltip>
+                                    <Text align="center" color={theme.black} size="xs" sx={{ maxWidth: 80 }}>
+                                        {tCommon(`allergens.${allergen}` as any)}
                                     </Text>
-                                </Tooltip>
+                                </Stack>
                             ))}
                         </Group>
                     </Box>
