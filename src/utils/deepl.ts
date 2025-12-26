@@ -20,7 +20,7 @@ export async function translateWithDeepL(text: string, targetLang: string, sourc
     try {
         // Normalize target language for DeepL API
         // DeepL supports EN-GB and EN-US as target languages
-        let normalizedTargetLang = targetLang.toUpperCase();
+        const normalizedTargetLang = targetLang.toUpperCase();
 
         const requestBody: Record<string, unknown> = {
             target_lang: normalizedTargetLang,
