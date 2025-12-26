@@ -38,11 +38,14 @@ export async function getOrCreateTranslation(
     });
 
     if (cached) {
+        console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
         return cached.translated;
     }
 
+    console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${targetLang} - calling DeepL with source: "${originalText}"`);
     // Translation not cached, call DeepL
     const translated = await translateWithDeepL(originalText, targetLang, sourceLang);
+    console.log(`[Translation] DeepL returned: "${translated}"`);
 
     // Save to cache
     try {
@@ -169,8 +172,12 @@ export async function getImageDisclaimer(isAiGenerated: boolean, targetLang: str
         ? "Imagem gerada por IA - o prato real pode variar"
         : "A apresentação real pode variar";
 
+    console.log(`[Translation] Getting disclaimer translation - field: ${field}, targetLang: ${targetLang}, sourceText: "${sourceText}"`);
+
     // Use a static entity ID for UI translations
     const cached = await getOrCreateTranslation("menu", "ui-disclaimers", field, sourceText, targetLang, "PT");
+
+    console.log(`[Translation] Disclaimer result: "${cached}"`);
 
     return cached;
 }
