@@ -72,14 +72,14 @@ export const getMantineTheme = (colorScheme: ColorScheme): MantineThemeOverride 
     loader: "dots",
     primaryColor: "primary",
     white: colorScheme === "light" ? White : Black,
-    // Custom breakpoints for responsive design including Smart TVs
+    // Custom breakpoints for responsive design including Smart TVs (in pixels)
     breakpoints: {
-        xs: "36em",    // 576px - Small phones
-        sm: "48em",    // 768px - Tablets and larger phones
-        md: "62em",    // 992px - Small laptops
-        lg: "75em",    // 1200px - Desktops
-        xl: "88em",    // 1408px - Large desktops
-        tv: "120em",   // 1920px - Full HD Smart TVs
-        "4k": "240em", // 3840px - 4K Ultra HD Smart TVs
+        xs: 576,    // Small phones
+        sm: 768,    // Tablets and larger phones
+        md: 992,    // Small laptops
+        lg: 1200,   // Desktops
+        xl: 1408,   // Large desktops
+        tv: 1920,   // Full HD Smart TVs
+        "4k": 3840, // 4K Ultra HD Smart TVs
     },
 });
