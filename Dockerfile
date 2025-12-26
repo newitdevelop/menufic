@@ -16,6 +16,11 @@ RUN npm config set fetch-timeout 60000 && \
     npm config set fetch-retries 3 && \
     npm install
 
+# Fix non-breaking security vulnerabilities automatically
+# Note: This only applies safe patches (no major version updates)
+# Breaking changes like Next.js 13→16, imagekit 4→6, sharp 0.31→0.34 are SKIPPED
+RUN npm audit fix || true
+
 # Add build argument to bust cache for source copy
 ARG CACHEBUST=1
 RUN echo "Cache bust: $CACHEBUST"

@@ -23,7 +23,11 @@
       "Bash(echo:*)",
       "Bash(docker exec:*)",
       "Bash(npx next build:*)",
-      "Bash(docker-compose:*)"
+      "Bash(docker-compose:*)",
+      "Bash(npm outdated:*)",
+      "Bash(node:*)",
+      "Bash(npm help:*)",
+      "Bash(npx prisma generate:*)"
     ]
   }
 }
