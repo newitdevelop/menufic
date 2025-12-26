@@ -1,5 +1,4 @@
 import type { AbstractIntlMessages } from "next-intl";
-import enMessages from "src/lang/en.json";
 
 /**
  * Safely load translation messages for a given language
@@ -11,19 +10,21 @@ import enMessages from "src/lang/en.json";
 export async function loadTranslations(locale?: string): Promise<AbstractIntlMessages> {
     // Default to English
     if (!locale || locale.toLowerCase() === "en") {
-        return enMessages;
+        const enMessages = await import("src/lang/en.json");
+        return enMessages.default as AbstractIntlMessages;
     }
 
     // Try to load the requested language
     try {
         const messages = await import(`src/lang/${locale.toLowerCase()}.json`);
-        return messages.default;
+        return messages.default as AbstractIntlMessages;
     } catch (error) {
         // Language file doesn't exist, fall back to English
         console.warn(
             `Translation file for "${locale}" not found, falling back to English. ` +
-            `Run "npm run translate" to generate missing translations.`
+                `Run "npm run translate" to generate missing translations.`
         );
-        return enMessages;
+        const enMessages = await import("src/lang/en.json");
+        return enMessages.default as AbstractIntlMessages;
     }
 }
