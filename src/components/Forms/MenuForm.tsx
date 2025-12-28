@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useEffect } from "react";
 
 import { Button, Checkbox, Group, Stack, Textarea, TextInput } from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -158,17 +158,17 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                     />
                     {values.isTemporary && (
                         <>
-                            <DateTimePicker
+                            <DatePicker
                                 disabled={loading}
                                 label="Start Date"
-                                placeholder="Select start date and time"
+                                placeholder="Select start date"
                                 clearable
                                 {...getInputProps("startDate")}
                             />
-                            <DateTimePicker
+                            <DatePicker
                                 disabled={loading}
                                 label="End Date (menu will be disabled after this)"
-                                placeholder="Select end date and time"
+                                placeholder="Select end date"
                                 withAsterisk
                                 clearable
                                 {...getInputProps("endDate")}

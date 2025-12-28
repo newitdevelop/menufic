@@ -31,7 +31,8 @@
       "Bash(npm install:*)",
       "Bash(npx eslint:*)",
       "Bash(curl:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(set SKIP_ENV_VALIDATION=true)"
     ]
   }
 }
