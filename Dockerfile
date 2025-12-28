@@ -16,8 +16,11 @@ COPY prisma ./prisma
 # Configure npm for better network handling and install dependencies
 # Set sharp to use pre-built binaries to avoid compilation issues
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
-RUN npm config set fetch-timeout 60000 && \
-    npm config set fetch-retries 3 && \
+ENV npm_config_sharp_binary_host="https://github.com/lovell/sharp-libvips/releases/download"
+ENV npm_config_sharp_libvips_binary_host="https://github.com/lovell/sharp-libvips/releases/download"
+RUN npm config set fetch-timeout 120000 && \
+    npm config set fetch-retries 5 && \
+    npm config set maxsockets 1 && \
     npm install --legacy-peer-deps
 
 # Copy audit scripts
