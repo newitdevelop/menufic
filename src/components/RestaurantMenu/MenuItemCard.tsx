@@ -33,25 +33,19 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             gap: 0,
             overflow: "hidden",
             padding: theme.spacing.lg,
-            "@media (min-width: 120em)": { padding: theme.spacing.xl * 1.5 }, // 1920px Smart TV
-            "@media (min-width: 240em)": { padding: theme.spacing.xl * 2 }, // 3840px 4K TV
         },
         cardImage: {
-            height: 150,
+            height: "clamp(150px, 12vw, 200px)", // Responsive: 150px min, scales with viewport, 200px max
             ref: image,
             transition: "transform 500ms ease",
-            width: 150,
-            "@media (min-width: 120em)": { height: 240, width: 240 }, // 1920px Smart TV
-            "@media (min-width: 240em)": { height: 360, width: 360 }, // 3840px 4K TV
+            width: "clamp(150px, 12vw, 200px)",
         },
         cardImageWrap: {
             borderRadius: theme.radius.lg,
-            height: 150,
+            height: "clamp(150px, 12vw, 200px)",
             overflow: "hidden",
             position: "relative",
-            width: 150,
-            "@media (min-width: 120em)": { height: 240, width: 240 }, // 1920px Smart TV
-            "@media (min-width: 240em)": { height: 360, width: 360 }, // 3840px 4K TV
+            width: "clamp(150px, 12vw, 200px)",
         },
         cardItem: {
             "&:hover": {

@@ -134,6 +134,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const language = (router.query?.lang as string) || "PT";
     const t = useTranslations("menu");
 
+    // Extract uiTranslations from first menu item (all items share same UI translations)
+    const uiTranslations = useMemo(() => {
+        const firstItem = restaurant?.menus?.[0]?.categories?.[0]?.items?.[0];
+        return (firstItem as any)?.uiTranslations || { remoteShortcuts: t("remoteShortcuts") };
+    }, [restaurant?.menus, t]);
+
     const handleLanguageChange = (newLang: string) => {
         const currentQuery = { ...router.query };
         if (newLang === "PT") {
@@ -263,28 +269,29 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
                         </ActionIcon>
                     </Box>
-                    {/* Smart TV keyboard shortcuts hint */}
-                    <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-                        <Box
-                            sx={(theme) => ({
-                                backgroundColor: theme.fn.rgba(theme.colors.dark[9], 0.8),
-                                borderRadius: theme.radius.sm,
-                                color: "white",
-                                padding: "0.375rem 0.625rem",
+                    {/* Smart TV keyboard shortcuts hint - only show on large screens (1440px+) */}
+                    <Box
+                        sx={{
+                            display: "none",
+                            "@media (min-width: 90em)": { // 1440px and up (large TVs)
                                 display: "flex",
+                                backgroundColor: "rgba(0, 0, 0, 0.8)",
+                                borderRadius: "4px",
+                                color: "white",
+                                padding: "0.75rem 1rem",
                                 flexDirection: "column",
-                                gap: 4,
-                                fontSize: "0.625rem", // 10px base, scales automatically with viewport
-                            })}
-                        >
-                            <Text size="xs" weight={600} sx={{ fontSize: "inherit" }}>
-                                📱 {t("remoteShortcuts")}:
-                            </Text>
-                            <Text size="xs" sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
-                                1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
-                            </Text>
-                        </Box>
-                    </MediaQuery>
+                                gap: 6,
+                                fontSize: "1rem", // Will scale with viewport
+                            },
+                        }}
+                    >
+                        <Text weight={600} sx={{ fontSize: "inherit" }}>
+                            📱 Remote Control Shortcuts:
+                        </Text>
+                        <Text sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
+                            1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
+                        </Text>
+                    </Box>
                 </Box>
             </Box>
 
