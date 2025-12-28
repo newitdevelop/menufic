@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Group, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, Stack, Textarea, TextInput } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -47,7 +48,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         },
     });
 
-    const { getInputProps, onSubmit, isDirty, resetDirty, setValues } = useForm({
+    const { getInputProps, onSubmit, isDirty, resetDirty, setValues, values } = useForm({
         initialValues: {
             availableTime: menuItem?.availableTime || "",
             email: menuItem?.email || "",
@@ -55,6 +56,10 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             message: menuItem?.message || "",
             name: menuItem?.name || "",
             telephone: menuItem?.telephone || "",
+            isTemporary: (menuItem as any)?.isTemporary || false,
+            startDate: (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null,
+            endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
+            isFestive: (menuItem as any)?.isFestive || false,
         },
         validate: zodResolver(menuInput),
     });
@@ -68,6 +73,10 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 message: menuItem?.message || "",
                 name: menuItem?.name || "",
                 telephone: menuItem?.telephone || "",
+                isTemporary: (menuItem as any)?.isTemporary || false,
+                startDate: (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null,
+                endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
+                isFestive: (menuItem as any)?.isFestive || false,
             };
             setValues(values);
             resetDirty(values);
@@ -137,6 +146,35 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         placeholder={t("inputMessagePlaceholder")}
                         {...getInputProps("message")}
                     />
+                    <Checkbox
+                        disabled={loading}
+                        label="Festive Menu (🎄 highlighted)"
+                        {...getInputProps("isFestive", { type: "checkbox" })}
+                    />
+                    <Checkbox
+                        disabled={loading}
+                        label="Temporary Menu (with start/end dates)"
+                        {...getInputProps("isTemporary", { type: "checkbox" })}
+                    />
+                    {values.isTemporary && (
+                        <>
+                            <DateTimePicker
+                                disabled={loading}
+                                label="Start Date"
+                                placeholder="Select start date and time"
+                                clearable
+                                {...getInputProps("startDate")}
+                            />
+                            <DateTimePicker
+                                disabled={loading}
+                                label="End Date (menu will be disabled after this)"
+                                placeholder="Select end date and time"
+                                withAsterisk
+                                clearable
+                                {...getInputProps("endDate")}
+                            />
+                        </>
+                    )}
                     <Group mt="md" position="right">
                         <Button data-testid="save-menu-form" loading={loading} px="xl" type="submit">
                             {tCommon("save")}

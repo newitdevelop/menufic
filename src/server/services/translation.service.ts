@@ -207,14 +207,19 @@ export async function translateCategory(category: { id: string; name: string }, 
  * Source language is Portuguese (PT) - the default content language
  * NOTE: Menu name and availableTime are NOT translated (brand names and times should stay as-is)
  * Only the message field is translated
+ * Festive menus get a 🎄 emoji prefix
  */
 export async function translateMenu(
-    menu: { id: string; name: string; availableTime: string; message?: string | null },
+    menu: { id: string; name: string; availableTime: string; message?: string | null; isFestive?: boolean },
     targetLang: string
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
         // Don't translate if target is Portuguese (source language)
-        return menu;
+        // But still add festive emoji if needed
+        return {
+            ...menu,
+            name: menu.isFestive ? `🎄 ${menu.name}` : menu.name,
+        };
     }
 
     // Only translate the message field, keep name and availableTime unchanged
@@ -224,7 +229,8 @@ export async function translateMenu(
 
     return {
         ...menu,
-        // name: keep original (brand names should not be translated)
+        // name: keep original (brand names should not be translated) but add festive emoji
+        name: menu.isFestive ? `🎄 ${menu.name}` : menu.name,
         // availableTime: keep original (time formats should stay consistent)
         message: translatedMessage,
     };

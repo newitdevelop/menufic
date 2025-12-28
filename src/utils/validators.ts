@@ -73,6 +73,10 @@ export const menuInput = z.object({
         .max(20, "Telephone cannot be longer than 20 characters")
         .optional()
         .transform((val) => (val === "" ? undefined : val)),
+    isTemporary: z.boolean().default(false),
+    startDate: z.date().nullable().optional(),
+    endDate: z.date().nullable().optional(),
+    isFestive: z.boolean().default(false),
 });
 export const menuItemInputBase = z.object({
     currency: z.enum(["€", "$"]).default("€"),

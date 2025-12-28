@@ -46,12 +46,18 @@ model Menu {
     reservations  String?     // URL for reservations
     message       String?
     position      Int
+    isTemporary   Boolean     @default(false) // Whether this is a temporary menu
+    startDate     DateTime?   // Start date for temporary menus
+    endDate       DateTime?   // End date for temporary menus (menu becomes disabled after this)
+    isFestive     Boolean     @default(false) // Whether this is a festive/special menu (highlighted with emoji)
+    isActive      Boolean     @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
     categories    Category[]  @relation("CategoriesOfMenu")
     restaurant    Restaurant? @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
     restaurantId  String?
 
     @@id([id, userId])
     @@index([restaurantId])
+    @@index([isActive, endDate])
 }
 
 model Category {

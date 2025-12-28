@@ -39,6 +39,12 @@ export const menuRouter = createTRPCRouter({
                 restaurantId: input.restaurantId,
                 telephone: input.telephone,
                 userId: ctx.session.user.id,
+                isTemporary: input.isTemporary ?? false,
+                startDate: input.startDate ?? null,
+                endDate: input.endDate ?? null,
+                isFestive: input.isFestive ?? false,
+                // Auto-calculate isActive based on endDate
+                isActive: input.endDate ? new Date() <= input.endDate : true,
             },
         });
     }),
@@ -109,6 +115,12 @@ export const menuRouter = createTRPCRouter({
                     message: input.message ?? null,
                     name: input.name,
                     telephone: input.telephone ?? null,
+                    isTemporary: input.isTemporary ?? false,
+                    startDate: input.startDate ?? null,
+                    endDate: input.endDate ?? null,
+                    isFestive: input.isFestive ?? false,
+                    // Auto-calculate isActive based on endDate
+                    isActive: input.endDate ? new Date() <= input.endDate : true,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),

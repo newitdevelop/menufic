@@ -323,7 +323,23 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             <Tabs my={40} onTabChange={setSelectedMenu} value={selectedMenu}>
                 <Tabs.List>
                     {restaurant?.menus?.map((menu) => (
-                        <Tabs.Tab key={menu.id} px="lg" value={menu.id}>
+                        <Tabs.Tab
+                            key={menu.id}
+                            px="lg"
+                            value={menu.id}
+                            sx={(theme) => ({
+                                // Festive menu highlighting
+                                ...((menu as any).isFestive && {
+                                    background: `linear-gradient(135deg, ${theme.fn.rgba(theme.colors.green[1], 0.3)} 0%, ${theme.fn.rgba(theme.colors.red[1], 0.3)} 100%)`,
+                                    border: `2px solid ${theme.colors.green[3]}`,
+                                    borderRadius: theme.radius.md,
+                                    '&[data-active]': {
+                                        background: `linear-gradient(135deg, ${theme.fn.rgba(theme.colors.green[2], 0.5)} 0%, ${theme.fn.rgba(theme.colors.red[2], 0.5)} 100%)`,
+                                        borderColor: theme.colors.green[5],
+                                    },
+                                }),
+                            })}
+                        >
                             <Text color={theme.black} size="lg" translate="no" weight={selectedMenu === menu.id ? "bold" : "normal"}>
                                 {menu.name}
                             </Text>

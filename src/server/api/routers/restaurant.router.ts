@@ -183,6 +183,7 @@ export const restaurantRouter = createTRPCRouter({
                             },
                         },
                         orderBy: { position: "asc" },
+                        where: { isActive: true }, // Only show active menus (not expired temporary menus)
                     },
                 },
                 where: { id: input.id },

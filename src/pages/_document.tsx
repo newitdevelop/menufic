@@ -21,6 +21,8 @@ export default class MyDocument extends Document {
                         dangerouslySetInnerHTML={{
                             __html: `
                                 html {
+                                    /* Fallback for older browsers */
+                                    font-size: 16px;
                                     /* Dynamic font scaling based on viewport width */
                                     /* Base: 16px at 1920px (120em) */
                                     /* Scales from 12px (mobile) to 18px (8K) */
