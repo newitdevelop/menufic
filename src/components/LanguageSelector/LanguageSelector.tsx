@@ -3,12 +3,12 @@ import type { FC } from "react";
 import { Box, Menu, Text } from "@mantine/core";
 
 const LANGUAGES = [
-    { code: "PT", flag: "🇵🇹", label: "Português" },
-    { code: "EN", flag: "🇬🇧", label: "English" },
-    { code: "ES", flag: "🇪🇸", label: "Español" },
-    { code: "FR", flag: "🇫🇷", label: "Français" },
-    { code: "DE", flag: "🇩🇪", label: "Deutsch" },
-    { code: "IT", flag: "🇮🇹", label: "Italiano" },
+    { code: "PT", flag: "🇵🇹", label: "Português", shortcut: "1" },
+    { code: "EN", flag: "🇬🇧", label: "English", shortcut: "2" },
+    { code: "ES", flag: "🇪🇸", label: "Español", shortcut: "3" },
+    { code: "FR", flag: "🇫🇷", label: "Français", shortcut: "4" },
+    { code: "DE", flag: "🇩🇪", label: "Deutsch", shortcut: "5" },
+    { code: "IT", flag: "🇮🇹", label: "Italiano", shortcut: "6" },
 ];
 
 interface Props {
@@ -48,7 +48,7 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
             </Menu.Target>
 
             <Menu.Dropdown>
-                <Menu.Label>Select Language</Menu.Label>
+                <Menu.Label>Select Language (or press 1-6)</Menu.Label>
                 {LANGUAGES.map((lang) => (
                     <Menu.Item
                         key={lang.code}
@@ -58,6 +58,11 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
                             backgroundColor: lang.code === current?.code ? theme.colors.gray[1] : undefined,
                             fontWeight: lang.code === current?.code ? 600 : undefined,
                         })}
+                        rightSection={
+                            <Text color="dimmed" size="xs" weight={500}>
+                                {lang.shortcut}
+                            </Text>
+                        }
                     >
                         {lang.label}
                     </Menu.Item>

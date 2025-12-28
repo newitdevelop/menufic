@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Carousel } from "@mantine/carousel";
@@ -73,16 +73,16 @@ const useStyles = createStyles((theme) => ({
     carousalTitleSubText: {
         flex: 1,
         fontSize: 22,
-        "@media (min-width: 120em)": { fontSize: 36 }, // 1920px Smart TV
-        "@media (min-width: 240em)": { fontSize: 48 }, // 3840px 4K TV
+        "@media (min-width: 120em)": { fontSize: 24 }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: 36 }, // 3840px 4K TV
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 18 },
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 14 },
     },
     carousalTitleText: {
         fontSize: 40,
         fontWeight: "bold",
-        "@media (min-width: 120em)": { fontSize: 64 }, // 1920px Smart TV
-        "@media (min-width: 240em)": { fontSize: 96 }, // 3840px 4K TV
+        "@media (min-width: 120em)": { fontSize: 48 }, // 1920px Smart TV
+        "@media (min-width: 240em)": { fontSize: 72 }, // 3840px 4K TV
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 30 },
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 24 },
     },
@@ -154,6 +154,29 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             { shallow: false }
         );
     };
+
+    // Keyboard shortcuts for language switching (Smart TV remote control)
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            // Number key shortcuts for languages
+            const languageMap: Record<string, string> = {
+                '1': 'PT', // Portuguese
+                '2': 'EN', // English
+                '3': 'ES', // Spanish
+                '4': 'FR', // French
+                '5': 'DE', // German
+                '6': 'IT', // Italian
+            };
+
+            if (languageMap[event.key]) {
+                event.preventDefault();
+                handleLanguageChange(languageMap[event.key]);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [router]);
 
     const menuDetails = useMemo(
         () => restaurant?.menus?.find((item) => item.id === selectedMenu),
@@ -237,11 +260,30 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         </Box>
                     </Box>
                 </MediaQuery>
-                <Box pos="absolute" right={12} top={10} sx={{ display: "flex", gap: 8, zIndex: 1 }}>
-                    <LanguageSelector currentLanguage={language} onLanguageChange={handleLanguageChange} />
-                    <ActionIcon className={classes.themeSwitch} onClick={() => toggleColorScheme()} size="lg" sx={{ position: "relative", right: "unset", top: "unset" }}>
-                        {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
-                    </ActionIcon>
+                <Box pos="absolute" right={12} top={10} sx={{ display: "flex", flexDirection: "column", gap: 8, zIndex: 1, alignItems: "flex-end" }}>
+                    <Box sx={{ display: "flex", gap: 8 }}>
+                        <LanguageSelector currentLanguage={language} onLanguageChange={handleLanguageChange} />
+                        <ActionIcon className={classes.themeSwitch} onClick={() => toggleColorScheme()} size="lg" sx={{ position: "relative", right: "unset", top: "unset" }}>
+                            {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
+                        </ActionIcon>
+                    </Box>
+                    {/* Smart TV keyboard shortcuts hint */}
+                    <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+                        <Text
+                            size="xs"
+                            sx={(theme) => ({
+                                backgroundColor: theme.fn.rgba(theme.colors.dark[9], 0.7),
+                                borderRadius: theme.radius.sm,
+                                color: "white",
+                                padding: "4px 8px",
+                                fontSize: "11px",
+                                "@media (min-width: 120em)": { fontSize: "16px", padding: "6px 12px" }, // 1920px Smart TV
+                                "@media (min-width: 240em)": { fontSize: "22px", padding: "8px 16px" }, // 3840px 4K TV
+                            })}
+                        >
+                            🎮 Press 1-6 to change language
+                        </Text>
+                    </MediaQuery>
                 </Box>
             </Box>
 

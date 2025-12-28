@@ -2,7 +2,6 @@ import type { FC } from "react";
 import { useMemo, useState } from "react";
 
 import { Box, createStyles, Paper, Stack, Text } from "@mantine/core";
-import { useTranslations } from "next-intl";
 
 import type { Image, MenuItem } from "@prisma/client";
 
@@ -79,7 +78,7 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             [`&:focus .${image}`]: { transform: "scale(1.05)" },
         },
         cardItemDesc: { WebkitLineClamp: 3 },
-        cardItemTitle: { WebkitLineClamp: 1 },
+        cardItemTitle: { WebkitLineClamp: 2 },
         cardText: {
             WebkitBoxOrient: "vertical",
             color: theme.black,
@@ -151,8 +150,8 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         translate="yes"
                         weight={700}
                         sx={{
-                            "@media (min-width: 120em)": { fontSize: "28px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "42px" }, // 3840px 4K TV
+                            "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "32px" }, // 3840px 4K TV
                         }}
                     >
                         {item.name}
@@ -161,8 +160,8 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         color="red"
                         size="sm"
                         sx={{
-                            "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "30px" }, // 3840px 4K TV
+                            "@media (min-width: 120em)": { fontSize: "16px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "24px" }, // 3840px 4K TV
                         }}
                     >
                         {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
@@ -173,8 +172,8 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         size="xs"
                         translate="yes"
                         sx={{
-                            "@media (min-width: 120em)": { fontSize: "18px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "26px" }, // 3840px 4K TV
+                            "@media (min-width: 120em)": { fontSize: "14px" }, // 1920px Smart TV
+                            "@media (min-width: 240em)": { fontSize: "20px" }, // 3840px 4K TV
                         }}
                     >
                         {item.description}
