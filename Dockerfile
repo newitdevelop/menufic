@@ -1,4 +1,5 @@
-FROM node:22.2.0
+# ===== BUILDER STAGE =====
+FROM node:22.2.0 AS builder
 
 # Install system dependencies required for sharp and jq for audit script
 RUN apt-get update && apt-get install -y \
@@ -54,12 +55,27 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 # Build the app
 RUN npm run build
 
-# Backup en.json for restoration after volume mount
-RUN cp src/lang/en.json /tmp/en.json.backup
+# ===== PRODUCTION STAGE =====
+FROM node:22.2.0-slim AS runner
 
-# Copy and make the entrypoint script executable
-COPY docker-entrypoint.sh /usr/local/bin/
+WORKDIR /app
+
+# Copy only necessary files from builder
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/src/lang/en.json /tmp/en.json.backup
+COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/docker-entrypoint.sh /usr/local/bin/
+COPY --from=builder /app/src ./src
+
+# Make entrypoint executable
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Set NODE_ENV to production
+ENV NODE_ENV=production
 
 EXPOSE 3000
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
