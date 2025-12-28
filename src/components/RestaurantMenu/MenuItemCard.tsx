@@ -149,20 +149,12 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         size="lg"
                         translate="yes"
                         weight={700}
-                        sx={{
-                            "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "32px" }, // 3840px 4K TV
-                        }}
                     >
                         {item.name}
                     </Text>
                     <Text
                         color="red"
                         size="sm"
-                        sx={{
-                            "@media (min-width: 120em)": { fontSize: "16px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "24px" }, // 3840px 4K TV
-                        }}
                     >
                         {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
                     </Text>
@@ -171,10 +163,6 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                         opacity={0.7}
                         size="xs"
                         translate="yes"
-                        sx={{
-                            "@media (min-width: 120em)": { fontSize: "14px" }, // 1920px Smart TV
-                            "@media (min-width: 240em)": { fontSize: "20px" }, // 3840px 4K TV
-                        }}
                     >
                         {item.description}
                     </Text>

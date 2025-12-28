@@ -72,19 +72,15 @@ const useStyles = createStyles((theme) => ({
     },
     carousalTitleSubText: {
         flex: 1,
-        fontSize: 22,
-        "@media (min-width: 120em)": { fontSize: 24 }, // 1920px Smart TV
-        "@media (min-width: 240em)": { fontSize: 36 }, // 3840px 4K TV
-        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 18 },
-        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 14 },
+        fontSize: "1.375rem", // 22px base, scales automatically with viewport
+        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: "1.125rem" }, // 18px
+        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: "0.875rem" }, // 14px
     },
     carousalTitleText: {
-        fontSize: 40,
+        fontSize: "2.5rem", // 40px base, scales automatically with viewport
         fontWeight: "bold",
-        "@media (min-width: 120em)": { fontSize: 48 }, // 1920px Smart TV
-        "@media (min-width: 240em)": { fontSize: 72 }, // 3840px 4K TV
-        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: 30 },
-        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: 24 },
+        [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: "1.875rem" }, // 30px
+        [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: "1.5rem" }, // 24px
     },
     darkFontColor: { color: theme.colors.dark[7] },
     headerImageBox: {
@@ -269,20 +265,25 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     </Box>
                     {/* Smart TV keyboard shortcuts hint */}
                     <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-                        <Text
-                            size="xs"
+                        <Box
                             sx={(theme) => ({
-                                backgroundColor: theme.fn.rgba(theme.colors.dark[9], 0.7),
+                                backgroundColor: theme.fn.rgba(theme.colors.dark[9], 0.8),
                                 borderRadius: theme.radius.sm,
                                 color: "white",
-                                padding: "4px 8px",
-                                fontSize: "11px",
-                                "@media (min-width: 120em)": { fontSize: "16px", padding: "6px 12px" }, // 1920px Smart TV
-                                "@media (min-width: 240em)": { fontSize: "22px", padding: "8px 16px" }, // 3840px 4K TV
+                                padding: "0.375rem 0.625rem",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 4,
+                                fontSize: "0.625rem", // 10px base, scales automatically with viewport
                             })}
                         >
-                            🎮 Press 1-6 to change language
-                        </Text>
+                            <Text size="xs" weight={600} sx={{ fontSize: "inherit" }}>
+                                📱 {t("remoteShortcuts")}:
+                            </Text>
+                            <Text size="xs" sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
+                                1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
+                            </Text>
+                        </Box>
                     </MediaQuery>
                 </Box>
             </Box>

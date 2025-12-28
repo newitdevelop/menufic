@@ -189,6 +189,7 @@
         "noItemsForMenu": "There aren't any menu items for the chosen venue menu. Try checking out later.",
         "noDetailsAvailable": "This venue details are unavailable at the moment. We are sorry for the inconvenience. Please try again in a while",
         "reservations": "Reservations",
+        "remoteShortcuts": "Remote Control Shortcuts",
         "seoTitle": "{name} Menu",
         "seoDescription": {
             "venueName": "Menu of venue {name}",
