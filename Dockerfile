@@ -15,7 +15,7 @@ COPY prisma ./prisma
 # Configure npm for better network handling and install dependencies
 RUN npm config set fetch-timeout 60000 && \
     npm config set fetch-retries 3 && \
-    npm install
+    npm install --legacy-peer-deps
 
 # Copy audit scripts
 COPY scripts/check-audit-needed.sh /tmp/check-audit-needed.sh
