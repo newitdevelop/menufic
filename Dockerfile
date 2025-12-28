@@ -62,6 +62,9 @@ RUN npm run build
 # ===== PRODUCTION STAGE =====
 FROM node:22.2.0-slim AS runner
 
+# Install openssl for Prisma (required for database connections)
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy only necessary files from builder
