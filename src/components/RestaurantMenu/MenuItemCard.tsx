@@ -109,11 +109,9 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                 className={classes.cardItem}
                 component="button"
                 data-testid="menu-item-card"
-                h={150}
                 onClick={() => setModalVisible(true)}
                 sx={{
-                    "@media (min-width: 120em)": { height: 240 }, // 1920px Smart TV
-                    "@media (min-width: 240em)": { height: 360 }, // 3840px 4K TV
+                    minHeight: "150px", // Minimum height, but can grow with content
                 }}
                 tabIndex={0}
             >

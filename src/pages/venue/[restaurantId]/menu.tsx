@@ -52,7 +52,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                 title={t("seoTitle", { name: restaurant?.name })}
             />
             <main>
-                <Container py="lg" size="xl">
+                <Container py="lg" size="xl" sx={{ maxWidth: "100%", "@media (min-width: 90em)": { padding: "1rem 2rem" } }}>
                     {(() => {
                         if (isLoading) {
                             return <Empty height="calc(100vh - 100px)" text="Loading..." />;
