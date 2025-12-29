@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { useColorScheme, useLocalStorage } from "@mantine/hooks";
 import { NotificationsProvider } from "@mantine/notifications";
@@ -30,6 +32,14 @@ const MyApp: AppType<{ messages?: AbstractIntlMessages; session: Session | null 
 
     const toggleColorScheme = (value?: ColorScheme) =>
         setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
+    // Fix: Remove stuck aria-hidden attribute from #__next that can block all interactions
+    useEffect(() => {
+        const nextElement = document.getElementById("__next");
+        if (nextElement?.getAttribute("aria-hidden") === "true") {
+            nextElement.removeAttribute("aria-hidden");
+        }
+    }, []);
 
     return (
         <>
