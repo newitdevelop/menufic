@@ -67,6 +67,11 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                         maxWidth: "70vw",
                         fontSize: "1.2rem",
                     },
+                    "@media (min-width: 3840px)": { // 4K TVs
+                        maxWidth: "65vw",
+                        fontSize: "1.5rem",
+                        padding: "2.5rem",
+                    },
                 }
             }}
             title={

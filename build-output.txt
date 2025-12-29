@@ -1,0 +1,6 @@
+
+> menufic@1.0.0 build
+> next build
+
+info  - Loaded env from C:\Users\eric.herji\Downloads\menufic-main\.env
+info  - Linting and checking validity of types...

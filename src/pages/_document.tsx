@@ -184,12 +184,53 @@ export default class MyDocument extends Document {
 
                                     /* Dynamic font scaling based on viewport width */
                                     /* Base: 16px at 1920px (120em) */
-                                    /* Scales from 12px (mobile) to 18px (8K) */
-                                    font-size: clamp(12px, 0.625vw, 18px);
+                                    /* Scales from 12px (mobile) to 24px (8K) */
+                                    font-size: clamp(12px, 0.833vw, 24px);
 
                                     /* Smooth scrolling for TVs with remote controls */
                                     -webkit-overflow-scrolling: touch;
                                     scroll-behavior: smooth;
+                                }
+
+                                /* Specific font size increases for 4K TVs */
+                                @media (min-width: 3840px) {
+                                    html {
+                                        /* Larger base for 4K displays */
+                                        font-size: 24px;
+                                    }
+
+                                    body {
+                                        /* Increase spacing for 4K */
+                                        line-height: 1.7;
+                                    }
+
+                                    /* Increase all spacing for 4K */
+                                    * {
+                                        letter-spacing: 0.015em;
+                                    }
+
+                                    /* Larger buttons and interactive elements */
+                                    button, a[role="button"] {
+                                        min-height: 52px;
+                                    }
+                                }
+
+                                /* Font size for 1440p-4K range */
+                                @media (min-width: 2560px) and (max-width: 3839px) {
+                                    html {
+                                        font-size: 20px;
+                                    }
+
+                                    body {
+                                        line-height: 1.6;
+                                    }
+                                }
+
+                                /* Font size for Full HD - 1440p */
+                                @media (min-width: 1920px) and (max-width: 2559px) {
+                                    html {
+                                        font-size: 18px;
+                                    }
                                 }
 
                                 body {

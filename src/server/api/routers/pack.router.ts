@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
-import { imageKit } from "src/server/imageUtil";
+import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
 import { invalidateTranslations } from "src/server/services/translation.service";
 import { id, menuId, packId, packInput } from "src/utils/validators";
 
@@ -15,20 +15,20 @@ export const packRouter = createTRPCRouter({
         });
 
         // Handle image upload if provided
-        let imageId: string | undefined = undefined;
-        if (input.imageBase64 && input.imagePath) {
-            const { path, blurHash, color } = await imageKit.uploadImage(
-                input.imageBase64,
-                input.imagePath,
-                ctx.session.user.id
-            );
+        let imageId: string | undefined;
+        if (input.imageBase64) {
+            const [uploadedResponse, blurHash, color] = await Promise.all([
+                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/pack`),
+                encodeImageToBlurhash(input.imageBase64),
+                getColor(input.imageBase64),
+            ]);
 
             const image = await ctx.prisma.image.create({
                 data: {
                     blurHash,
-                    color,
-                    id: path,
-                    path,
+                    color: rgba2hex(color[0], color[1], color[2]),
+                    id: uploadedResponse.fileId,
+                    path: uploadedResponse.filePath,
                     isAiGenerated: input.isAiGeneratedImage ?? false,
                 },
             });
@@ -91,28 +91,28 @@ export const packRouter = createTRPCRouter({
 
             // Handle image update
             let imageId: string | undefined = existingPack.imageId ?? undefined;
-            if (input.imageBase64 && input.imagePath) {
+            if (input.imageBase64) {
                 // Delete old image if exists
                 if (existingPack.imageId) {
-                    await imageKit.deleteImage(existingPack.imageId);
+                    await imageKit.deleteFile(existingPack.imageId);
                     await ctx.prisma.image.delete({ where: { id: existingPack.imageId } }).catch(() => {
                         // Ignore errors - image might already be deleted
                     });
                 }
 
                 // Upload new image
-                const { path, blurHash, color } = await imageKit.uploadImage(
-                    input.imageBase64,
-                    input.imagePath,
-                    ctx.session.user.id
-                );
+                const [uploadedResponse, blurHash, color] = await Promise.all([
+                    uploadImage(input.imageBase64, `user/${ctx.session.user.id}/pack`),
+                    encodeImageToBlurhash(input.imageBase64),
+                    getColor(input.imageBase64),
+                ]);
 
                 const image = await ctx.prisma.image.create({
                     data: {
                         blurHash,
-                        color,
-                        id: path,
-                        path,
+                        color: rgba2hex(color[0], color[1], color[2]),
+                        id: uploadedResponse.fileId,
+                        path: uploadedResponse.filePath,
                         isAiGenerated: input.isAiGeneratedImage ?? false,
                     },
                 });
@@ -175,7 +175,7 @@ export const packRouter = createTRPCRouter({
 
         // Delete image if exists
         if (pack.imageId) {
-            await imageKit.deleteImage(pack.imageId);
+            await imageKit.deleteFile(pack.imageId);
             await ctx.prisma.image.delete({ where: { id: pack.imageId } }).catch(() => {
                 // Ignore errors
             });

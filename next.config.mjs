@@ -35,11 +35,6 @@ const config = {
     experimental: {
         // Optimize for older browsers
         legacyBrowsers: false,
-        browsersListForSwc: true,
-        // Optimize fonts for faster loading on TVs
-        optimizeFonts: true,
-        // Modern middleware for better performance
-        optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
     },
     // Output standalone for better Docker performance
     output: process.env.NODE_ENV === "production" ? "standalone" : undefined,

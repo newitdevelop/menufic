@@ -77,12 +77,14 @@ const useStyles = createStyles((theme) => ({
         fontSize: "1.375rem", // 22px base, scales automatically with viewport
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: "1.125rem" }, // 18px
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: "0.875rem" }, // 14px
+        [`@media (min-width: 3840px)`]: { fontSize: "2rem" }, // 32px for 4K
     },
     carousalTitleText: {
         fontSize: "2.5rem", // 40px base, scales automatically with viewport
         fontWeight: "bold",
         [`@media (max-width: ${theme.breakpoints.lg})`]: { fontSize: "1.875rem" }, // 30px
         [`@media (max-width: ${theme.breakpoints.sm})`]: { fontSize: "1.5rem" }, // 24px
+        [`@media (min-width: 3840px)`]: { fontSize: "3.5rem" }, // 56px for 4K
     },
     darkFontColor: { color: theme.colors.dark[7] },
     headerImageBox: {

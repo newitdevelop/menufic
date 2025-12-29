@@ -95,6 +95,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                                             <br />
                                             <button
                                                 onClick={handleRetry}
+                                                type="button"
                                                 style={{
                                                     marginTop: "1rem",
                                                     padding: "0.5rem 1rem",
@@ -125,6 +126,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                                             <br />
                                             <button
                                                 onClick={handleRetry}
+                                                type="button"
                                                 style={{
                                                     marginTop: "1rem",
                                                     padding: "0.5rem 1rem",

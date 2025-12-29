@@ -268,7 +268,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack, ...rest }) 
                     <Divider label={t("sections")} labelPosition="center" />
 
                     {values.sections.map((section, sectionIndex) => (
-                        <Box key={sectionIndex} sx={(theme) => ({ padding: theme.spacing.md, backgroundColor: theme.colors.gray[0], borderRadius: theme.radius.md })}>
+                        <Box key={`section-${sectionIndex}-${section.title}`} sx={(theme) => ({ padding: theme.spacing.md, backgroundColor: theme.colors.gray[0], borderRadius: theme.radius.md })}>
                             <Group position="apart" mb="sm">
                                 <Text weight={600}>
                                     {t("section")} {sectionIndex + 1}
@@ -297,7 +297,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack, ...rest }) 
                                     {t("items")}
                                 </Text>
                                 {section.items.map((item, itemIndex) => (
-                                    <Group key={itemIndex} spacing="xs">
+                                    <Group key={`item-${sectionIndex}-${itemIndex}-${item}`} spacing="xs">
                                         <TextInput
                                             placeholder={t("itemPlaceholder")}
                                             required

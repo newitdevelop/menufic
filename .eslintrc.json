@@ -29,6 +29,12 @@
         "typescript-sort-keys/interface": "warn",
         "react/jsx-sort-props": ["warn", { "reservedFirst": ["key"] }],
         "sort-imports": ["warn", { "ignoreCase": true, "ignoreDeclarationSort": true }],
+        "react/no-array-index-key": "warn",
+        "react/button-has-type": "warn",
+        "no-undef-init": "warn",
+        "consistent-return": "warn",
+        "no-else-return": "warn",
+        "@typescript-eslint/return-await": "warn",
         "import/order": [
             "warn",
             {

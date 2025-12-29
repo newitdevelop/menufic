@@ -35,17 +35,25 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             padding: theme.spacing.lg,
         },
         cardImage: {
-            height: "clamp(150px, 12vw, 200px)", // Responsive: 150px min, scales with viewport, 200px max
+            height: "clamp(150px, 12vw, 300px)", // Increased max to 300px for 4K
             ref: image,
             transition: "transform 500ms ease",
-            width: "clamp(150px, 12vw, 200px)",
+            width: "clamp(150px, 12vw, 300px)",
+            "@media (min-width: 3840px)": {
+                height: "280px", // Fixed larger size for 4K
+                width: "280px",
+            },
         },
         cardImageWrap: {
             borderRadius: theme.radius.lg,
-            height: "clamp(150px, 12vw, 200px)",
+            height: "clamp(150px, 12vw, 300px)", // Increased max to 300px for 4K
             overflow: "hidden",
             position: "relative",
-            width: "clamp(150px, 12vw, 200px)",
+            width: "clamp(150px, 12vw, 300px)",
+            "@media (min-width: 3840px)": {
+                height: "280px", // Fixed larger size for 4K
+                width: "280px",
+            },
         },
         cardItem: {
             "&:hover": {

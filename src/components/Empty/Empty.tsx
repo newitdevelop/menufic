@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import { Box, Center, keyframes, Text, useMantineTheme } from "@mantine/core";
 import { IconAtom2 } from "@tabler/icons";
@@ -8,7 +8,7 @@ interface Props {
     /** Height of the empty component */
     height?: string | number;
     /** Text to be display in the empty component */
-    text: string;
+    text: string | ReactNode;
 }
 
 const floatingAnimation = keyframes`

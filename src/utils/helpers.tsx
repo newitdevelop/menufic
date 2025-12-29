@@ -59,6 +59,63 @@ export const toBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
     });
 };
 
+/**
+ * Compress an image file to reduce its size while maintaining quality
+ * @param file - The image file to compress
+ * @param maxWidth - Maximum width of the compressed image (default: 1920)
+ * @param maxHeight - Maximum height of the compressed image (default: 1080)
+ * @param quality - JPEG quality (0-1, default: 0.85)
+ * @returns Base64-encoded compressed image
+ */
+export const compressImage = async (
+    file: File,
+    maxWidth = 1920,
+    maxHeight = 1080,
+    quality = 0.85
+): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onerror = (error) => reject(error);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let { width, height } = img;
+
+                // Calculate new dimensions while maintaining aspect ratio
+                if (width > maxWidth || height > maxHeight) {
+                    const aspectRatio = width / height;
+                    if (width > height) {
+                        width = maxWidth;
+                        height = width / aspectRatio;
+                    } else {
+                        height = maxHeight;
+                        width = height * aspectRatio;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    reject(new Error("Failed to get canvas context"));
+                    return;
+                }
+
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to base64
+                const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+                resolve(compressedBase64);
+            };
+            img.onerror = (error) => reject(error);
+            img.src = event.target?.result as string;
+        };
+    });
+};
+
 const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
         const image = new Image();
