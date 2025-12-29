@@ -323,12 +323,16 @@
                 "aiImageConfirmOverride": "This will replace your current image with an AI-generated image. Continue?"
             },
             "pack": {
+                "fetchError": "Failed to retrieve packs",
+                "addPackLabel": "Add Pack",
                 "createPack": "Create Pack",
                 "editPack": "Edit Pack",
                 "createError": "Failed to create pack",
                 "createSuccessDesc": "Created a new pack {name} successfully",
                 "updateError": "Failed to update pack",
                 "updateSuccessDesc": "Updated pack {name} successfully",
+                "deleteError": "Failed to delete pack",
+                "deleteSuccessDesc": "Deleted pack {name} successfully",
                 "name": "Pack Name",
                 "namePlaceholder": "e.g., Christmas Day Buffet",
                 "description": "Description",
