@@ -22,7 +22,9 @@ COPY prisma ./prisma
 RUN --mount=type=cache,target=/root/.npm \
     npm config set fetch-timeout 120000 && \
     npm config set fetch-retries 5 && \
-    npm ci --legacy-peer-deps
+    npm config set progress false && \
+    npm config set loglevel error && \
+    npm ci --legacy-peer-deps --prefer-offline
 
 # Copy audit scripts and run conditionally (faster feedback)
 ARG SKIP_AUDIT_FIX=0
