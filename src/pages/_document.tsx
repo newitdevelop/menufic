@@ -318,22 +318,42 @@ export default class MyDocument extends Document {
                     <script
                         dangerouslySetInnerHTML={{
                             __html: `
-                                // Fix stuck aria-hidden that blocks all interactions
+                                // Prevent Mantine modals from setting aria-hidden on #__next
+                                // This fixes the issue where modals block all page interactions
                                 (function() {
-                                    function removeStuckAriaHidden() {
+                                    function preventAriaHidden() {
                                         var nextEl = document.getElementById('__next');
-                                        if (nextEl && nextEl.getAttribute('aria-hidden') === 'true') {
+                                        if (!nextEl) return;
+
+                                        // Remove aria-hidden if it exists
+                                        if (nextEl.hasAttribute('aria-hidden')) {
                                             nextEl.removeAttribute('aria-hidden');
                                         }
+
+                                        // Watch for changes and prevent aria-hidden from being added
+                                        var observer = new MutationObserver(function(mutations) {
+                                            mutations.forEach(function(mutation) {
+                                                if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                                                    var target = mutation.target;
+                                                    if (target.id === '__next' && target.getAttribute('aria-hidden') === 'true') {
+                                                        target.removeAttribute('aria-hidden');
+                                                    }
+                                                }
+                                            });
+                                        });
+
+                                        observer.observe(nextEl, {
+                                            attributes: true,
+                                            attributeFilter: ['aria-hidden']
+                                        });
                                     }
-                                    // Run on load
+
+                                    // Run when DOM is ready
                                     if (document.readyState === 'loading') {
-                                        document.addEventListener('DOMContentLoaded', removeStuckAriaHidden);
+                                        document.addEventListener('DOMContentLoaded', preventAriaHidden);
                                     } else {
-                                        removeStuckAriaHidden();
+                                        preventAriaHidden();
                                     }
-                                    // Check periodically for stuck aria-hidden
-                                    setInterval(removeStuckAriaHidden, 1000);
                                 })();
                             `,
                         }}

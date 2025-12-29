@@ -11,7 +11,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     jq \
     pkg-config \
     libvips-dev \
-    libglib2.0-dev
+    libglib2.0-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY package*.json ./
@@ -49,7 +50,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y \
     openssl \
-    libvips42
+    libvips42 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
