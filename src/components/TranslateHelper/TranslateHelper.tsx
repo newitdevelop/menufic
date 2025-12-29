@@ -1,7 +1,9 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { ActionIcon, List, Modal, Text, Title } from "@mantine/core";
+import { ActionIcon, List, Text, Title } from "@mantine/core";
+
+import { Modal } from "../Modal";
 import { IconLanguage } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 
