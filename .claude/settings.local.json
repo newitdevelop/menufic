@@ -33,7 +33,9 @@
       "Bash(curl:*)",
       "Bash(npx tsc:*)",
       "Bash(set SKIP_ENV_VALIDATION=true)",
-      "Bash(npm run tsc:*)"
+      "Bash(npm run tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(docker:*)"
     ]
   }
 }
