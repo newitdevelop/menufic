@@ -4,15 +4,15 @@ FROM node:22.2.0 AS builder
 # Install system dependencies required for sharp and jq for audit script
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3 \
     make \
     g++ \
     jq \
     pkg-config \
     libvips-dev \
-    libglib2.0-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libglib2.0-dev
 
 WORKDIR /app
 COPY package*.json ./
@@ -48,10 +48,10 @@ FROM node:22.2.0-slim AS runner
 # Install runtime dependencies for Prisma and Sharp
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssl \
-    libvips42 \
-    && rm -rf /var/lib/apt/lists/*
+    libvips42
 
 WORKDIR /app
 
