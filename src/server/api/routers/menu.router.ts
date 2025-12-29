@@ -43,8 +43,8 @@ export const menuRouter = createTRPCRouter({
                 startDate: input.startDate ?? null,
                 endDate: input.endDate ?? null,
                 isFestive: input.isFestive ?? false,
-                // Auto-calculate isActive based on endDate
-                isActive: input.endDate ? new Date() <= input.endDate : true,
+                // Auto-calculate isActive: only check endDate if menu is temporary
+                isActive: input.isTemporary && input.endDate ? new Date() <= input.endDate : true,
             },
         });
     }),
@@ -119,8 +119,8 @@ export const menuRouter = createTRPCRouter({
                     startDate: input.startDate ?? null,
                     endDate: input.endDate ?? null,
                     isFestive: input.isFestive ?? false,
-                    // Auto-calculate isActive based on endDate
-                    isActive: input.endDate ? new Date() <= input.endDate : true,
+                    // Auto-calculate isActive: only check endDate if menu is temporary
+                    isActive: input.isTemporary && input.endDate ? new Date() <= input.endDate : true,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),
