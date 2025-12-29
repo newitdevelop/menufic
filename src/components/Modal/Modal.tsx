@@ -14,10 +14,14 @@ export const Modal: FC<Props> = ({ loading = false, ...rest }) => {
         <MantineModal
             closeOnClickOutside={!loading}
             closeOnEscape={!loading}
-            overlayBlur={5}
-            overlayOpacity={0.1}
-            styles={{ modal: { background: theme.white } }}
+            overlayBlur={0}
+            overlayOpacity={0.55}
+            styles={{
+                modal: { background: theme.white },
+                overlay: { backdropFilter: 'blur(2px)' }
+            }}
             withCloseButton={!loading}
+            zIndex={1000}
             {...rest}
         />
     );

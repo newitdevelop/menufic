@@ -37,7 +37,8 @@
       "Bash(npm run dev:*)",
       "Bash(docker:*)",
       "Bash(timeout /t 15 /nobreak)",
-      "Bash(findstr build:*)"
+      "Bash(findstr build:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
