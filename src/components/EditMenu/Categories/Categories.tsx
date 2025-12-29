@@ -16,7 +16,6 @@ import { CategoryElement } from "./CategoryElement";
 import { useStyles } from "./styles";
 import { env } from "../../../env/client.mjs";
 import { CategoryForm } from "../../Forms/CategoryForm";
-import { Packs } from "../Packs";
 
 interface Props {
     /** Id of the menu to which the categories belong to */
@@ -144,8 +143,6 @@ export const Categories: FC<Props> = ({ menuId }) => {
                         {t("addCategoryLabel")}
                     </Button>
                 )}
-
-                <Packs menuId={menuId} />
             </Box>
             <CategoryForm
                 menuId={menuId}

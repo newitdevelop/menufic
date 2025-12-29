@@ -18,7 +18,6 @@ export const Modal: FC<Props> = ({ loading = false, ...rest }) => {
             overlayOpacity={0.1}
             styles={{ modal: { background: theme.white } }}
             withCloseButton={!loading}
-            withinPortal
             {...rest}
         />
     );
