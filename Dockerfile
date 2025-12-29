@@ -41,8 +41,9 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 
 # Generate Prisma client and build
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npx prisma generate && \
-    npm run build
+    NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 # ===== PRODUCTION STAGE =====
 FROM node:22.2.0-slim AS runner
