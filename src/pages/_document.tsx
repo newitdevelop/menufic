@@ -166,7 +166,7 @@ export default class MyDocument extends Document {
                         dangerouslySetInnerHTML={{
                             __html: `
                                 /* Smart TV CSS optimizations */
-                                * {
+                                *:not([class*="mantine-Modal"]):not([class*="mantine-Overlay"]):not([data-mantine-portal]) {
                                     /* Hardware acceleration for Samsung Tizen and LG WebOS */
                                     -webkit-backface-visibility: hidden;
                                     -moz-backface-visibility: hidden;

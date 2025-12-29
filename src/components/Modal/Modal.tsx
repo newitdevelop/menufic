@@ -21,6 +21,7 @@ export const Modal: FC<Props> = ({ loading = false, ...rest }) => {
                 overlay: { backdropFilter: 'blur(2px)' }
             }}
             withCloseButton={!loading}
+            withinPortal
             zIndex={1000}
             {...rest}
         />
