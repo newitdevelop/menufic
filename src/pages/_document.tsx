@@ -302,7 +302,7 @@ export default class MyDocument extends Document {
 
                                 /* Reduce memory usage on older TVs */
                                 @media (min-width: 1440px) {
-                                    * {
+                                    *:not([class*="mantine-Modal"]):not([class*="overlay"]) {
                                         /* Disable blur effects on TVs (heavy on GPU) */
                                         backdrop-filter: none !important;
                                         -webkit-backdrop-filter: none !important;
@@ -315,6 +315,29 @@ export default class MyDocument extends Document {
                 <body>
                     <Main />
                     <NextScript />
+                    <script
+                        dangerouslySetInnerHTML={{
+                            __html: `
+                                // Fix stuck aria-hidden that blocks all interactions
+                                (function() {
+                                    function removeStuckAriaHidden() {
+                                        var nextEl = document.getElementById('__next');
+                                        if (nextEl && nextEl.getAttribute('aria-hidden') === 'true') {
+                                            nextEl.removeAttribute('aria-hidden');
+                                        }
+                                    }
+                                    // Run on load
+                                    if (document.readyState === 'loading') {
+                                        document.addEventListener('DOMContentLoaded', removeStuckAriaHidden);
+                                    } else {
+                                        removeStuckAriaHidden();
+                                    }
+                                    // Check periodically for stuck aria-hidden
+                                    setInterval(removeStuckAriaHidden, 1000);
+                                })();
+                            `,
+                        }}
+                    />
                 </body>
             </Html>
         );
