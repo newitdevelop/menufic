@@ -58,7 +58,17 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
             data-testid="menu-item-card-modal"
             onClose={onClose}
             opened={opened}
-            styles={{ modal: { background: bgColor } }}
+            size="xl"
+            styles={{
+                modal: {
+                    background: bgColor,
+                    maxWidth: "90vw",
+                    "@media (min-width: 90em)": { // Large screens/TVs (1440px+)
+                        maxWidth: "70vw",
+                        fontSize: "1.2rem",
+                    },
+                }
+            }}
             title={
                 <Text color={theme.black} size="xl" translate="yes" weight="bold">
                     {menuItem?.name}
@@ -69,13 +79,20 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
             <Stack spacing="sm">
                 {menuItem?.image?.path && (
                     <>
-                        <Box sx={{ borderRadius: theme.radius.lg, overflow: "hidden" }}>
+                        <Box sx={{
+                            borderRadius: theme.radius.lg,
+                            overflow: "hidden",
+                            maxHeight: "60vh",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
                             <ImageKitImage
                                 blurhash={menuItem?.image?.blurHash}
-                                height={400}
+                                height={600}
                                 imageAlt={menuItem?.name}
                                 imagePath={menuItem?.image?.path}
-                                width={400}
+                                width={600}
                             />
                         </Box>
                         {(menuItem?.image as any)?.disclaimer && (

@@ -25,6 +25,7 @@ import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client
 import { Black, White } from "src/styles/theme";
 import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
 import { getInitialMenuSelection } from "src/utils/detectSmartTV";
+import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { Empty } from "../Empty";
@@ -84,12 +85,12 @@ const useStyles = createStyles((theme) => ({
     },
     darkFontColor: { color: theme.colors.dark[7] },
     headerImageBox: {
-        aspectRatio: "3",
+        aspectRatio: "4",
         borderRadius: theme.radius.lg,
         overflow: "hidden",
         position: "relative",
-        [theme.fn.smallerThan("md")]: { aspectRatio: "2.5" },
-        [theme.fn.smallerThan("sm")]: { aspectRatio: "2" },
+        [theme.fn.smallerThan("md")]: { aspectRatio: "3" },
+        [theme.fn.smallerThan("sm")]: { aspectRatio: "2.5" },
     },
     mobileTitleWrap: { color: theme.black, gap: 8, marginTop: theme.spacing.lg },
     switchThumb: { background: theme.fn.lighten(Black, 0.2) },
@@ -341,7 +342,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             })}
                         >
                             <Text color={theme.black} size="lg" translate="no" weight={selectedMenu === menu.id ? "bold" : "normal"}>
-                                {(menu as any).isFestive ? `🎄 ${menu.name}` : menu.name}
+                                {(menu as any).isFestive ? `${getFestiveEmoji()} ${menu.name}` : menu.name}
                             </Text>
                             <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">
                                 {menu.availableTime}
