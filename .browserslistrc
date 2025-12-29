@@ -1,0 +1,38 @@
+# Browsers that we support
+# Comprehensive Smart TV browser support for hotel/hospitality TVs
+
+# Production
+[production]
+>0.2%
+not dead
+not op_mini all
+
+# Desktop/Mobile browsers
+Chrome >= 60
+Safari >= 11
+Firefox >= 60
+Edge >= 79
+
+# Smart TV browsers - comprehensive support
+# Samsung Tizen (2015+) - WebKit 538+
+Chrome >= 38
+# LG WebOS (2014+) - WebKit 537+
+Chrome >= 36
+# Philips TV (2014+) - Chromium-based
+Chrome >= 40
+# Hisense VIDAA - WebKit-based
+Safari >= 9
+# Older hotel TVs - minimum support
+Chrome >= 30
+Safari >= 8
+
+# Explicitly support older ES5 features
+ie >= 11
+# Support for very old WebKit (hotel TVs)
+Android >= 4.4
+
+# Development
+[development]
+last 1 chrome version
+last 1 firefox version
+last 1 safari version

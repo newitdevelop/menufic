@@ -3,6 +3,7 @@ import { z } from "zod";
 export const menuId = z.object({ menuId: z.string().cuid() });
 export const categoryId = z.object({ categoryId: z.string().cuid() });
 export const restaurantId = z.object({ restaurantId: z.string().cuid() });
+export const packId = z.object({ packId: z.string().cuid() });
 export const id = z.object({ id: z.string().cuid() });
 
 // Portuguese law allergens (EU Regulation 1169/2011) + "none" option
@@ -133,4 +134,29 @@ export const restaurantInput = z.object({
 export const bannerInput = z.object({
     imageBase64: z.string().min(1, "Image is required"),
     restaurantId: z.string().cuid(),
+});
+
+export const packSectionInput = z.object({
+    title: z.string().trim().min(1, "Section title is required").max(50, "Title cannot be longer than 50 characters"),
+    items: z.array(z.string().trim().min(1).max(200)).min(1, "At least one item is required"),
+    position: z.number().int().min(0),
+});
+
+export const packInput = z.object({
+    name: z.string().trim().min(1, "Name is required").max(100, "Name cannot be longer than 100 characters"),
+    description: z
+        .string()
+        .trim()
+        .max(500, "Description cannot be longer than 500 characters")
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
+    price: z.string().trim().min(1, "Price is required").max(12, "Price cannot be longer than 12 characters"),
+    currency: z.enum(["€", "$"]).default("€"),
+    vatRate: z.union([z.literal(6), z.literal(13), z.literal(23)]).default(23),
+    vatIncluded: z.boolean().default(true),
+    isActive: z.boolean().default(true),
+    sections: z.array(packSectionInput).min(1, "At least one section is required"),
+    imageBase64: z.string().optional(),
+    imagePath: z.string().optional(),
+    isAiGeneratedImage: z.boolean().default(false),
 });

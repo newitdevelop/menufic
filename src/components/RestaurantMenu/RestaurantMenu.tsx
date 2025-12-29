@@ -28,6 +28,7 @@ import { getInitialMenuSelection } from "src/utils/detectSmartTV";
 import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
 
 import { MenuItemCard } from "./MenuItemCard";
+import { PackCard } from "./PackCard";
 import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
 import { LanguageSelector } from "../LanguageSelector";
@@ -386,6 +387,11 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Stack>
             )}
             <Box ref={menuParent}>
+                {(menuDetails as any)?.packs?.map((pack: any) => (
+                    <Box key={pack.id} mb={40}>
+                        <PackCard pack={pack} />
+                    </Box>
+                ))}
                 {menuDetails?.categories
                     ?.filter((category) => category?.items.length)
                     ?.map((category) => (

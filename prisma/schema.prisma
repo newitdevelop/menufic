@@ -52,6 +52,7 @@ model Menu {
     isFestive     Boolean     @default(false) // Whether this is a festive/special menu (highlighted with emoji)
     isActive      Boolean     @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
     categories    Category[]  @relation("CategoriesOfMenu")
+    packs         Pack[]      @relation("PacksOfMenu")
     restaurant    Restaurant? @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
     restaurantId  String?
 
@@ -105,6 +106,7 @@ model Image {
     color            String
     isAiGenerated    Boolean     @default(false)
     menuItem         MenuItem?   @relation("ImageOfMenuItem")
+    pack             Pack?       @relation("ImageOfPack")
     restaurant       Restaurant? @relation("ImageOfRestaurant")
     restaurantBanner Restaurant? @relation("BannersOfRestaurant", fields: [restaurantId], references: [id], onDelete: Restrict, onUpdate: Restrict)
     restaurantId     String?
@@ -112,12 +114,50 @@ model Image {
     @@index([restaurantId])
 }
 
+model Pack {
+    id           String       @unique @default(cuid())
+    userId       String
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+    name         String       // e.g., "Christmas Day"
+    description  String?      @db.Text // Optional description
+    price        String       // Fixed price for the pack
+    currency     String       @default("€")
+    vatRate      Int          @default(23) // VAT percentage
+    vatIncluded  Boolean      @default(true) // Whether VAT is included in price
+    position     Int          // Display order
+    isActive     Boolean      @default(true) // Whether pack is available
+    sections     PackSection[] @relation("PackSections")
+    menu         Menu?        @relation("PacksOfMenu", fields: [menuId], references: [id])
+    menuId       String?
+    image        Image?       @relation("ImageOfPack", fields: [imageId], references: [id])
+    imageId      String?      @unique
+
+    @@id([id, userId])
+    @@index([menuId])
+}
+
+model PackSection {
+    id          String   @unique @default(cuid())
+    userId      String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    title       String   // e.g., "COLD DISHES", "HOT DISHES"
+    items       String[] // Array of item descriptions
+    position    Int      // Display order within pack
+    pack        Pack?    @relation("PackSections", fields: [packId], references: [id], onDelete: Cascade)
+    packId      String?
+
+    @@id([id, userId])
+    @@index([packId])
+}
+
 model Translation {
     id         String   @id @default(cuid())
-    entityType String   // 'menuItem', 'category', 'menu'
+    entityType String   // 'menuItem', 'category', 'menu', 'pack', 'packSection'
     entityId   String   // ID of the item being translated
     language   String   // 'pt', 'es', 'fr', 'de', etc.
-    field      String   // 'name', 'description', 'availableTime', 'message'
+    field      String   // 'name', 'description', 'availableTime', 'message', 'title'
     translated String   @db.Text
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt

@@ -181,6 +181,14 @@ export const restaurantRouter = createTRPCRouter({
                                 include: { items: { include: { image: true }, orderBy: { position: "asc" } } },
                                 orderBy: { position: "asc" },
                             },
+                            packs: {
+                                include: {
+                                    sections: { orderBy: { position: "asc" } },
+                                    image: true,
+                                },
+                                orderBy: { position: "asc" },
+                                where: { isActive: true }, // Only show active packs
+                            },
                         },
                         orderBy: { position: "asc" },
                         where: { isActive: true }, // Only show active menus (not expired temporary menus)
@@ -190,7 +198,7 @@ export const restaurantRouter = createTRPCRouter({
             });
 
             // Import translation services
-            const { translateMenu, translateCategory, translateMenuItem, getImageDisclaimer, getUITranslation, getAllergenTranslation } = await import(
+            const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, getImageDisclaimer, getUITranslation, getAllergenTranslation } = await import(
                 "src/server/services/translation.service"
             );
 
@@ -270,13 +278,20 @@ export const restaurantRouter = createTRPCRouter({
                                 return { ...category, items: itemsWithDisclaimers };
                             })
                         );
-                        return { ...menu, categories: categoriesWithDisclaimers };
+
+                        // Add UI translations to packs
+                        const packsWithUiTranslations = menu.packs?.map(pack => ({
+                            ...pack,
+                            uiTranslations,
+                        })) || [];
+
+                        return { ...menu, categories: categoriesWithDisclaimers, packs: packsWithUiTranslations };
                     })
                 );
                 return { ...restaurant, menus: menusWithDisclaimers, uiTranslations };
             }
 
-            // Translate all menus, categories, and items
+            // Translate all menus, categories, items, and packs
             const translatedMenus = await Promise.all(
                 restaurant.menus.map(async (menu) => {
                     const translatedMenu = await translateMenu(menu, input.language!);
@@ -317,9 +332,29 @@ export const restaurantRouter = createTRPCRouter({
                         })
                     );
 
+                    // Translate packs and their sections
+                    const translatedPacks = await Promise.all(
+                        (menu.packs || []).map(async (pack) => {
+                            const translatedPack = await translatePack(pack, input.language!);
+
+                            const translatedSections = await Promise.all(
+                                pack.sections.map(async (section) => {
+                                    return await translatePackSection(section, input.language!);
+                                })
+                            );
+
+                            return {
+                                ...translatedPack,
+                                sections: translatedSections,
+                                uiTranslations,
+                            };
+                        })
+                    );
+
                     return {
                         ...translatedMenu,
                         categories: translatedCategories,
+                        packs: translatedPacks,
                     };
                 })
             );

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Container } from "@mantine/core";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { useRouter } from "next/router";
@@ -23,15 +25,43 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
     const language = (router.query?.lang as string) || "PT";
     const t = useTranslations("menu");
 
-    const { data: restaurant, error, isLoading } = (api.restaurant as any).getDetails.useQuery(
+    // Loading timeout for older browsers (Hisense TV)
+    const [loadingTimeout, setLoadingTimeout] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
+
+    const { data: restaurant, error, isLoading, refetch } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId, language },
-        { enabled: !!restaurantId }
+        {
+            enabled: !!restaurantId,
+            retry: 3,
+            retryDelay: 1000,
+            staleTime: 30000, // 30 seconds
+        }
     );
+
+    // Set timeout for loading state (20 seconds)
+    useEffect(() => {
+        if (isLoading) {
+            const timer = setTimeout(() => {
+                setLoadingTimeout(true);
+            }, 20000);
+            return () => clearTimeout(timer);
+        } else {
+            setLoadingTimeout(false);
+        }
+    }, [isLoading]);
 
     // Debug logging
     if (error) {
         console.error("Restaurant query error:", error);
     }
+
+    // Handle retry after timeout
+    const handleRetry = () => {
+        setLoadingTimeout(false);
+        setRetryCount(prev => prev + 1);
+        refetch();
+    };
 
     return (
         <>
@@ -54,8 +84,63 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
             <main>
                 <Container py="lg" size="xl" sx={{ maxWidth: "100%", "@media (min-width: 90em)": { padding: "1rem 2rem" } }}>
                     {(() => {
+                        // Show timeout message if loading takes too long
+                        if (loadingTimeout) {
+                            return (
+                                <Empty
+                                    height="calc(100vh - 100px)"
+                                    text={
+                                        <>
+                                            {t("loadingTooLong")}
+                                            <br />
+                                            <button
+                                                onClick={handleRetry}
+                                                style={{
+                                                    marginTop: "1rem",
+                                                    padding: "0.5rem 1rem",
+                                                    fontSize: "1rem",
+                                                    cursor: "pointer",
+                                                    borderRadius: "4px",
+                                                    border: "1px solid #ccc",
+                                                    background: "#fff"
+                                                }}
+                                            >
+                                                {t("retry")} {retryCount > 0 ? `(${retryCount})` : ""}
+                                            </button>
+                                        </>
+                                    }
+                                />
+                            );
+                        }
                         if (isLoading) {
-                            return <Empty height="calc(100vh - 100px)" text="Loading..." />;
+                            return <Empty height="calc(100vh - 100px)" text={t("loading")} />;
+                        }
+                        if (error) {
+                            return (
+                                <Empty
+                                    height="calc(100vh - 100px)"
+                                    text={
+                                        <>
+                                            {t("errorLoading")}
+                                            <br />
+                                            <button
+                                                onClick={handleRetry}
+                                                style={{
+                                                    marginTop: "1rem",
+                                                    padding: "0.5rem 1rem",
+                                                    fontSize: "1rem",
+                                                    cursor: "pointer",
+                                                    borderRadius: "4px",
+                                                    border: "1px solid #ccc",
+                                                    background: "#fff"
+                                                }}
+                                            >
+                                                {t("retry")}
+                                            </button>
+                                        </>
+                                    }
+                                />
+                            );
                         }
                         if (restaurant && restaurant?.isPublished === true) {
                             return <RestaurantMenu restaurant={restaurant} />;

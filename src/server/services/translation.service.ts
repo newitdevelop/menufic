@@ -1,8 +1,8 @@
 import { prisma } from "src/server/db";
 import { translateWithDeepL } from "src/utils/deepl";
 
-type EntityType = "menuItem" | "category" | "menu";
-type TranslatableField = "name" | "description" | "availableTime" | "message" | "aiImageDisclaimer" | "imageDisclaimer" | string;
+type EntityType = "menuItem" | "category" | "menu" | "pack" | "packSection";
+type TranslatableField = "name" | "description" | "availableTime" | "message" | "title" | "aiImageDisclaimer" | "imageDisclaimer" | string;
 
 /**
  * Get or create translation for a specific entity field
@@ -207,7 +207,6 @@ export async function translateCategory(category: { id: string; name: string }, 
  * Source language is Portuguese (PT) - the default content language
  * NOTE: Menu name and availableTime are NOT translated (brand names and times should stay as-is)
  * Only the message field is translated
- * Festive menus get a 🎄 emoji prefix
  */
 export async function translateMenu(
     menu: { id: string; name: string; availableTime: string; message?: string | null; isFestive?: boolean },
@@ -215,11 +214,7 @@ export async function translateMenu(
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
         // Don't translate if target is Portuguese (source language)
-        // But still add festive emoji if needed
-        return {
-            ...menu,
-            name: menu.isFestive ? `🎄 ${menu.name}` : menu.name,
-        };
+        return menu;
     }
 
     // Only translate the message field, keep name and availableTime unchanged
@@ -229,8 +224,7 @@ export async function translateMenu(
 
     return {
         ...menu,
-        // name: keep original (brand names should not be translated) but add festive emoji
-        name: menu.isFestive ? `🎄 ${menu.name}` : menu.name,
+        // name: keep original (brand names should not be translated)
         // availableTime: keep original (time formats should stay consistent)
         message: translatedMessage,
     };
@@ -332,4 +326,61 @@ export async function getAllergenTranslation(allergenCode: string, targetLang: s
     const cached = await getOrCreateTranslation("menu", "ui-allergens", allergenCode, sourceText, targetLang, "PT");
 
     return cached;
+}
+
+/**
+ * Translate a pack with its fields
+ * Source language is Portuguese (PT) - the default content language
+ */
+export async function translatePack(
+    pack: { id: string; name: string; description?: string | null },
+    targetLang: string
+) {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Don't translate if target is Portuguese (source language)
+        return pack;
+    }
+
+    const [name, description] = await Promise.all([
+        getOrCreateTranslation("pack", pack.id, "name", pack.name, targetLang, "PT"),
+        pack.description
+            ? getOrCreateTranslation("pack", pack.id, "description", pack.description, targetLang, "PT")
+            : Promise.resolve(pack.description),
+    ]);
+
+    return {
+        ...pack,
+        name,
+        description,
+    };
+}
+
+/**
+ * Translate a pack section with its fields
+ * Source language is Portuguese (PT) - the default content language
+ */
+export async function translatePackSection(
+    section: { id: string; title: string; items: string[] },
+    targetLang: string
+) {
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        // Don't translate if target is Portuguese (source language)
+        return section;
+    }
+
+    // Translate section title
+    const title = await getOrCreateTranslation("packSection", section.id, "title", section.title, targetLang, "PT");
+
+    // Translate all items
+    const items = await Promise.all(
+        section.items.map((item, index) =>
+            getOrCreateTranslation("packSection", section.id, `item_${index}`, item, targetLang, "PT")
+        )
+    );
+
+    return {
+        ...section,
+        title,
+        items,
+    };
 }
