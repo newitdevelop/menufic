@@ -2,71 +2,54 @@
 FROM node:22.2.0 AS builder
 
 # Install system dependencies required for sharp and jq for audit script
-RUN apt-get update && apt-get install -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     jq \
     pkg-config \
     libvips-dev \
-    libglib2.0-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libglib2.0-dev
 
 WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma
 
 # Configure npm for better network handling and install dependencies
-RUN npm config set fetch-timeout 120000 && \
+RUN --mount=type=cache,target=/root/.npm \
+    npm config set fetch-timeout 120000 && \
     npm config set fetch-retries 5 && \
-    npm config set maxsockets 1 && \
-    npm install --legacy-peer-deps
+    npm ci --legacy-peer-deps
 
-# Copy audit scripts
-COPY scripts/check-audit-needed.sh /tmp/check-audit-needed.sh
-COPY scripts/audit-fix-safe.sh /tmp/audit-fix-safe.sh
-RUN chmod +x /tmp/check-audit-needed.sh /tmp/audit-fix-safe.sh
-
-# Apply safe security patches conditionally with verbose output
-# This automatically checks if safe patches are available before running
-# Set SKIP_AUDIT_FIX=1 as build arg to force skip this step
+# Copy audit scripts and run conditionally (faster feedback)
 ARG SKIP_AUDIT_FIX=0
-RUN if [ "$SKIP_AUDIT_FIX" = "1" ]; then \
-        echo "⏭️  Skipping npm audit fix (SKIP_AUDIT_FIX=1)"; \
+COPY scripts/check-audit-needed.sh scripts/audit-fix-safe.sh /tmp/
+RUN --mount=type=cache,target=/root/.npm \
+    chmod +x /tmp/*.sh && \
+    if [ "$SKIP_AUDIT_FIX" = "1" ]; then \
+        echo "⏭️  Skipping audit"; \
     elif /tmp/check-audit-needed.sh; then \
-        echo ""; \
-        echo "🔧 Running security audit..."; \
-        echo ""; \
-        /tmp/audit-fix-safe.sh || echo "⚠️  Audit fix completed with warnings (non-critical)"; \
-    else \
-        echo "⏭️  Skipping npm audit fix (no safe patches available)"; \
+        /tmp/audit-fix-safe.sh || true; \
     fi
 
-# Add build argument to bust cache for source copy
-ARG CACHEBUST=1
-RUN echo "Cache bust: $CACHEBUST"
+# Copy source files
 COPY . .
 
-# Remove any cached build artifacts and verify structure
-RUN rm -rf .next && \
-    echo "Verifying source structure..." && \
-    ls -la src/pages/ && \
-    test -d src/pages/venue || (echo "ERROR: venue folder not found!" && exit 1)
-
-# Regenerate Prisma client with the updated schema
-RUN npx prisma generate --schema=./prisma/schema.prisma
-
-# Build the app
-RUN npm run build
+# Generate Prisma client and build
+RUN npx prisma generate && \
+    npm run build
 
 # ===== PRODUCTION STAGE =====
 FROM node:22.2.0-slim AS runner
 
 # Install runtime dependencies for Prisma and Sharp
-RUN apt-get update && apt-get install -y \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
     openssl \
-    libvips42 \
-    && rm -rf /var/lib/apt/lists/*
+    libvips42
 
 WORKDIR /app
 
