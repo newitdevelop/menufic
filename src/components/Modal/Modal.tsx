@@ -18,24 +18,16 @@ export const Modal: FC<Props> = ({ loading = false, ...rest }) => {
             overlayOpacity={0.55}
             styles={{
                 modal: {
-                    background: theme.white,
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%) !important'
+                    background: theme.white
                 },
                 overlay: {
-                    backdropFilter: 'blur(2px)',
-                    position: 'fixed'
+                    backdropFilter: 'blur(2px)'
                 }
             }}
             withCloseButton={!loading}
             withinPortal
-            target="body"
-            trapFocus={false}
-            lockScroll={false}
             centered
-            zIndex={10000}
+            zIndex={1000}
             {...rest}
         />
     );

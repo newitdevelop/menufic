@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Container } from "@mantine/core";
+import { Container, Global } from "@mantine/core";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -65,6 +65,29 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
 
     return (
         <>
+            <Global
+                styles={{
+                    /* Smart TV CSS optimizations - only apply to main content, not modals */
+                    'main, footer': {
+                        /* Hardware acceleration for Samsung Tizen and LG WebOS */
+                        WebkitBackfaceVisibility: 'hidden',
+                        MozBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden',
+                        /* Force GPU acceleration for smoother rendering */
+                        WebkitTransform: 'translateZ(0)',
+                        MozTransform: 'translateZ(0)',
+                        transform: 'translateZ(0)',
+                    },
+                    /* Reduce memory usage on older TVs */
+                    '@media (min-width: 1440px)': {
+                        'main, footer': {
+                            /* Disable blur effects on TVs (heavy on GPU) */
+                            backdropFilter: 'none !important',
+                            WebkitBackdropFilter: 'none !important',
+                        },
+                    },
+                }}
+            />
             <NextSeo
                 description={`${t("seoDescription.venueName", { name: restaurant?.name })}. ${t(
                     "seoDescription.venueLocation",

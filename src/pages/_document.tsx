@@ -165,17 +165,19 @@ export default class MyDocument extends Document {
                     <style
                         dangerouslySetInnerHTML={{
                             __html: `
-                                /* Smart TV CSS optimizations */
-                                *:not([class*="mantine-Modal"]):not([class*="mantine-Overlay"]):not([data-mantine-portal]) {
-                                    /* Hardware acceleration for Samsung Tizen and LG WebOS */
-                                    -webkit-backface-visibility: hidden;
-                                    -moz-backface-visibility: hidden;
-                                    backface-visibility: hidden;
-
-                                    /* Force GPU acceleration for smoother rendering */
-                                    -webkit-transform: translateZ(0);
-                                    -moz-transform: translateZ(0);
-                                    transform: translateZ(0);
+                                /* Ensure modals always work correctly regardless of parent CSS */
+                                .mantine-Modal-inner {
+                                    position: fixed !important;
+                                    top: 0 !important;
+                                    left: 0 !important;
+                                    right: 0 !important;
+                                    bottom: 0 !important;
+                                    display: flex !important;
+                                    align-items: center !important;
+                                    justify-content: center !important;
+                                    transform: none !important;
+                                    -webkit-transform: none !important;
+                                    -moz-transform: none !important;
                                 }
 
                                 html {
@@ -300,14 +302,6 @@ export default class MyDocument extends Document {
                                     }
                                 }
 
-                                /* Reduce memory usage on older TVs */
-                                @media (min-width: 1440px) {
-                                    *:not([class*="mantine-Modal"]):not([class*="overlay"]) {
-                                        /* Disable blur effects on TVs (heavy on GPU) */
-                                        backdrop-filter: none !important;
-                                        -webkit-backdrop-filter: none !important;
-                                    }
-                                }
                             `,
                         }}
                     />
