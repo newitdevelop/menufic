@@ -357,8 +357,8 @@
                 "removeSectionButton": "Remove Section",
                 "minSectionsError": "At least one section is required"
             },
-            "categoriesTab": "Categories",
-            "packsTab": "Packs"
+            "categoriesTab": "Standard Menu",
+            "packsTab": "Groups & Events"
         },
         "venue": {
             "seoTitle": "Venues",

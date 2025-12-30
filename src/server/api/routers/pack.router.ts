@@ -189,7 +189,7 @@ export const packRouter = createTRPCRouter({
         // Invalidate translations
         await invalidateTranslations("pack", input.id);
 
-        return { success: true };
+        return pack;
     }),
 
     /** Get all packs for a menu */

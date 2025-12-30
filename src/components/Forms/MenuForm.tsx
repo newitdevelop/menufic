@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { useEffect } from "react";
 
 import { Button, Checkbox, Group, Stack, Textarea, TextInput, useMantineTheme } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
+import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
 
@@ -49,9 +49,22 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         },
     });
 
+    // Parse availableTime into start and end times
+    const parseAvailableTime = (timeString: string) => {
+        if (!timeString) return { startTime: "", endTime: "" };
+        const parts = timeString.split(" - ");
+        return {
+            startTime: parts[0]?.trim() || "",
+            endTime: parts[1]?.trim() || "",
+        };
+    };
+
+    const { startTime: initialStartTime, endTime: initialEndTime } = parseAvailableTime(menuItem?.availableTime || "");
+
     const { getInputProps, onSubmit, isDirty, resetDirty, setValues, values } = useForm({
         initialValues: {
-            availableTime: menuItem?.availableTime || "",
+            startTime: initialStartTime,
+            endTime: initialEndTime,
             email: menuItem?.email || "",
             reservations: (menuItem as any)?.reservations || "",
             message: menuItem?.message || "",
@@ -63,13 +76,14 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             isFestive: (menuItem as any)?.isFestive || false,
             isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
         },
-        validate: zodResolver(menuInput),
     });
 
     useEffect(() => {
         if (opened) {
+            const { startTime, endTime } = parseAvailableTime(menuItem?.availableTime || "");
             const values = {
-                availableTime: menuItem?.availableTime || "",
+                startTime,
+                endTime,
                 email: menuItem?.email || "",
                 reservations: (menuItem as any)?.reservations || "",
                 message: menuItem?.message || "",
@@ -98,14 +112,20 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         >
             <form
                 onSubmit={onSubmit((values) => {
-                    if (isDirty()) {
-                        if (menuItem) {
-                            updateMenu({ ...values, id: menuItem?.id });
-                        } else {
-                            createMenu({ ...values, restaurantId });
-                        }
+                    // Combine start and end times into availableTime string
+                    const availableTime = values.startTime && values.endTime
+                        ? `${values.startTime} - ${values.endTime}`
+                        : values.startTime || values.endTime || "";
+
+                    const submitData = {
+                        ...values,
+                        availableTime,
+                    };
+
+                    if (menuItem) {
+                        updateMenu({ ...submitData, id: menuItem?.id });
                     } else {
-                        onClose();
+                        createMenu({ ...submitData, restaurantId });
                     }
                 })}
             >
@@ -117,12 +137,24 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         withAsterisk
                         {...getInputProps("name")}
                     />
-                    <TextInput
-                        disabled={loading}
-                        label={t("inputTimeLabel")}
-                        placeholder={t("inputTimePlaceholder")}
-                        {...getInputProps("availableTime")}
-                    />
+                    <Group grow>
+                        <TimeInput
+                            disabled={loading}
+                            label="Start Time"
+                            placeholder="e.g., 11:00"
+                            format="24"
+                            clearable
+                            {...getInputProps("startTime")}
+                        />
+                        <TimeInput
+                            disabled={loading}
+                            label="End Time"
+                            placeholder="e.g., 23:00"
+                            format="24"
+                            clearable
+                            {...getInputProps("endTime")}
+                        />
+                    </Group>
                     <TextInput
                         disabled={loading}
                         label={t("inputTelephoneLabel")}
