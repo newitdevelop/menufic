@@ -56,26 +56,27 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const isSelected = item.id === selectedMenu?.id;
     const isInactive = !(item as any).isActive;
 
-    let iconColor = theme.colors.dark[6];
-    if (isInactive) {
-        iconColor = theme.colors.red[7];
-    } else if (isSelected) {
-        iconColor = theme.colors.primary?.[7];
-    }
+    const getIconColor = () => {
+        if (isInactive) return theme.colors.red[7];
+        if (isSelected) return theme.colors.primary?.[7];
+        return theme.colors.dark[6];
+    };
 
-    let editDeleteColor = theme.colors.dark[6];
-    if (isInactive) {
-        editDeleteColor = theme.colors.red[7];
-    } else if (isSelected) {
-        editDeleteColor = theme.colors?.primary?.[7];
-    }
+    const getEditDeleteColor = () => {
+        if (isInactive) return theme.colors.red[7];
+        if (isSelected) return theme.colors?.primary?.[7];
+        return theme.colors.dark[6];
+    };
 
-    let editDeleteHoverColor = theme.colors.primary?.[5];
-    if (isInactive) {
-        editDeleteHoverColor = theme.colors.red[8];
-    } else if (isSelected) {
-        editDeleteHoverColor = theme.black;
-    }
+    const getEditDeleteHoverColor = () => {
+        if (isInactive) return theme.colors.red[8];
+        if (isSelected) return theme.black;
+        return theme.colors.primary?.[5];
+    };
+
+    const iconColor = getIconColor();
+    const editDeleteColor = getEditDeleteColor();
+    const editDeleteHoverColor = getEditDeleteHoverColor();
 
     return (
         <>
