@@ -220,6 +220,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     }, [restaurant]);
 
     const haveMenuItems = menuDetails?.categories?.some((category) => category?.items?.length > 0);
+    const havePacks = (menuDetails as any)?.packs?.length > 0;
 
     // Smart TV remote control navigation
     const menuIds = useMemo(() => sortedMenus?.map(m => m.id) || [], [sortedMenus]);
@@ -422,7 +423,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             <Box ref={menuParent}>
                 {(menuDetails as any)?.packs?.map((pack: any) => (
                     <Box key={pack.id} mb={40}>
-                        <PackCard pack={pack} />
+                        <PackCard pack={pack} isFestive={(menuDetails as any)?.isFestive} />
                     </Box>
                 ))}
                 {menuDetails?.categories
@@ -449,7 +450,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 {sortedMenus?.length === 0 && !haveMenuItems && (
                     <Empty height={400} text={t("noMenusForVenue")} />
                 )}
-                {!!sortedMenus?.length && !haveMenuItems && <Empty height={400} text={t("noItemsForMenu")} />}
+                {!!sortedMenus?.length && !haveMenuItems && !havePacks && <Empty height={400} text={t("noItemsForMenu")} />}
             </Box>
         </Box>
     );

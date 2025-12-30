@@ -6,13 +6,18 @@ import { Box, createStyles, Divider, Group, Paper, Stack, Text } from "@mantine/
 import type { Image } from "@prisma/client";
 
 import { calculateVATInclusivePrice } from "src/utils/helpers";
+import { getFestiveColors, getProfessionalColors } from "src/utils/getFestiveColors";
 import { ImageKitImage } from "../ImageKitImage";
 
 export interface StyleProps {
     imageColor?: string;
+    isFestive?: boolean;
 }
 
-const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
+const useStyles = createStyles((theme, { imageColor, isFestive }: StyleProps) => {
+    // Get dynamic color scheme based on season/holiday (if festive) or professional colors
+    const colors = isFestive ? getFestiveColors() : getProfessionalColors();
+
     const bgColor = useMemo(() => {
         if (imageColor) {
             if (theme.colorScheme === "light") {
@@ -20,17 +25,18 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
             }
             return theme.fn.darken(imageColor, 0.95);
         }
-        return theme.colors.dark[0];
+        return colors.bg;
     }, [imageColor, theme.colorScheme]);
 
     return {
         packCard: {
             backgroundColor: bgColor,
-            border: `1px solid ${theme.colors.dark[3]}`,
+            border: `2px solid ${colors.border}`,
             padding: theme.spacing.xl,
             transition: "all 300ms ease",
             "&:hover": {
-                boxShadow: theme.shadows.md,
+                boxShadow: theme.shadows.lg,
+                transform: "translateY(-2px)",
             },
             "@media (min-width: 90em)": {
                 padding: `${theme.spacing.xl * 1.5}px`,
@@ -38,11 +44,13 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
         },
         packHeader: {
             marginBottom: theme.spacing.lg,
+            borderBottom: `2px solid ${colors.accent}`,
+            paddingBottom: theme.spacing.md,
         },
         packName: {
             fontSize: "2rem",
             fontWeight: 700,
-            color: theme.black,
+            color: isFestive ? colors.border : theme.black,
             textAlign: "center",
             "@media (max-width: 768px)": {
                 fontSize: "1.5rem",
@@ -57,7 +65,7 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
         packPrice: {
             fontSize: "2.5rem",
             fontWeight: 700,
-            color: theme.colors.red[6],
+            color: colors.price,
             textAlign: "center",
             marginTop: theme.spacing.md,
             marginBottom: theme.spacing.md,
@@ -68,7 +76,7 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
         sectionTitle: {
             fontSize: "1.125rem",
             fontWeight: 600,
-            color: theme.colors.orange[7],
+            color: colors.sectionTitle,
             textTransform: "uppercase",
             letterSpacing: "0.5px",
             marginBottom: theme.spacing.xs,
@@ -129,11 +137,12 @@ interface Pack {
 
 interface Props {
     pack: Pack;
+    isFestive?: boolean;
 }
 
 /** Display a menu pack as a card with sections (like a buffet menu) */
-export const PackCard: FC<Props> = ({ pack }) => {
-    const { classes } = useStyles({ imageColor: pack?.image?.color });
+export const PackCard: FC<Props> = ({ pack, isFestive }) => {
+    const { classes } = useStyles({ imageColor: pack?.image?.color, isFestive });
 
     // Get UI translations (server-side translated via DeepL)
     const uiTranslations = pack.uiTranslations || {
