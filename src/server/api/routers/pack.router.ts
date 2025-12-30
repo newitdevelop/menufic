@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
+import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
 import { invalidateTranslations } from "src/server/services/translation.service";
 import { id, menuId, packId, packInput } from "src/utils/validators";
 
@@ -35,10 +36,8 @@ export const packRouter = createTRPCRouter({
             imageId = image.id;
         }
 
-        // Initialize empty allergen map for all items
-        // Note: Similar to menu items, allergen detection should be done on the frontend
-        // via a separate API call if needed in the future
-        const allergenMap: Record<string, string[]> = {};
+        // Use allergen map from input if provided, otherwise use empty map
+        const allergenMap: Record<string, string[]> = input.allergenMap || {};
 
         // Create pack and sections separately to avoid relationMode issues
         const pack = await ctx.prisma.$transaction(async (tx) => {
@@ -157,10 +156,8 @@ export const packRouter = createTRPCRouter({
                 imageId = image.id;
             }
 
-            // Initialize empty allergen map for all items
-            // Note: Similar to menu items, allergen detection should be done on the frontend
-            // via a separate API call if needed in the future
-            const allergenMap: Record<string, string[]> = {};
+            // Use allergen map from input if provided, otherwise use empty map
+            const allergenMap: Record<string, string[]> = input.allergenMap || {};
 
             // Use transaction to ensure atomic operations
             const pack = await ctx.prisma.$transaction(async (tx) => {
@@ -329,5 +326,42 @@ export const packRouter = createTRPCRouter({
             );
 
             return { success: true };
+        }),
+
+    /** Detect allergens using AI for pack items */
+    detectAllergensAI: protectedProcedure
+        .input(
+            z.object({
+                items: z.array(z.string()),
+            })
+        )
+        .mutation(async ({ input }) => {
+            if (!isAllergenAIAvailable()) {
+                throw new TRPCError({
+                    code: "PRECONDITION_FAILED",
+                    message: "AI allergen detection is not available. OpenAI API key not configured.",
+                });
+            }
+
+            try {
+                // Detect allergens for each item
+                const allergenMap: Record<string, string[]> = {};
+
+                await Promise.all(
+                    input.items.map(async (item) => {
+                        if (item.trim()) {
+                            const allergens = await detectAllergensWithAI(item, "");
+                            allergenMap[item] = allergens;
+                        }
+                    })
+                );
+
+                return { allergenMap };
+            } catch (error) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: error instanceof Error ? error.message : "Failed to detect allergens",
+                });
+            }
         }),
 });

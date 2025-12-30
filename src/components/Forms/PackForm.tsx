@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { ActionIcon, Button, Checkbox, Divider, Group, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
@@ -11,7 +11,7 @@ import type { Pack, PackSection } from "@prisma/client";
 
 import { api } from "src/utils/api";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
-import { packInput } from "src/utils/validators";
+import { allergenCodes, packInput } from "src/utils/validators";
 
 import { Modal } from "../Modal";
 
@@ -27,6 +27,16 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
     const trpcCtx = api.useContext();
     const t = useTranslations("dashboard.editMenu.pack");
     const tCommon = useTranslations("common");
+    const [allergenMap, setAllergenMap] = useState<Record<string, (typeof allergenCodes)[number][]>>({});
+
+    // AI allergen detection mutation
+    const { mutate: detectAllergensAI, isLoading: isDetectingAllergens } = (api.pack as any).detectAllergensAI.useMutation({
+        onError: (err: unknown) => showErrorToast("AI Detection Error", err as { message: string }),
+        onSuccess: (data: any) => {
+            setAllergenMap(data.allergenMap);
+            showSuccessToast("Allergens Detected", `Successfully detected allergens for ${Object.keys(data.allergenMap).length} items`);
+        },
+    });
 
     const { mutate: createPack, isLoading: isCreating } = (api.pack as any).create.useMutation({
         onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
@@ -123,6 +133,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                                 ...section,
                                 items: section.items.filter(item => item.trim() !== ""),
                             })),
+                            allergenMap,
                         };
 
                         if (packItem) {
@@ -239,6 +250,49 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                     >
                         {t("addSectionButton")}
                     </Button>
+
+                    <Divider my="md" />
+
+                    <Button
+                        compact
+                        disabled={loading || isDetectingAllergens || values.sections.length === 0}
+                        loading={isDetectingAllergens}
+                        onClick={() => {
+                            // Collect all items from all sections
+                            const allItems: string[] = [];
+                            values.sections.forEach((section) => {
+                                section.items.forEach((item) => {
+                                    if (item.trim()) {
+                                        allItems.push(item.trim());
+                                    }
+                                });
+                            });
+
+                            if (allItems.length === 0) {
+                                showErrorToast("No Items", { message: "Please add items to sections before detecting allergens" });
+                                return;
+                            }
+
+                            // If allergens are already detected, confirm before overriding
+                            if (Object.keys(allergenMap).length > 0) {
+                                // eslint-disable-next-line no-alert
+                                if (!window.confirm("Allergens have already been detected. Do you want to override them?")) {
+                                    return;
+                                }
+                            }
+
+                            detectAllergensAI({ items: allItems });
+                        }}
+                        variant="light"
+                    >
+                        Detect Allergens with AI
+                    </Button>
+
+                    {Object.keys(allergenMap).length > 0 && (
+                        <Text size="xs" color="dimmed">
+                            Allergens detected for {Object.keys(allergenMap).length} items
+                        </Text>
+                    )}
 
                     <Group mt="md" position="right">
                         <Button data-testid="save-pack-form" loading={loading} px="xl" type="submit">

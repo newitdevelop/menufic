@@ -165,4 +165,5 @@ export const packInput = z.object({
     imageBase64: z.string().optional(),
     imagePath: z.string().optional(),
     isAiGeneratedImage: z.boolean().default(false),
+    allergenMap: z.record(z.string(), z.array(z.enum(allergenCodes))).optional(),
 });
