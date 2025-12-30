@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
-import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
 import { invalidateTranslations } from "src/server/services/translation.service";
 import { id, menuId, packId, packInput } from "src/utils/validators";
 
@@ -36,25 +35,10 @@ export const packRouter = createTRPCRouter({
             imageId = image.id;
         }
 
-        // Detect allergens for all items in all sections using AI (if available)
+        // Initialize empty allergen map for all items
+        // Note: Similar to menu items, allergen detection should be done on the frontend
+        // via a separate API call if needed in the future
         const allergenMap: Record<string, string[]> = {};
-        if (isAllergenAIAvailable()) {
-            const allItems = input.sections.flatMap(section => section.items);
-
-            // Batch detect allergens for all items
-            await Promise.all(
-                allItems.map(async (item) => {
-                    try {
-                        const allergens = await detectAllergensWithAI(item, "");
-                        // Filter out "none" - we store empty array instead
-                        allergenMap[item] = allergens.filter(code => code !== "none");
-                    } catch (error) {
-                        console.error(`Failed to detect allergens for "${item}":`, error);
-                        allergenMap[item] = [];
-                    }
-                })
-            );
-        }
 
         // Create pack and sections separately to avoid relationMode issues
         const pack = await ctx.prisma.$transaction(async (tx) => {
@@ -173,25 +157,10 @@ export const packRouter = createTRPCRouter({
                 imageId = image.id;
             }
 
-            // Detect allergens for all items in all sections using AI (if available)
+            // Initialize empty allergen map for all items
+            // Note: Similar to menu items, allergen detection should be done on the frontend
+            // via a separate API call if needed in the future
             const allergenMap: Record<string, string[]> = {};
-            if (isAllergenAIAvailable()) {
-                const allItems = input.sections.flatMap(section => section.items);
-
-                // Batch detect allergens for all items
-                await Promise.all(
-                    allItems.map(async (item) => {
-                        try {
-                            const allergens = await detectAllergensWithAI(item, "");
-                            // Filter out "none" - we store empty array instead
-                            allergenMap[item] = allergens.filter(code => code !== "none");
-                        } catch (error) {
-                            console.error(`Failed to detect allergens for "${item}":`, error);
-                            allergenMap[item] = [];
-                        }
-                    })
-                );
-            }
 
             // Use transaction to ensure atomic operations
             const pack = await ctx.prisma.$transaction(async (tx) => {

@@ -109,7 +109,7 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId, restaurantId 
             />
             <PrintLanguageModal
                 menuId={menuId}
-                categoryName={categoryItem.name}
+                categoryId={categoryItem.id}
                 onClose={() => setPrintLanguageModalOpen(false)}
                 opened={printLanguageModalOpen}
                 restaurantId={restaurantId}

@@ -161,7 +161,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const router = useRouter();
     const language = (router.query?.lang as string) || "PT";
     const menuIdFromQuery = router.query?.menuId as string | undefined;
-    const categoryNameFromQuery = router.query?.categoryName as string | undefined;
+    const categoryIdFromQuery = router.query?.categoryId as string | undefined;
 
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
     // If menuId is provided in query params, use that instead
@@ -416,7 +416,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Tabs.List>
             </Tabs>
             {menuDetails && (
-                <Stack spacing="xs" mb="lg">
+                <Stack spacing="xs" mb="lg" className="no-print">
                     {(menuDetails as any).reservations && (
                         <Flex align="center" gap={8}>
                             <IconCalendar size={16} color={theme.colors.primary[6]} />
@@ -452,10 +452,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
 
             <Box ref={menuParent}>
                 {/* Print-only header for category name */}
-                {categoryNameFromQuery && (
+                {categoryIdFromQuery && (
                     <Box className="print-only" sx={{ display: "none", marginBottom: "1.5rem" }}>
                         <Text size="xl" weight={700} translate="no">
-                            {categoryNameFromQuery}
+                            {menuDetails?.categories?.find((cat) => cat.id === categoryIdFromQuery)?.name}
                         </Text>
                     </Box>
                 )}
@@ -467,17 +467,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 ))}
                 {menuDetails?.categories
                     ?.filter((category) => {
-                        // Filter by category name if provided in query params
-                        if (categoryNameFromQuery) {
-                            return category.name === categoryNameFromQuery && category?.items.length;
+                        // Filter by category ID if provided in query params
+                        if (categoryIdFromQuery) {
+                            return category.id === categoryIdFromQuery && category?.items.length;
                         }
                         return category?.items.length;
                     })
                     ?.map((category) => (
                         <Box key={category.id}>
-                            <Text my="lg" size="lg" translate="no" weight={600}>
-                                {category.name}
-                            </Text>
+                            {/* Hide category name when printing specific category (already shown in print-only header) */}
+                            {!categoryIdFromQuery && (
+                                <Text my="lg" size="lg" translate="no" weight={600}>
+                                    {category.name}
+                                </Text>
+                            )}
                             <SimpleGrid
                                 breakpoints={[
                                     { cols: 3, minWidth: "lg" },
