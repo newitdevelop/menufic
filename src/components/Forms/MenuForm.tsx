@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { ActionIcon, Button, Checkbox, Group, Stack, Textarea, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Group, Stack, Textarea, Text, TextInput, useMantineTheme, Select, NumberInput, Divider } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons";
@@ -85,6 +85,16 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
 
     const initialTimeRanges = parseAvailableTime(menuItem?.availableTime || "");
 
+    // Parse time string (HH:mm) to Date object
+    const parseTimeString = (timeStr: string | null | undefined): Date | null => {
+        if (!timeStr) return null;
+        const [hours, minutes] = timeStr.split(":").map(Number);
+        if (Number.isNaN(hours)) return null;
+        const date = new Date();
+        date.setHours(hours, minutes || 0, 0, 0);
+        return date;
+    };
+
     const { getInputProps, onSubmit, isDirty, resetDirty, setValues, values, setFieldValue, insertListItem, removeListItem } = useForm({
         initialValues: {
             timeRanges: initialTimeRanges,
@@ -98,6 +108,13 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
             isFestive: (menuItem as any)?.isFestive || false,
             isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
+            // New reservation system fields
+            reservationType: (menuItem as any)?.reservationType || "NONE",
+            reservationUrl: (menuItem as any)?.reservationUrl || "",
+            reservationEmail: (menuItem as any)?.reservationEmail || menuItem?.email || "",
+            reservationStartTime: parseTimeString((menuItem as any)?.reservationStartTime),
+            reservationEndTime: parseTimeString((menuItem as any)?.reservationEndTime),
+            reservationMaxPartySize: (menuItem as any)?.reservationMaxPartySize || 12,
         },
     });
 
@@ -116,6 +133,13 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
                 isFestive: (menuItem as any)?.isFestive || false,
                 isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
+                // New reservation system fields
+                reservationType: (menuItem as any)?.reservationType || "NONE",
+                reservationUrl: (menuItem as any)?.reservationUrl || "",
+                reservationEmail: (menuItem as any)?.reservationEmail || menuItem?.email || "",
+                reservationStartTime: parseTimeString((menuItem as any)?.reservationStartTime),
+                reservationEndTime: parseTimeString((menuItem as any)?.reservationEndTime),
+                reservationMaxPartySize: (menuItem as any)?.reservationMaxPartySize || 12,
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -166,10 +190,12 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         .join(", ");
 
                     // Remove timeRanges from the data, only send availableTime
-                    const { timeRanges, ...restValues } = values;
+                    const { timeRanges, reservationStartTime, reservationEndTime, ...restValues } = values;
                     const submitData = {
                         ...restValues,
                         availableTime,
+                        reservationStartTime: formatTime(reservationStartTime),
+                        reservationEndTime: formatTime(reservationEndTime),
                     };
 
                     if (menuItem) {
@@ -246,19 +272,83 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         type="email"
                         {...getInputProps("email")}
                     />
-                    <TextInput
-                        disabled={loading}
-                        label={t("inputReservationsLabel")}
-                        placeholder={t("inputReservationsPlaceholder")}
-                        type="url"
-                        {...getInputProps("reservations")}
-                    />
                     <Textarea
                         disabled={loading}
                         label={t("inputMessageLabel")}
                         placeholder={t("inputMessagePlaceholder")}
                         {...getInputProps("message")}
                     />
+
+                    <Divider my="md" label="Reservation System" labelPosition="center" />
+
+                    <Select
+                        disabled={loading}
+                        label="Reservation Type"
+                        description="Choose how customers can make reservations"
+                        data={[
+                            { value: "NONE", label: "No Reservations" },
+                            { value: "EXTERNAL", label: "External URL (e.g., TheFork, OpenTable)" },
+                            { value: "FORM", label: "Built-in Reservation Form" },
+                        ]}
+                        {...getInputProps("reservationType")}
+                    />
+
+                    {values.reservationType === "EXTERNAL" && (
+                        <TextInput
+                            disabled={loading}
+                            label="External Reservation URL"
+                            placeholder="https://www.thefork.com/restaurant/..."
+                            type="url"
+                            withAsterisk
+                            {...getInputProps("reservationUrl")}
+                        />
+                    )}
+
+                    {values.reservationType === "FORM" && (
+                        <Stack spacing="sm">
+                            <TextInput
+                                disabled={loading}
+                                label="Reservation Email"
+                                description="Email address to receive reservation requests"
+                                placeholder="reservations@restaurant.com"
+                                type="email"
+                                withAsterisk
+                                {...getInputProps("reservationEmail")}
+                            />
+                            <Group grow>
+                                <TimeInput
+                                    disabled={loading}
+                                    label="Reservation Start Time"
+                                    description="First available reservation time"
+                                    placeholder="10:00"
+                                    format="24"
+                                    clearable
+                                    withAsterisk
+                                    {...getInputProps("reservationStartTime")}
+                                />
+                                <TimeInput
+                                    disabled={loading}
+                                    label="Reservation End Time"
+                                    description="Last available reservation time"
+                                    placeholder="22:00"
+                                    format="24"
+                                    clearable
+                                    withAsterisk
+                                    {...getInputProps("reservationEndTime")}
+                                />
+                            </Group>
+                            <NumberInput
+                                disabled={loading}
+                                label="Maximum Party Size"
+                                description="Maximum number of people per reservation"
+                                placeholder="12"
+                                min={1}
+                                max={50}
+                                withAsterisk
+                                {...getInputProps("reservationMaxPartySize")}
+                            />
+                        </Stack>
+                    )}
                     <Checkbox
                         disabled={loading}
                         label="Festive Menu (🎄 highlighted)"

@@ -2,6 +2,7 @@ import { categoryRouter } from "./routers/category.router";
 import { menuRouter } from "./routers/menu.router";
 import { menuItemRouter } from "./routers/menuItem.router";
 import { packRouter } from "./routers/pack.router";
+import { reservationRouter } from "./routers/reservation.router";
 import { restaurantRouter } from "./routers/restaurant.router";
 import { translationRouter } from "./routers/translation.router";
 import { createTRPCRouter } from "./trpc";
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
     menu: menuRouter,
     menuItem: menuItemRouter,
     pack: packRouter,
+    reservation: reservationRouter,
     restaurant: restaurantRouter,
     translation: translationRouter,
 });

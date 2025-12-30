@@ -31,6 +31,12 @@ export const serverSchema = z.object({
     SENTRY_AUTH_TOKEN: z.string().optional(),
     SENTRY_ORG: z.string().optional(),
     SENTRY_PROJECT: z.string().optional(),
+    // SMTP Email Configuration (all optional - email features will be disabled if not set)
+    SMTP_HOST: z.string().optional(), // SMTP server hostname (e.g., smtp.gmail.com)
+    SMTP_PORT: z.string().optional(), // SMTP port (typically 587 for TLS, 465 for SSL, 25 for unencrypted)
+    SMTP_USER: z.string().optional(), // SMTP username/email
+    SMTP_PASS: z.string().optional(), // SMTP password
+    SMTP_FROM: z.string().optional(), // From email address (defaults to SMTP_USER if not set)
     TEST_MENUFIC_USER_LOGIN_KEY: z.string().optional(),
 });
 

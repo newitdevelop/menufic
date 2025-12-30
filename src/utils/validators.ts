@@ -47,6 +47,16 @@ export const allergenSymbols: Record<(typeof allergenCodes)[number], string> = {
 export const categoryInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });
+export const reservationTypeEnum = z.enum(["NONE", "EXTERNAL", "FORM"]);
+
+export const reservationSubmissionInput = z.object({
+    menuId: z.string(),
+    date: z.date(),
+    time: z.string(),
+    partySize: z.number().int().min(1).max(50),
+    email: z.string().email("Invalid email address"),
+});
+
 export const menuInput = z.object({
     availableTime: z
         .string()
@@ -84,6 +94,31 @@ export const menuInput = z.object({
     endDate: z.date().nullable().optional(),
     isFestive: z.boolean().default(false),
     isActive: z.boolean().default(true),
+    // New reservation system fields
+    reservationType: reservationTypeEnum.default("NONE"),
+    reservationUrl: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().url("Invalid reservation URL").optional()),
+    reservationEmail: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().email("Invalid reservation email").optional()),
+    reservationStartTime: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
+    reservationEndTime: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
+    reservationMaxPartySize: z.number().int().min(1).max(50).optional(),
 });
 export const menuItemInputBase = z.object({
     currency: z.enum(["€", "$"]).default("€"),

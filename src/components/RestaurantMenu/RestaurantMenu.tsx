@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import {
     ActionIcon,
     Box,
+    Button,
     createStyles,
     Flex,
     MediaQuery,
@@ -15,6 +16,7 @@ import {
     Tabs,
     Text,
     useMantineColorScheme,
+    useMantineTheme,
 } from "@mantine/core";
 import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
 import Autoplay from "embla-carousel-autoplay";
@@ -29,6 +31,7 @@ import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { PackCard } from "./PackCard";
+import { ReservationForm } from "./ReservationForm";
 import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
 import { LanguageSelector } from "../LanguageSelector";
@@ -123,9 +126,11 @@ interface Props {
 /** Component to display all the menus and banners of the restaurant */
 export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { classes, theme } = useStyles();
+    const mantineTheme = useMantineTheme();
     const bannerCarousalRef = useRef(Autoplay({ delay: 5000 }));
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
+    const [reservationModalOpened, setReservationModalOpened] = useState(false);
 
     // Menu sorting: Show room menus first (on Smart TV), then package menus, then standard menus
     const sortedMenus = useMemo(() => {
@@ -417,14 +422,36 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             </Tabs>
             {menuDetails && (
                 <Stack spacing="xs" mb="lg" className="no-print">
-                    {(menuDetails as any).reservations && (
+                    {/* New Reservation System */}
+                    {(menuDetails as any).reservationType === "EXTERNAL" && (menuDetails as any).reservationUrl && (
                         <Flex align="center" gap={8}>
-                            <IconCalendar size={16} color={theme.colors.primary[6]} />
-                            <a href={(menuDetails as any).reservations} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'underline' }}>
-                                <Text size="sm" translate="yes" weight={600} color={theme.colors.primary[6]}>{t("reservations")}</Text>
+                            <IconCalendar size={16} color={mantineTheme.colors.primary[6]} />
+                            <a href={(menuDetails as any).reservationUrl} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'underline' }}>
+                                <Text size="sm" translate="yes" weight={600} color={mantineTheme.colors.primary[6]}>{t("reservations")}</Text>
                             </a>
                         </Flex>
                     )}
+                    {(menuDetails as any).reservationType === "FORM" && (
+                        <Button
+                            leftIcon={<IconCalendar size={16} />}
+                            variant="filled"
+                            color="primary"
+                            onClick={() => setReservationModalOpened(true)}
+                            compact
+                        >
+                            {t("reservations")}
+                        </Button>
+                    )}
+                    {/* Legacy reservation link support (deprecated) */}
+                    {!(menuDetails as any).reservationType && (menuDetails as any).reservations && (
+                        <Flex align="center" gap={8}>
+                            <IconCalendar size={16} color={mantineTheme.colors.primary[6]} />
+                            <a href={(menuDetails as any).reservations} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'underline' }}>
+                                <Text size="sm" translate="yes" weight={600} color={mantineTheme.colors.primary[6]}>{t("reservations")}</Text>
+                            </a>
+                        </Flex>
+                    )}
+
                     {menuDetails.telephone && (
                         <Flex align="center" gap={8}>
                             <IconPhone size={16} />
@@ -448,6 +475,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         </Flex>
                     )}
                 </Stack>
+            )}
+
+            {/* Reservation Form Modal */}
+            {menuDetails && (menuDetails as any).reservationType === "FORM" && (
+                <ReservationForm
+                    menuId={menuDetails.id}
+                    menuName={menuDetails.name}
+                    restaurantName={restaurant.name}
+                    startTime={(menuDetails as any).reservationStartTime || "10:00"}
+                    endTime={(menuDetails as any).reservationEndTime || "22:00"}
+                    maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
+                    opened={reservationModalOpened}
+                    onClose={() => setReservationModalOpened(false)}
+                />
             )}
 
             <Box ref={menuParent}>

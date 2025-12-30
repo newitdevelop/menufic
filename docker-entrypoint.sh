@@ -47,7 +47,7 @@ else
     if [ -z "$FAILED_MIGRATIONS" ]; then
       echo "❌ Could not detect failed migrations - attempting generic resolution..."
       # Try common migrations that might fail
-      FAILED_MIGRATIONS="20251226203500_add_is_ai_generated_to_image 20251228212939_add_temporary_and_festive_menus 20251229_add_menu_packs"
+      FAILED_MIGRATIONS="20251226203500_add_is_ai_generated_to_image 20251228212939_add_temporary_and_festive_menus 20251229_add_menu_packs 20251223_add_allergens_to_menu_item 20251230163000_add_item_allergens_to_pack_section 20251230162945_add_reservation_system"
     fi
 
     for MIGRATION in $FAILED_MIGRATIONS; do

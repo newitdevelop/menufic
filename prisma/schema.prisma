@@ -34,27 +34,40 @@ model Restaurant {
     @@index([isPublished])
 }
 
+enum ReservationType {
+    NONE     // No reservations
+    EXTERNAL // External URL
+    FORM     // Built-in reservation form
+}
+
 model Menu {
-    id            String      @unique @default(cuid())
-    userId        String
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
-    name          String
-    availableTime String
-    telephone     String?
-    email         String?
-    reservations  String?     // URL for reservations
-    message       String?
-    position      Int
-    isTemporary   Boolean     @default(false) // Whether this is a temporary menu
-    startDate     DateTime?   // Start date for temporary menus
-    endDate       DateTime?   // End date for temporary menus (menu becomes disabled after this)
-    isFestive     Boolean     @default(false) // Whether this is a festive/special menu (highlighted with emoji)
-    isActive      Boolean     @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
-    categories    Category[]  @relation("CategoriesOfMenu")
-    packs         Pack[]      @relation("PacksOfMenu")
-    restaurant    Restaurant? @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
-    restaurantId  String?
+    id                      String           @unique @default(cuid())
+    userId                  String
+    createdAt               DateTime         @default(now())
+    updatedAt               DateTime         @updatedAt
+    name                    String
+    availableTime           String
+    telephone               String?
+    email                   String?
+    reservations            String?          // URL for external reservations (deprecated, use reservationType)
+    message                 String?
+    position                Int
+    isTemporary             Boolean          @default(false) // Whether this is a temporary menu
+    startDate               DateTime?        // Start date for temporary menus
+    endDate                 DateTime?        // End date for temporary menus (menu becomes disabled after this)
+    isFestive               Boolean          @default(false) // Whether this is a festive/special menu (highlighted with emoji)
+    isActive                Boolean          @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
+    // New reservation system fields
+    reservationType         ReservationType  @default(NONE) // Type of reservation system
+    reservationUrl          String?          // External reservation URL (when reservationType = EXTERNAL)
+    reservationEmail        String?          // Email to send reservation requests (when reservationType = FORM)
+    reservationStartTime    String?          // Start time for reservations (e.g., "10:00")
+    reservationEndTime      String?          // End time for reservations (e.g., "22:00")
+    reservationMaxPartySize Int?             // Maximum party size allowed
+    categories              Category[]       @relation("CategoriesOfMenu")
+    packs                   Pack[]           @relation("PacksOfMenu")
+    restaurant              Restaurant?      @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
+    restaurantId            String?
 
     @@id([id, userId])
     @@index([restaurantId])
