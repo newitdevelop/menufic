@@ -256,6 +256,8 @@
                 "updateModalTitle": "Update Menu",
                 "updateError": "Failed to update menu",
                 "updateSuccessDesc": "Updated details of ${data.name} menu successfully",
+                "printLanguageModalTitle": "Select Print Language",
+                "printLanguageModalDescription": "Choose the language for the printed menu:",
                 "inputNameLabel": "Name",
                 "inputNamePlaceholder": "Menu Name",
                 "inputTimeLabel": "Available Time",

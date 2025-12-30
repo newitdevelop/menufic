@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
 import { ActionIcon, Loader, Menu, useMantineTheme } from "@mantine/core";
-import { IconDotsVertical, IconEdit, IconPrinter, IconTrash } from "@tabler/icons";
+import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 
 export interface EditDeleteOptionsProps {
@@ -15,8 +15,6 @@ export interface EditDeleteOptionsProps {
     onDeleteClick?: () => void;
     /** Event handler when edit option is clicked in the menu */
     onEditClick?: () => void;
-    /** Event handler when print option is clicked in the menu */
-    onPrintClick?: () => void;
 }
 
 /** Three dot menu to be shown in cards/items to allow users to trigger edit or delete form */
@@ -24,7 +22,6 @@ export const EditDeleteOptions: FC<EditDeleteOptionsProps> = ({
     loading,
     onEditClick,
     onDeleteClick,
-    onPrintClick,
     color,
     hoverColor,
 }) => {
@@ -67,20 +64,6 @@ export const EditDeleteOptions: FC<EditDeleteOptionsProps> = ({
                         }}
                     >
                         {t("edit")}
-                    </Menu.Item>
-                )}
-                {onPrintClick && (
-                    <Menu.Item
-                        color={theme.black}
-                        data-testid="menu-item-print"
-                        icon={<IconPrinter size={14} />}
-                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            onPrintClick();
-                        }}
-                    >
-                        Print Menu
                     </Menu.Item>
                 )}
                 {onDeleteClick && (

@@ -97,7 +97,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                             padding: 0,
                             backgroundColor: 'white !important',
                         },
-                        '.no-print, footer, header, nav, .mantine-Tabs-tabsList, .mantine-LanguageSelector-root': {
+                        '.no-print, footer, header, nav, .mantine-Tabs-tabsList, .mantine-LanguageSelector-root, img': {
                             display: 'none !important',
                         },
                         '.print-content': {

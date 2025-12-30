@@ -158,15 +158,22 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         return [...packageMenus, ...standardMenus];
     }, [restaurant?.menus]);
 
-    // Smart TV detection: Auto-select "Room*" menu if accessing from TV
-    const initialMenu = useMemo(
-        () => getInitialMenuSelection(sortedMenus, sortedMenus?.[0]?.id),
-        [sortedMenus]
-    );
-    const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(initialMenu);
-
     const router = useRouter();
     const language = (router.query?.lang as string) || "PT";
+    const menuIdFromQuery = router.query?.menuId as string | undefined;
+
+    // Smart TV detection: Auto-select "Room*" menu if accessing from TV
+    // If menuId is provided in query params, use that instead
+    const initialMenu = useMemo(
+        () => {
+            if (menuIdFromQuery) {
+                return menuIdFromQuery;
+            }
+            return getInitialMenuSelection(sortedMenus, sortedMenus?.[0]?.id);
+        },
+        [sortedMenus, menuIdFromQuery]
+    );
+    const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(initialMenu);
     const t = useTranslations("menu");
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
@@ -191,6 +198,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             { shallow: false }
         );
     };
+
+    // Update selected menu when menuId query parameter changes
+    useEffect(() => {
+        if (menuIdFromQuery && menuIdFromQuery !== selectedMenu) {
+            setSelectedMenu(menuIdFromQuery);
+        }
+    }, [menuIdFromQuery]);
 
     // Keyboard shortcuts for language switching (Smart TV remote control)
     useEffect(() => {

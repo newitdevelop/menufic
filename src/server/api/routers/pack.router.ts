@@ -75,17 +75,21 @@ export const packRouter = createTRPCRouter({
                 },
             });
 
-            // Create sections separately
-            await tx.packSection.createMany({
-                data: input.sections.map((section) => ({
-                    packId: createdPack.id,
-                    title: section.title,
-                    items: section.items,
-                    itemAllergens: allergenMap,
-                    position: section.position,
-                    userId: ctx.session.user.id,
-                })),
-            });
+            // Create sections separately (using individual creates because createMany doesn't support JSON fields properly)
+            await Promise.all(
+                input.sections.map((section) =>
+                    tx.packSection.create({
+                        data: {
+                            packId: createdPack.id,
+                            title: section.title,
+                            items: section.items,
+                            itemAllergens: allergenMap,
+                            position: section.position,
+                            userId: ctx.session.user.id,
+                        },
+                    })
+                )
+            );
 
             // Fetch the complete pack with sections
             const packWithSections = await tx.pack.findUnique({
@@ -203,17 +207,21 @@ export const packRouter = createTRPCRouter({
                     },
                 });
 
-                // Create new sections separately
-                await tx.packSection.createMany({
-                    data: input.sections.map((section) => ({
-                        packId: input.id,
-                        title: section.title,
-                        items: section.items,
-                        itemAllergens: allergenMap,
-                        position: section.position,
-                        userId: ctx.session.user.id,
-                    })),
-                });
+                // Create new sections separately (using individual creates because createMany doesn't support JSON fields properly)
+                await Promise.all(
+                    input.sections.map((section) =>
+                        tx.packSection.create({
+                            data: {
+                                packId: input.id,
+                                title: section.title,
+                                items: section.items,
+                                itemAllergens: allergenMap,
+                                position: section.position,
+                                userId: ctx.session.user.id,
+                            },
+                        })
+                    )
+                );
 
                 // Fetch the complete pack with sections
                 const packWithSections = await tx.pack.findUnique({

@@ -3,6 +3,7 @@ import { menuRouter } from "./routers/menu.router";
 import { menuItemRouter } from "./routers/menuItem.router";
 import { packRouter } from "./routers/pack.router";
 import { restaurantRouter } from "./routers/restaurant.router";
+import { translationRouter } from "./routers/translation.router";
 import { createTRPCRouter } from "./trpc";
 
 /**
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
     menuItem: menuItemRouter,
     pack: packRouter,
     restaurant: restaurantRouter,
+    translation: translationRouter,
 });
 
 // export type definition of API
