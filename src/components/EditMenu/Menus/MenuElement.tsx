@@ -56,23 +56,26 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const isSelected = item.id === selectedMenu?.id;
     const isInactive = !(item as any).isActive;
 
-    const iconColor = isInactive
-        ? theme.colors.red[7]
-        : isSelected
-        ? theme.colors.primary?.[7]
-        : theme.colors.dark[6];
+    let iconColor = theme.colors.dark[6];
+    if (isInactive) {
+        iconColor = theme.colors.red[7];
+    } else if (isSelected) {
+        iconColor = theme.colors.primary?.[7];
+    }
 
-    const editDeleteColor = isInactive
-        ? theme.colors.red[7]
-        : isSelected
-        ? theme.colors?.primary?.[7]
-        : theme.colors.dark[6];
+    let editDeleteColor = theme.colors.dark[6];
+    if (isInactive) {
+        editDeleteColor = theme.colors.red[7];
+    } else if (isSelected) {
+        editDeleteColor = theme.colors?.primary?.[7];
+    }
 
-    const editDeleteHoverColor = isInactive
-        ? theme.colors.red[8]
-        : isSelected
-        ? theme.black
-        : theme.colors.primary?.[5];
+    let editDeleteHoverColor = theme.colors.primary?.[5];
+    if (isInactive) {
+        editDeleteHoverColor = theme.colors.red[8];
+    } else if (isSelected) {
+        editDeleteHoverColor = theme.black;
+    }
 
     return (
         <>
