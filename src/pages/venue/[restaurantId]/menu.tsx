@@ -86,6 +86,44 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                             WebkitBackdropFilter: 'none !important',
                         },
                     },
+                    /* Print styles for A4 layout */
+                    '@media print': {
+                        '@page': {
+                            size: 'A4',
+                            margin: '1.5cm',
+                        },
+                        'body': {
+                            margin: 0,
+                            padding: 0,
+                            backgroundColor: 'white !important',
+                        },
+                        '.no-print, footer, header, nav, .mantine-Tabs-tabsList, .mantine-LanguageSelector-root': {
+                            display: 'none !important',
+                        },
+                        '.print-content': {
+                            pageBreakBefore: 'auto',
+                            pageBreakAfter: 'auto',
+                        },
+                        '.print-content > *': {
+                            pageBreakInside: 'avoid',
+                        },
+                        'h1, h2, h3, h4, h5, h6': {
+                            pageBreakAfter: 'avoid',
+                        },
+                        'img': {
+                            maxWidth: '100% !important',
+                            pageBreakInside: 'avoid',
+                        },
+                        /* Ensure good contrast for printing */
+                        'body, p, span, div': {
+                            color: '#000 !important',
+                        },
+                        /* Remove shadows and effects for print */
+                        '*': {
+                            boxShadow: 'none !important',
+                            textShadow: 'none !important',
+                        },
+                    },
                 }}
             />
             <NextSeo

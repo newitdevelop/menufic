@@ -56,36 +56,56 @@ export const packRouter = createTRPCRouter({
             );
         }
 
-        // Create pack with sections including allergen data
-        const pack = await ctx.prisma.pack.create({
-            data: {
-                name: input.name,
-                description: input.description,
-                price: input.price,
-                currency: input.currency,
-                vatRate: input.vatRate,
-                vatIncluded: input.vatIncluded,
-                isActive: input.isActive,
-                position: lastPack ? lastPack.position + 1 : 0,
-                menuId: input.menuId,
-                userId: ctx.session.user.id,
-                imageId,
-                sections: {
-                    create: input.sections.map((section) => ({
-                        title: section.title,
-                        items: section.items,
-                        itemAllergens: allergenMap, // Store AI-detected allergens
-                        position: section.position,
-                        userId: ctx.session.user.id,
-                    })),
+        // Create pack and sections separately to avoid relationMode issues
+        const pack = await ctx.prisma.$transaction(async (tx) => {
+            // Create the pack first
+            const createdPack = await tx.pack.create({
+                data: {
+                    name: input.name,
+                    description: input.description,
+                    price: input.price,
+                    currency: input.currency,
+                    vatRate: input.vatRate,
+                    vatIncluded: input.vatIncluded,
+                    isActive: input.isActive,
+                    position: lastPack ? lastPack.position + 1 : 0,
+                    menuId: input.menuId,
+                    userId: ctx.session.user.id,
+                    imageId,
                 },
-            },
-            include: {
-                sections: {
-                    orderBy: { position: "asc" },
+            });
+
+            // Create sections separately
+            await tx.packSection.createMany({
+                data: input.sections.map((section) => ({
+                    packId: createdPack.id,
+                    title: section.title,
+                    items: section.items,
+                    itemAllergens: allergenMap,
+                    position: section.position,
+                    userId: ctx.session.user.id,
+                })),
+            });
+
+            // Fetch the complete pack with sections
+            const packWithSections = await tx.pack.findUnique({
+                where: { id_userId: { id: createdPack.id, userId: ctx.session.user.id } },
+                include: {
+                    sections: {
+                        orderBy: { position: "asc" },
+                    },
+                    image: true,
                 },
-                image: true,
-            },
+            });
+
+            if (!packWithSections) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Failed to create pack",
+                });
+            }
+
+            return packWithSections;
         });
 
         return pack;

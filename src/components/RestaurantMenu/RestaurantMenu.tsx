@@ -242,7 +242,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
 
     return (
         <Box mih="calc(100vh - 100px)">
-            <Box pos="relative">
+            <Box pos="relative" className="no-print">
                 <Carousel
                     className={classes.headerImageBox}
                     data-testid="restaurant-banner"
@@ -322,7 +322,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         }}
                     >
                         <Text weight={600} sx={{ fontSize: "inherit" }}>
-                            📱 Remote Control Shortcuts:
+                            📱 Control Shortcuts:
                         </Text>
                         <Text sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
                             1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
@@ -357,7 +357,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Stack>
             </MediaQuery>
             <Tabs my={40} onTabChange={setSelectedMenu} value={selectedMenu}>
-                <Tabs.List>
+                <Tabs.List className="no-print">
                     {sortedMenus?.map((menu) => (
                         <Tabs.Tab
                             key={menu.id}
@@ -379,7 +379,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             <Text
                                 color={theme.black}
                                 size="lg"
-                                translate={(menu as any).isFestive || (menu as any).isTemporary ? "yes" : "no"}
+                                translate="no"
                                 weight={selectedMenu === menu.id ? "bold" : "normal"}
                             >
                                 {(menu as any).isFestive ? `${getFestiveEmoji()} ${menu.name}` : menu.name}
@@ -434,6 +434,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     )}
                 </Stack>
             )}
+
             <Box ref={menuParent}>
                 {(menuDetails as any)?.packs?.map((pack: any) => (
                     <Box key={pack.id} mb={40}>

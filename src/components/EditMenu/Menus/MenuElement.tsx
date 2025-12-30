@@ -78,6 +78,23 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const editDeleteColor = getEditDeleteColor();
     const editDeleteHoverColor = getEditDeleteHoverColor();
 
+    const handlePrint = () => {
+        // Get the base URL (remove /edit-menu and add /menu)
+        const baseUrl = window.location.origin;
+        const menuUrl = `${baseUrl}/venue/${restaurantId}/menu?lang=PT`;
+
+        // Open the menu in a new window and trigger print
+        const printWindow = window.open(menuUrl, '_blank');
+        if (printWindow) {
+            printWindow.addEventListener('load', () => {
+                // Wait for page to fully load, then print
+                setTimeout(() => {
+                    printWindow.print();
+                }, 1000);
+            });
+        }
+    };
+
     return (
         <>
             <Draggable key={item.id} draggableId={item.id} index={item.position}>
@@ -130,6 +147,7 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
                             hoverColor={editDeleteHoverColor}
                             onDeleteClick={() => setDeleteMenuModalOpen(true)}
                             onEditClick={() => setMenuFormOpen(true)}
+                            onPrintClick={handlePrint}
                         />
                     </Box>
                 )}
