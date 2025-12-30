@@ -49,6 +49,13 @@ export const menuRouter = createTRPCRouter({
                 endDate: input.endDate ?? null,
                 isFestive: input.isFestive ?? false,
                 isActive: finalIsActive,
+                // New reservation system fields
+                reservationType: input.reservationType ?? "NONE",
+                reservationUrl: input.reservationUrl ?? null,
+                reservationEmail: input.reservationEmail ?? null,
+                reservationStartTime: input.reservationStartTime ?? null,
+                reservationEndTime: input.reservationEndTime ?? null,
+                reservationMaxPartySize: input.reservationMaxPartySize ?? null,
             },
         });
     }),
@@ -130,6 +137,13 @@ export const menuRouter = createTRPCRouter({
                     endDate: input.endDate ?? null,
                     isFestive: input.isFestive ?? false,
                     isActive: finalIsActive,
+                    // New reservation system fields
+                    reservationType: input.reservationType ?? "NONE",
+                    reservationUrl: input.reservationUrl ?? null,
+                    reservationEmail: input.reservationEmail ?? null,
+                    reservationStartTime: input.reservationStartTime ?? null,
+                    reservationEndTime: input.reservationEndTime ?? null,
+                    reservationMaxPartySize: input.reservationMaxPartySize ?? null,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),
