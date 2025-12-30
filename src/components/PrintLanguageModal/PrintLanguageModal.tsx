@@ -12,17 +12,20 @@ interface Props extends ModalProps {
     restaurantId: string;
     /** The menu ID to print */
     menuId: string;
+    /** Optional category name to filter print */
+    categoryName?: string;
 }
 
 /** Modal to select language before printing a menu */
-export const PrintLanguageModal: FC<Props> = ({ opened, onClose, restaurantId, menuId, ...rest }) => {
+export const PrintLanguageModal: FC<Props> = ({ opened, onClose, restaurantId, menuId, categoryName, ...rest }) => {
     const t = useTranslations("dashboard.editMenu.menu");
 
     const handlePrint = (languageCode: string) => {
-        // Build URL with specific menu ID and language
+        // Build URL with specific menu ID, language, and optional category name
         const baseUrl = window.location.origin;
         const langParam = languageCode === "PT" ? "" : `lang=${languageCode}&`;
-        const menuUrl = `${baseUrl}/venue/${restaurantId}/menu?${langParam}menuId=${menuId}`;
+        const categoryParam = categoryName ? `categoryName=${encodeURIComponent(categoryName)}&` : "";
+        const menuUrl = `${baseUrl}/venue/${restaurantId}/menu?${langParam}${categoryParam}menuId=${menuId}`;
 
         // Open the menu in a new window and trigger print
         const printWindow = window.open(menuUrl, "_blank");

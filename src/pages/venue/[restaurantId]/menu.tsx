@@ -97,8 +97,17 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                             padding: 0,
                             backgroundColor: 'white !important',
                         },
-                        '.no-print, footer, header, nav, .mantine-Tabs-tabsList, .mantine-LanguageSelector-root, img': {
+                        /* Hide UI elements but keep content images */
+                        '.no-print, footer, header, nav, .mantine-Tabs-root, .mantine-Tabs-tabsList, .mantine-Tabs-panel[hidden], .mantine-LanguageSelector-root': {
                             display: 'none !important',
+                        },
+                        /* Hide banner/carousel images only */
+                        '.mantine-Carousel-root, .embla__container': {
+                            display: 'none !important',
+                        },
+                        /* Show print-only elements */
+                        '.print-only': {
+                            display: 'block !important',
                         },
                         '.print-content': {
                             pageBreakBefore: 'auto',
@@ -110,8 +119,10 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
                         'h1, h2, h3, h4, h5, h6': {
                             pageBreakAfter: 'avoid',
                         },
+                        /* Style content images (menu items, packs) */
                         'img': {
                             maxWidth: '100% !important',
+                            height: 'auto !important',
                             pageBreakInside: 'avoid',
                         },
                         /* Ensure good contrast for printing */

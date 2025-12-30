@@ -161,6 +161,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const router = useRouter();
     const language = (router.query?.lang as string) || "PT";
     const menuIdFromQuery = router.query?.menuId as string | undefined;
+    const categoryNameFromQuery = router.query?.categoryName as string | undefined;
 
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
     // If menuId is provided in query params, use that instead
@@ -450,13 +451,28 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             )}
 
             <Box ref={menuParent}>
+                {/* Print-only header for category name */}
+                {categoryNameFromQuery && (
+                    <Box className="print-only" sx={{ display: "none", marginBottom: "1.5rem" }}>
+                        <Text size="xl" weight={700} translate="no">
+                            {categoryNameFromQuery}
+                        </Text>
+                    </Box>
+                )}
+
                 {(menuDetails as any)?.packs?.map((pack: any) => (
                     <Box key={pack.id} mb={40}>
                         <PackCard pack={pack} isFestive={(menuDetails as any)?.isFestive} />
                     </Box>
                 ))}
                 {menuDetails?.categories
-                    ?.filter((category) => category?.items.length)
+                    ?.filter((category) => {
+                        // Filter by category name if provided in query params
+                        if (categoryNameFromQuery) {
+                            return category.name === categoryNameFromQuery && category?.items.length;
+                        }
+                        return category?.items.length;
+                    })
                     ?.map((category) => (
                         <Box key={category.id}>
                             <Text my="lg" size="lg" translate="no" weight={600}>

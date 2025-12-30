@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { Accordion, Box, Flex, Text } from "@mantine/core";
-import { IconGripVertical } from "@tabler/icons";
+import { Accordion, ActionIcon, Box, Flex, Text } from "@mantine/core";
+import { IconGripVertical, IconPrinter } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -16,22 +16,31 @@ import { DeleteConfirmModal } from "../../DeleteConfirmModal";
 import { EditDeleteOptions } from "../../EditDeleteOptions";
 import { CategoryForm } from "../../Forms/CategoryForm";
 import { MenuItems } from "../MenuItems/MenuItems";
+import { PrintLanguageModal } from "../../PrintLanguageModal";
 
 interface Props {
     /** Category which will be represented by the component */
     categoryItem: Category & { items: MenuItem[] };
     /** Id of the menu to which the categories belong to */
     menuId: string;
+    /** Id of the restaurant */
+    restaurantId: string;
 }
 
 /** Individual category component with an option to edit or delete */
-export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
+export const CategoryElement: FC<Props> = ({ categoryItem, menuId, restaurantId }) => {
     const trpcCtx = api.useContext();
     const { classes, cx, theme } = useStyles();
     const [deleteCategoryModalOpen, setDeleteCategoryModalOpen] = useState(false);
     const [categoryFormOpen, setCategoryFormOpen] = useState(false);
+    const [printLanguageModalOpen, setPrintLanguageModalOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.category");
     const tCommon = useTranslations("common");
+
+    const handlePrint = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setPrintLanguageModalOpen(true);
+    };
 
     const { mutate: deleteCategory, isLoading: isDeleting } = api.category.delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deleteCategoryError"), err as { message: string }),
@@ -63,6 +72,15 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
                                     <IconGripVertical size={18} stroke={1.5} />
                                 </Box>
                                 <Text sx={{ flex: 1 }}>{categoryItem.name}</Text>
+                                <ActionIcon
+                                    onClick={handlePrint}
+                                    size="lg"
+                                    variant="subtle"
+                                    title="Print Category"
+                                    sx={{ marginRight: 8 }}
+                                >
+                                    <IconPrinter size={18} />
+                                </ActionIcon>
                                 <EditDeleteOptions
                                     onDeleteClick={() => setDeleteCategoryModalOpen(true)}
                                     onEditClick={() => setCategoryFormOpen(true)}
@@ -88,6 +106,13 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId }) => {
                 onDelete={() => deleteCategory({ id: categoryItem?.id })}
                 opened={deleteCategoryModalOpen}
                 title={t("deleteConfirmTitle", { name: categoryItem.name })}
+            />
+            <PrintLanguageModal
+                menuId={menuId}
+                categoryName={categoryItem.name}
+                onClose={() => setPrintLanguageModalOpen(false)}
+                opened={printLanguageModalOpen}
+                restaurantId={restaurantId}
             />
         </>
     );

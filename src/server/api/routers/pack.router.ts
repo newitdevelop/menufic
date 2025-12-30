@@ -77,18 +77,26 @@ export const packRouter = createTRPCRouter({
 
             // Create sections separately (using individual creates because createMany doesn't support JSON fields properly)
             await Promise.all(
-                input.sections.map((section) =>
-                    tx.packSection.create({
+                input.sections.map((section) => {
+                    // Filter allergenMap to only include items in this section
+                    const sectionAllergenMap: Record<string, string[]> = {};
+                    section.items.forEach((item) => {
+                        if (allergenMap[item]) {
+                            sectionAllergenMap[item] = allergenMap[item];
+                        }
+                    });
+
+                    return tx.packSection.create({
                         data: {
                             packId: createdPack.id,
                             title: section.title,
                             items: section.items,
-                            itemAllergens: allergenMap,
+                            itemAllergens: sectionAllergenMap,
                             position: section.position,
                             userId: ctx.session.user.id,
                         },
-                    })
-                )
+                    });
+                })
             );
 
             // Fetch the complete pack with sections
@@ -209,18 +217,26 @@ export const packRouter = createTRPCRouter({
 
                 // Create new sections separately (using individual creates because createMany doesn't support JSON fields properly)
                 await Promise.all(
-                    input.sections.map((section) =>
-                        tx.packSection.create({
+                    input.sections.map((section) => {
+                        // Filter allergenMap to only include items in this section
+                        const sectionAllergenMap: Record<string, string[]> = {};
+                        section.items.forEach((item) => {
+                            if (allergenMap[item]) {
+                                sectionAllergenMap[item] = allergenMap[item];
+                            }
+                        });
+
+                        return tx.packSection.create({
                             data: {
                                 packId: input.id,
                                 title: section.title,
                                 items: section.items,
-                                itemAllergens: allergenMap,
+                                itemAllergens: sectionAllergenMap,
                                 position: section.position,
                                 userId: ctx.session.user.id,
                             },
-                        })
-                    )
+                        });
+                    })
                 );
 
                 // Fetch the complete pack with sections

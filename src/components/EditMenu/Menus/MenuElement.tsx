@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { ActionIcon, Box, Center, Text } from "@mantine/core";
-import { IconGripVertical, IconPrinter } from "@tabler/icons";
+import { Box, Center, Text } from "@mantine/core";
+import { IconGripVertical } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -15,7 +15,6 @@ import { useStyles } from "./styles";
 import { DeleteConfirmModal } from "../../DeleteConfirmModal";
 import { EditDeleteOptions } from "../../EditDeleteOptions";
 import { MenuForm } from "../../Forms/MenuForm";
-import { PrintLanguageModal } from "../../PrintLanguageModal";
 
 interface Props {
     /** Menu which will be represented by the component */
@@ -34,7 +33,6 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const { classes, cx, theme } = useStyles();
     const [deleteMenuModalOpen, setDeleteMenuModalOpen] = useState(false);
     const [menuFormOpen, setMenuFormOpen] = useState(false);
-    const [printLanguageModalOpen, setPrintLanguageModalOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.menu");
     const tCommon = useTranslations("common");
 
@@ -79,12 +77,6 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     const iconColor = getIconColor();
     const editDeleteColor = getEditDeleteColor();
     const editDeleteHoverColor = getEditDeleteHoverColor();
-
-    const handlePrint = (event: React.MouseEvent) => {
-        event.stopPropagation();
-        event.preventDefault();
-        setPrintLanguageModalOpen(true);
-    };
 
     return (
         <>
@@ -133,16 +125,6 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
                                     : item.availableTime}
                             </Text>
                         </Box>
-                        <ActionIcon
-                            onClick={handlePrint}
-                            sx={{
-                                "&:hover": { background: "unset", color: editDeleteHoverColor },
-                                color: editDeleteColor,
-                                transition: "color 500ms ease",
-                            }}
-                        >
-                            <IconPrinter size={18} />
-                        </ActionIcon>
                         <EditDeleteOptions
                             color={editDeleteColor}
                             hoverColor={editDeleteHoverColor}
@@ -165,12 +147,6 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
                 onDelete={() => deleteMenu({ id: item.id })}
                 opened={deleteMenuModalOpen}
                 title={t("deleteConfirmTitle", { name: item.name })}
-            />
-            <PrintLanguageModal
-                menuId={item.id}
-                onClose={() => setPrintLanguageModalOpen(false)}
-                opened={printLanguageModalOpen}
-                restaurantId={restaurantId}
             />
         </>
     );
