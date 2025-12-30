@@ -48,7 +48,12 @@ export const categoryInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });
 export const menuInput = z.object({
-    availableTime: z.string().trim().max(20, "Available time cannot be longer than 20 characters"),
+    availableTime: z
+        .string()
+        .trim()
+        .max(50, "Available time cannot be longer than 50 characters")
+        .optional()
+        .transform((val) => (val === "" ? undefined : val)),
     email: z
         .string()
         .trim()

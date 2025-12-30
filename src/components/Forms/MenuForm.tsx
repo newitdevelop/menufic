@@ -49,13 +49,26 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         },
     });
 
-    // Parse availableTime into start and end times
+    // Parse availableTime into start and end times as Date objects
     const parseAvailableTime = (timeString: string) => {
-        if (!timeString) return { startTime: "", endTime: "" };
+        if (!timeString) return { startTime: null, endTime: null };
         const parts = timeString.split(" - ");
+
+        const parseTime = (timeStr: string): Date | null => {
+            if (!timeStr) return null;
+            // Handle both "10h" and "10:00" formats
+            const cleaned = timeStr.trim().replace('h', ':00');
+            const [hours, minutes] = cleaned.split(':').map(Number);
+            if (isNaN(hours)) return null;
+
+            const date = new Date();
+            date.setHours(hours, minutes || 0, 0, 0);
+            return date;
+        };
+
         return {
-            startTime: parts[0]?.trim() || "",
-            endTime: parts[1]?.trim() || "",
+            startTime: parseTime(parts[0] || ""),
+            endTime: parseTime(parts[1] || ""),
         };
     };
 
@@ -112,13 +125,25 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         >
             <form
                 onSubmit={onSubmit((values) => {
-                    // Combine start and end times into availableTime string
-                    const availableTime = values.startTime && values.endTime
-                        ? `${values.startTime} - ${values.endTime}`
-                        : values.startTime || values.endTime || "";
+                    // Convert Date objects to time strings in HH:mm format
+                    const formatTime = (date: Date | null): string => {
+                        if (!date) return "";
+                        const hours = date.getHours().toString().padStart(2, '0');
+                        const minutes = date.getMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    };
 
+                    // Combine start and end times into availableTime string
+                    const startTimeStr = formatTime(values.startTime);
+                    const endTimeStr = formatTime(values.endTime);
+                    const availableTime = startTimeStr && endTimeStr
+                        ? `${startTimeStr} - ${endTimeStr}`
+                        : startTimeStr || endTimeStr || "";
+
+                    // Remove startTime and endTime from the data, only send availableTime
+                    const { startTime, endTime, ...restValues } = values;
                     const submitData = {
-                        ...values,
+                        ...restValues,
                         availableTime,
                     };
 
