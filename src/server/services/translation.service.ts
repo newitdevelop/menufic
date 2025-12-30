@@ -151,12 +151,14 @@ export async function getOrCreateTranslation(
  * @param entityId ID of the entity
  */
 export async function invalidateTranslations(entityType: EntityType, entityId: string): Promise<void> {
-    await prisma.translation.deleteMany({
+    console.log(`[Translation] Invalidating translations for ${entityType}/${entityId}`);
+    const result = await prisma.translation.deleteMany({
         where: {
             entityType,
             entityId,
         },
     });
+    console.log(`[Translation] Deleted ${result.count} cached translations for ${entityType}/${entityId}`);
 }
 
 /**
@@ -205,11 +207,12 @@ export async function translateCategory(category: { id: string; name: string }, 
 /**
  * Translate a menu with its fields
  * Source language is Portuguese (PT) - the default content language
- * NOTE: Menu name and availableTime are NOT translated (brand names and times should stay as-is)
- * Only the message field is translated
+ * NOTE: Menu name is translated ONLY for festive or temporary/timed menus
+ * Regular menu names are kept as-is (brand names should not be translated)
+ * availableTime is NOT translated (time formats should stay consistent)
  */
 export async function translateMenu(
-    menu: { id: string; name: string; availableTime: string; message?: string | null; isFestive?: boolean },
+    menu: { id: string; name: string; availableTime: string; message?: string | null; isFestive?: boolean; isTemporary?: boolean },
     targetLang: string
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
@@ -217,14 +220,20 @@ export async function translateMenu(
         return menu;
     }
 
-    // Only translate the message field, keep name and availableTime unchanged
+    // Translate menu name ONLY for festive or temporary menus
+    const shouldTranslateName = menu.isFestive || menu.isTemporary;
+    const translatedName = shouldTranslateName
+        ? await getOrCreateTranslation("menu", menu.id, "name", menu.name, targetLang, "PT")
+        : menu.name;
+
+    // Translate the message field if present
     const translatedMessage = menu.message
         ? await getOrCreateTranslation("menu", menu.id, "message", menu.message, targetLang, "PT")
         : menu.message;
 
     return {
         ...menu,
-        // name: keep original (brand names should not be translated)
+        name: translatedName,
         // availableTime: keep original (time formats should stay consistent)
         message: translatedMessage,
     };

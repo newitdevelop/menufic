@@ -101,6 +101,7 @@ export const menuRouter = createTRPCRouter({
     update: protectedProcedure.input(menuInput.merge(id)).mutation(async ({ ctx, input }) => {
         // Get current menu to check what changed
         const currentMenu = await ctx.prisma.menu.findUniqueOrThrow({
+            include: { restaurant: true },
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
 
@@ -135,6 +136,13 @@ export const menuRouter = createTRPCRouter({
             // Invalidate translations if any translatable field changed
             shouldInvalidate ? invalidateTranslations("menu", input.id) : Promise.resolve(),
         ]);
+
+        // Revalidate the public menu page to reflect translation changes immediately
+        if (shouldInvalidate && currentMenu.restaurant?.id) {
+            const restaurantId = currentMenu.restaurant.id;
+            console.log(`[Menu Update] Revalidating /venue/${restaurantId}/menu due to translatable field change`);
+            await ctx.res?.revalidate(`/venue/${restaurantId}/menu`);
+        }
 
         return updatedMenu;
     }),

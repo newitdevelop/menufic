@@ -84,8 +84,11 @@ export const categoryRouter = createTRPCRouter({
     update: protectedProcedure.input(categoryInput.merge(id)).mutation(async ({ ctx, input }) => {
         // Get current category to check if name changed
         const currentCategory = await ctx.prisma.category.findUniqueOrThrow({
+            include: { menu: { include: { restaurant: true } } },
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
+
+        const nameChanged = input.name !== currentCategory.name;
 
         const [updatedCategory] = await Promise.all([
             ctx.prisma.category.update({
@@ -93,8 +96,15 @@ export const categoryRouter = createTRPCRouter({
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),
             // Invalidate translations if name changed
-            input.name !== currentCategory.name ? invalidateTranslations("category", input.id) : Promise.resolve(),
+            nameChanged ? invalidateTranslations("category", input.id) : Promise.resolve(),
         ]);
+
+        // Revalidate the public menu page to reflect translation changes immediately
+        if (nameChanged && currentCategory.menu?.restaurant?.id) {
+            const restaurantId = currentCategory.menu.restaurant.id;
+            console.log(`[Category Update] Revalidating /venue/${restaurantId}/menu due to category name change`);
+            await ctx.res?.revalidate(`/venue/${restaurantId}/menu`);
+        }
 
         return updatedCategory;
     }),
