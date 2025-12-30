@@ -28,6 +28,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
     const t = useTranslations("dashboard.editMenu.pack");
     const tCommon = useTranslations("common");
     const [allergenMap, setAllergenMap] = useState<Record<string, (typeof allergenCodes)[number][]>>({});
+    const [shouldAutoSaveAfterDetection, setShouldAutoSaveAfterDetection] = useState(false);
 
     // AI allergen detection mutation
     const { mutate: detectAllergensAI, isLoading: isDetectingAllergens } = (api.pack as any).detectAllergensAI.useMutation({
@@ -97,6 +98,29 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
         }
     }, [packItem, opened]);
 
+    // Auto-save after allergen detection completes (if triggered from save button)
+    useEffect(() => {
+        if (shouldAutoSaveAfterDetection && !isDetectingAllergens && Object.keys(allergenMap).length > 0) {
+            setShouldAutoSaveAfterDetection(false);
+
+            // Clean up empty items before submitting
+            const cleanedValues = {
+                ...values,
+                sections: values.sections.map(section => ({
+                    ...section,
+                    items: section.items.filter(item => item.trim() !== ""),
+                })),
+                allergenMap,
+            };
+
+            if (packItem) {
+                updatePack({ ...cleanedValues, id: packItem?.id });
+            } else {
+                createPack({ ...cleanedValues, menuId });
+            }
+        }
+    }, [shouldAutoSaveAfterDetection, isDetectingAllergens, allergenMap]);
+
     const loading = isCreating || isUpdating;
 
     const addSection = () => {
@@ -126,6 +150,35 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
             <form
                 onSubmit={onSubmit((values) => {
                     if (isDirty()) {
+                        // Collect all items from all sections
+                        const allItems: string[] = [];
+                        values.sections.forEach((section) => {
+                            section.items.forEach((item) => {
+                                if (item.trim()) {
+                                    allItems.push(item.trim());
+                                }
+                            });
+                        });
+
+                        // Check if there's a mix of items with and without allergens
+                        const itemsWithAllergens = allItems.filter(item => allergenMap[item]);
+                        const itemsWithoutAllergens = allItems.filter(item => !allergenMap[item]);
+
+                        const hasMixedAllergenData = itemsWithAllergens.length > 0 && itemsWithoutAllergens.length > 0;
+
+                        if (hasMixedAllergenData) {
+                            // eslint-disable-next-line no-alert
+                            const shouldRegenerate = window.confirm(
+                                `Some items have allergens detected (${itemsWithAllergens.length}/${allItems.length}). Do you want to detect allergens for all items before saving?`
+                            );
+
+                            if (shouldRegenerate) {
+                                setShouldAutoSaveAfterDetection(true);
+                                detectAllergensAI({ items: allItems });
+                                return; // Don't save yet, wait for allergen detection to complete
+                            }
+                        }
+
                         // Clean up empty items before submitting
                         const cleanedValues = {
                             ...values,
@@ -251,48 +304,50 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                         {t("addSectionButton")}
                     </Button>
 
-                    <Divider my="md" />
+                    <Divider my="md" label="Allergen Detection" labelPosition="center" />
 
-                    <Button
-                        compact
-                        disabled={loading || isDetectingAllergens || values.sections.length === 0}
-                        loading={isDetectingAllergens}
-                        onClick={() => {
-                            // Collect all items from all sections
-                            const allItems: string[] = [];
-                            values.sections.forEach((section) => {
-                                section.items.forEach((item) => {
-                                    if (item.trim()) {
-                                        allItems.push(item.trim());
-                                    }
+                    <Stack spacing="xs">
+                        <Button
+                            compact
+                            disabled={loading || isDetectingAllergens || values.sections.length === 0}
+                            loading={isDetectingAllergens}
+                            onClick={() => {
+                                // Collect all items from all sections
+                                const allItems: string[] = [];
+                                values.sections.forEach((section) => {
+                                    section.items.forEach((item) => {
+                                        if (item.trim()) {
+                                            allItems.push(item.trim());
+                                        }
+                                    });
                                 });
-                            });
 
-                            if (allItems.length === 0) {
-                                showErrorToast("No Items", { message: "Please add items to sections before detecting allergens" });
-                                return;
-                            }
-
-                            // If allergens are already detected, confirm before overriding
-                            if (Object.keys(allergenMap).length > 0) {
-                                // eslint-disable-next-line no-alert
-                                if (!window.confirm("Allergens have already been detected. Do you want to override them?")) {
+                                if (allItems.length === 0) {
+                                    showErrorToast("No Items", { message: "Please add items to sections before detecting allergens" });
                                     return;
                                 }
-                            }
 
-                            detectAllergensAI({ items: allItems });
-                        }}
-                        variant="light"
-                    >
-                        Detect Allergens with AI
-                    </Button>
+                                // If allergens are already detected, confirm before overriding
+                                if (Object.keys(allergenMap).length > 0) {
+                                    // eslint-disable-next-line no-alert
+                                    if (!window.confirm("Allergens have already been detected. Do you want to override them?")) {
+                                        return;
+                                    }
+                                }
 
-                    {Object.keys(allergenMap).length > 0 && (
-                        <Text size="xs" color="dimmed">
-                            Allergens detected for {Object.keys(allergenMap).length} items
-                        </Text>
-                    )}
+                                detectAllergensAI({ items: allItems });
+                            }}
+                            variant="light"
+                        >
+                            Detect Allergens with AI
+                        </Button>
+
+                        {Object.keys(allergenMap).length > 0 && (
+                            <Text size="xs" color="dimmed">
+                                ✓ Allergens detected for {Object.keys(allergenMap).length} items
+                            </Text>
+                        )}
+                    </Stack>
 
                     <Group mt="md" position="right">
                         <Button data-testid="save-pack-form" loading={loading} px="xl" type="submit">
