@@ -57,9 +57,9 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         const parseTime = (timeStr: string): Date | null => {
             if (!timeStr) return null;
             // Handle both "10h" and "10:00" formats
-            const cleaned = timeStr.trim().replace('h', ':00');
-            const [hours, minutes] = cleaned.split(':').map(Number);
-            if (isNaN(hours)) return null;
+            const cleaned = timeStr.trim().replace("h", ":00");
+            const [hours, minutes] = cleaned.split(":").map(Number);
+            if (Number.isNaN(hours)) return null;
 
             const date = new Date();
             date.setHours(hours, minutes || 0, 0, 0);
