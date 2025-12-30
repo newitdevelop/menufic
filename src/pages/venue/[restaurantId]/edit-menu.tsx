@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Box, Breadcrumbs, Center, Grid, Loader, SimpleGrid, Text } from "@mantine/core";
+import { Box, Breadcrumbs, Center, Grid, Loader, SimpleGrid, Tabs, Text } from "@mantine/core";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,6 +12,7 @@ import type { Menu } from "@prisma/client";
 
 import { AppShell } from "src/components/AppShell";
 import { Categories } from "src/components/EditMenu/Categories";
+import { Packs } from "src/components/EditMenu/Packs";
 import { Menus } from "src/components/EditMenu/Menus";
 import { PublishButton } from "src/components/PublishButton";
 import { api } from "src/utils/api";
@@ -22,6 +23,7 @@ import { showErrorToast } from "src/utils/helpers";
 const EditMenuPage: NextPage = () => {
     const router = useRouter();
     const [selectedMenu, setSelectedMenu] = useState<Menu | undefined>();
+    const [activeTab, setActiveTab] = useState<string | null>("categories");
     const [gridItemParent] = useAutoAnimate<HTMLDivElement>();
     const [rootParent] = useAutoAnimate<HTMLDivElement>();
     const restaurantId = router.query?.restaurantId as string;
@@ -76,7 +78,20 @@ const EditMenuPage: NextPage = () => {
                                     </Grid.Col>
                                     {selectedMenu && (
                                         <Grid.Col lg={9} md={8} sm={12}>
-                                            <Categories menuId={selectedMenu?.id} />
+                                            <Tabs value={activeTab} onTabChange={setActiveTab}>
+                                                <Tabs.List>
+                                                    <Tabs.Tab value="categories">{t("categoriesTab")}</Tabs.Tab>
+                                                    <Tabs.Tab value="packs">{t("packsTab")}</Tabs.Tab>
+                                                </Tabs.List>
+
+                                                <Tabs.Panel value="categories" pt="md">
+                                                    <Categories menuId={selectedMenu?.id} />
+                                                </Tabs.Panel>
+
+                                                <Tabs.Panel value="packs" pt="md">
+                                                    <Packs menuId={selectedMenu?.id} />
+                                                </Tabs.Panel>
+                                            </Tabs>
                                         </Grid.Col>
                                     )}
                                 </Grid>

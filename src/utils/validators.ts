@@ -78,6 +78,7 @@ export const menuInput = z.object({
     startDate: z.date().nullable().optional(),
     endDate: z.date().nullable().optional(),
     isFestive: z.boolean().default(false),
+    isActive: z.boolean().default(true),
 });
 export const menuItemInputBase = z.object({
     currency: z.enum(["€", "$"]).default("€"),

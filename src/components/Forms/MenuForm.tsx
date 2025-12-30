@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Checkbox, Group, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, Stack, Textarea, TextInput, useMantineTheme } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
@@ -25,6 +25,7 @@ interface Props extends ModalProps {
 /** Form to be used when allowing users to add or edit menus of restaurant */
 export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuItem, ...rest }) => {
     const trpcCtx = api.useContext();
+    const theme = useMantineTheme();
     const t = useTranslations("dashboard.editMenu.menu");
     const tCommon = useTranslations("common");
 
@@ -60,6 +61,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             startDate: (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null,
             endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
             isFestive: (menuItem as any)?.isFestive || false,
+            isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
         },
         validate: zodResolver(menuInput),
     });
@@ -77,6 +79,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 startDate: (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null,
                 endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
                 isFestive: (menuItem as any)?.isFestive || false,
+                isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
             };
             setValues(values);
             resetDirty(values);
@@ -175,6 +178,21 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                             />
                         </>
                     )}
+                    <Checkbox
+                        disabled={loading}
+                        label={t("isActiveLabel")}
+                        description={t("isActiveDescription")}
+                        styles={{
+                            label: {
+                                color: !values.isActive ? theme.colors.red[7] : undefined,
+                                fontWeight: !values.isActive ? 600 : undefined,
+                            },
+                            description: {
+                                color: !values.isActive ? theme.colors.red[6] : undefined,
+                            }
+                        }}
+                        {...getInputProps("isActive", { type: "checkbox" })}
+                    />
                     <Group mt="md" position="right">
                         <Button data-testid="save-menu-form" loading={loading} px="xl" type="submit">
                             {tCommon("save")}

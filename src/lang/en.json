@@ -267,7 +267,9 @@
                 "inputReservationsLabel": "Reservations URL",
                 "inputReservationsPlaceholder": "https://restaurant.com/reservations",
                 "inputMessageLabel": "Message",
-                "inputMessagePlaceholder": "Additional information or special notes"
+                "inputMessagePlaceholder": "Additional information or special notes",
+                "isActiveLabel": "Menu is Active (visible to customers)",
+                "isActiveDescription": "When unchecked, this menu will be hidden from public pages"
             },
             "category": {
                 "fetchError": "Failed to retrieve categories and menu items",
@@ -321,7 +323,42 @@
                 "aiImageGenerationError": "Failed to generate image with AI",
                 "aiImageGenerationSuccess": "Image generated successfully",
                 "aiImageConfirmOverride": "This will replace your current image with an AI-generated image. Continue?"
-            }
+            },
+            "pack": {
+                "fetchError": "Failed to retrieve packs",
+                "positionUpdateError": "Failed to update pack position",
+                "deletePackError": "Failed to delete pack",
+                "addPackLabel": "Add Pack",
+                "sectionsCount": "sections",
+                "deleteConfirmTitle": "Delete {name} pack",
+                "deleteConfirmDesc": "Are you sure, you want to delete this pack? This action will also delete all the sections associated with this pack and cannot be undone",
+                "deleteSuccessToast": "Deleted the pack {name} and related sections successfully",
+                "createModalTitle": "Create Pack",
+                "createError": "Failed to create pack",
+                "createSuccessDesc": "Created a new pack {name} successfully",
+                "updateModalTitle": "Update Pack",
+                "updateError": "Failed to update pack",
+                "updateSuccessDesc": "Updated details of {name} pack successfully",
+                "inputNameLabel": "Name",
+                "inputNamePlaceholder": "Pack Name",
+                "inputPriceLabel": "Price",
+                "inputPricePlaceholder": "25.00",
+                "inputDescriptionLabel": "Description",
+                "inputDescriptionPlaceholder": "Describe what's included in this pack",
+                "inputCurrencyLabel": "Currency",
+                "inputVatRateLabel": "VAT Rate (%)",
+                "vatIncludedLabel": "VAT Included",
+                "sectionsLabel": "Sections",
+                "sectionTitleLabel": "Section Title",
+                "sectionTitlePlaceholder": "e.g., Starter, Main Course, Dessert",
+                "sectionItemsLabel": "Items",
+                "sectionItemsPlaceholder": "Enter items (one per line)",
+                "addSectionButton": "Add Section",
+                "removeSectionButton": "Remove Section",
+                "minSectionsError": "At least one section is required"
+            },
+            "categoriesTab": "Categories",
+            "packsTab": "Packs"
         },
         "venue": {
             "seoTitle": "Venues",

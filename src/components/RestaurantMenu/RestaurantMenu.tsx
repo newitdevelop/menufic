@@ -24,7 +24,7 @@ import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client
 
 import { Black, White } from "src/styles/theme";
 import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
-import { getInitialMenuSelection } from "src/utils/detectSmartTV";
+import { getInitialMenuSelection, isSmartTV } from "src/utils/detectSmartTV";
 import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
 
 import { MenuItemCard } from "./MenuItemCard";
@@ -127,10 +127,32 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
 
+    // Smart TV detection: Sort menus to show room* menus first on TVs only
+    const sortedMenus = useMemo(() => {
+        const menus = restaurant?.menus || [];
+
+        // Only sort for Smart TVs, keep original order for laptops/desktops
+        if (isSmartTV()) {
+            // Separate room* menus from others
+            const roomMenus = menus.filter(menu =>
+                menu.name.toLowerCase().startsWith("room")
+            );
+            const otherMenus = menus.filter(menu =>
+                !menu.name.toLowerCase().startsWith("room")
+            );
+
+            // Put room* menus first, then others
+            return [...roomMenus, ...otherMenus];
+        }
+
+        // For non-TV devices, return original order
+        return menus;
+    }, [restaurant?.menus]);
+
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
     const initialMenu = useMemo(
-        () => getInitialMenuSelection(restaurant?.menus || [], restaurant?.menus?.[0]?.id),
-        [restaurant?.menus]
+        () => getInitialMenuSelection(sortedMenus, sortedMenus?.[0]?.id),
+        [sortedMenus]
     );
     const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(initialMenu);
 
@@ -185,8 +207,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     }, [router]);
 
     const menuDetails = useMemo(
-        () => restaurant?.menus?.find((item) => item.id === selectedMenu),
-        [selectedMenu, restaurant]
+        () => sortedMenus?.find((item) => item.id === selectedMenu),
+        [selectedMenu, sortedMenus]
     );
 
     const images: Image[] = useMemo(() => {
@@ -200,7 +222,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const haveMenuItems = menuDetails?.categories?.some((category) => category?.items?.length > 0);
 
     // Smart TV remote control navigation
-    const menuIds = useMemo(() => restaurant?.menus?.map(m => m.id) || [], [restaurant]);
+    const menuIds = useMemo(() => sortedMenus?.map(m => m.id) || [], [sortedMenus]);
     useSmartTVNavigation({
         currentMenuId: selectedMenu,
         menuIds,
@@ -326,7 +348,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             </MediaQuery>
             <Tabs my={40} onTabChange={setSelectedMenu} value={selectedMenu}>
                 <Tabs.List>
-                    {restaurant?.menus?.map((menu) => (
+                    {sortedMenus?.map((menu) => (
                         <Tabs.Tab
                             key={menu.id}
                             px="lg"
@@ -415,10 +437,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             </SimpleGrid>
                         </Box>
                     ))}
-                {restaurant?.menus?.length === 0 && !haveMenuItems && (
+                {sortedMenus?.length === 0 && !haveMenuItems && (
                     <Empty height={400} text={t("noMenusForVenue")} />
                 )}
-                {!!restaurant?.menus?.length && !haveMenuItems && <Empty height={400} text={t("noItemsForMenu")} />}
+                {!!sortedMenus?.length && !haveMenuItems && <Empty height={400} text={t("noItemsForMenu")} />}
             </Box>
         </Box>
     );

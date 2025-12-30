@@ -54,6 +54,25 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
     });
 
     const isSelected = item.id === selectedMenu?.id;
+    const isInactive = !(item as any).isActive;
+
+    const iconColor = isInactive
+        ? theme.colors.red[7]
+        : isSelected
+        ? theme.colors.primary?.[7]
+        : theme.colors.dark[6];
+
+    const editDeleteColor = isInactive
+        ? theme.colors.red[7]
+        : isSelected
+        ? theme.colors?.primary?.[7]
+        : theme.colors.dark[6];
+
+    const editDeleteHoverColor = isInactive
+        ? theme.colors.red[8]
+        : isSelected
+        ? theme.black
+        : theme.colors.primary?.[5];
 
     return (
         <>
@@ -66,22 +85,45 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
                         })}
                         data-testid={`menu-item ${item.name}`}
                         ref={provided.innerRef}
+                        sx={{
+                            borderColor: isInactive ? `${theme.colors.red[5]} !important` : undefined,
+                            borderWidth: isInactive ? '2px !important' : undefined,
+                            backgroundColor: isInactive ? theme.colors.red[0] : undefined,
+                        }}
                         {...provided.draggableProps}
                         onClick={() => setSelectedMenu(item)}
                     >
                         <Center {...provided.dragHandleProps} className={classes.dragHandle}>
-                            <IconGripVertical
-                                color={isSelected ? theme.colors.primary?.[7] : theme.colors.dark[6]}
-                                size={18}
-                            />
+                            <IconGripVertical color={iconColor} size={18} />
                         </Center>
                         <Box sx={{ flex: 1 }}>
-                            <Text className={classes.itemTitle}>{item.name}</Text>
-                            <Text className={classes.itemSubTitle}>{item.availableTime}</Text>
+                            <Text
+                                className={classes.itemTitle}
+                                sx={{ color: isInactive ? theme.colors.red[7] : undefined }}
+                            >
+                                {(item as any).isFestive ? "🎄 " : ""}
+                                {item.name}
+                                {isInactive ? " (Disabled)" : ""}
+                            </Text>
+                            <Text
+                                className={classes.itemSubTitle}
+                                sx={{ color: isInactive ? theme.colors.red[6] : undefined }}
+                            >
+                                {(item as any).isTemporary && (item as any).startDate && (item as any).endDate
+                                    ? `${new Date((item as any).startDate).toLocaleDateString("en-GB", {
+                                          day: "numeric",
+                                          month: "short",
+                                      })} - ${new Date((item as any).endDate).toLocaleDateString("en-GB", {
+                                          day: "numeric",
+                                          month: "short",
+                                          year: "numeric",
+                                      })}`
+                                    : item.availableTime}
+                            </Text>
                         </Box>
                         <EditDeleteOptions
-                            color={isSelected ? theme.colors?.primary?.[7] : theme.colors.dark[6]}
-                            hoverColor={isSelected ? theme.black : theme.colors.primary?.[5]}
+                            color={editDeleteColor}
+                            hoverColor={editDeleteHoverColor}
                             onDeleteClick={() => setDeleteMenuModalOpen(true)}
                             onEditClick={() => setMenuFormOpen(true)}
                         />

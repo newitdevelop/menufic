@@ -28,6 +28,11 @@ export const menuRouter = createTRPCRouter({
             });
         }
 
+        // Calculate isActive: user's toggle AND date logic (if temporary menu is past end date, it's inactive)
+        const userActiveState = input.isActive ?? true;
+        const isWithinDateRange = input.isTemporary && input.endDate ? new Date() <= input.endDate : true;
+        const finalIsActive = userActiveState && isWithinDateRange;
+
         return ctx.prisma.menu.create({
             data: {
                 availableTime: input.availableTime,
@@ -43,8 +48,7 @@ export const menuRouter = createTRPCRouter({
                 startDate: input.startDate ?? null,
                 endDate: input.endDate ?? null,
                 isFestive: input.isFestive ?? false,
-                // Auto-calculate isActive: only check endDate if menu is temporary
-                isActive: input.isTemporary && input.endDate ? new Date() <= input.endDate : true,
+                isActive: finalIsActive,
             },
         });
     }),
@@ -106,6 +110,11 @@ export const menuRouter = createTRPCRouter({
             input.availableTime !== currentMenu.availableTime ||
             input.message !== currentMenu.message;
 
+        // Calculate isActive: user's toggle AND date logic (if temporary menu is past end date, it's inactive)
+        const userActiveState = input.isActive ?? true;
+        const isWithinDateRange = input.isTemporary && input.endDate ? new Date() <= input.endDate : true;
+        const finalIsActive = userActiveState && isWithinDateRange;
+
         const [updatedMenu] = await Promise.all([
             ctx.prisma.menu.update({
                 data: {
@@ -119,8 +128,7 @@ export const menuRouter = createTRPCRouter({
                     startDate: input.startDate ?? null,
                     endDate: input.endDate ?? null,
                     isFestive: input.isFestive ?? false,
-                    // Auto-calculate isActive: only check endDate if menu is temporary
-                    isActive: input.isTemporary && input.endDate ? new Date() <= input.endDate : true,
+                    isActive: finalIsActive,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),
