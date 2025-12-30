@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+
+# Disallow admin/dashboard pages
+Disallow: /dashboard
+
+# Host
+Host: ${NEXT_PUBLIC_PROD_URL}
+
+# Sitemaps
+Sitemap: ${NEXT_PUBLIC_PROD_URL}/sitemap.xml

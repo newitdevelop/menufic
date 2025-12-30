@@ -370,7 +370,16 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 {(menu as any).isFestive ? `${getFestiveEmoji()} ${menu.name}` : menu.name}
                             </Text>
                             <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">
-                                {menu.availableTime}
+                                {(menu as any).isTemporary && (menu as any).startDate && (menu as any).endDate
+                                    ? `${new Date((menu as any).startDate).toLocaleDateString("en-GB", {
+                                          day: "numeric",
+                                          month: "short",
+                                      })} - ${new Date((menu as any).endDate).toLocaleDateString("en-GB", {
+                                          day: "numeric",
+                                          month: "short",
+                                          year: "numeric",
+                                      })}`
+                                    : menu.availableTime}
                             </Text>
                         </Tabs.Tab>
                     ))}

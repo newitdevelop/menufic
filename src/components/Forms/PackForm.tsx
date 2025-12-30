@@ -116,10 +116,19 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
             <form
                 onSubmit={onSubmit((values) => {
                     if (isDirty()) {
+                        // Clean up empty items before submitting
+                        const cleanedValues = {
+                            ...values,
+                            sections: values.sections.map(section => ({
+                                ...section,
+                                items: section.items.filter(item => item.trim() !== ""),
+                            })),
+                        };
+
                         if (packItem) {
-                            updatePack({ ...values, id: packItem?.id });
+                            updatePack({ ...cleanedValues, id: packItem?.id });
                         } else {
-                            createPack({ ...values, menuId });
+                            createPack({ ...cleanedValues, menuId });
                         }
                     } else {
                         onClose();
@@ -164,11 +173,12 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                             disabled={loading}
                             label={t("inputVatRateLabel")}
                             data={[
-                                { value: "6", label: "6%" },
-                                { value: "13", label: "13%" },
-                                { value: "23", label: "23%" },
+                                { value: 6, label: "6%" },
+                                { value: 13, label: "13%" },
+                                { value: 23, label: "23%" },
                             ]}
-                            {...getInputProps("vatRate")}
+                            value={values.vatRate}
+                            onChange={(value) => setValues({ ...values, vatRate: Number(value) })}
                         />
                         <Checkbox
                             disabled={loading}
@@ -213,7 +223,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                                     const newSections = [...values.sections];
                                     newSections[index] = {
                                         ...newSections[index],
-                                        items: e.target.value.split("\n").filter(item => item.trim() !== ""),
+                                        items: e.target.value.split("\n"),
                                     };
                                     setValues({ ...values, sections: newSections });
                                 }}

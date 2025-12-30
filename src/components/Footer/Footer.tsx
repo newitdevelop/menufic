@@ -30,8 +30,12 @@ const useStyles = createStyles((theme) => ({
         },
     },
     linkItem: {
+        color: theme.colors.dark[9],
+        fontSize: theme.fontSizes.sm,
         marginLeft: 10,
         marginRight: 10,
+        "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV - match copyright
+        "@media (min-width: 240em)": { fontSize: "32px" }, // 3840px 4K TV - match copyright
         [theme.fn.smallerThan("sm")]: {
             marginLeft: 0,
             marginRight: 0,
@@ -41,8 +45,8 @@ const useStyles = createStyles((theme) => ({
     links: {
         color: theme.colors.dark[9],
         fontSize: theme.fontSizes.sm,
-        "@media (min-width: 120em)": { fontSize: "18px" }, // 1920px Smart TV
-        "@media (min-width: 240em)": { fontSize: "28px" }, // 3840px 4K TV
+        "@media (min-width: 120em)": { fontSize: "20px" }, // 1920px Smart TV - match copyright
+        "@media (min-width: 240em)": { fontSize: "32px" }, // 3840px 4K TV - match copyright
         [theme.fn.smallerThan("sm")]: {
             marginTop: 0,
             width: "100%",
@@ -89,7 +93,7 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
 
     const items = footerLinks.map((link) => (
         <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
-            {isMobile ? <Text size="sm">{link.label}</Text> : link.label}
+            {link.label}
         </Link>
     ));
 
