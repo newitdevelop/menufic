@@ -173,12 +173,12 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                             disabled={loading}
                             label={t("inputVatRateLabel")}
                             data={[
-                                { value: 6, label: "6%" },
-                                { value: 13, label: "13%" },
-                                { value: 23, label: "23%" },
+                                { value: "6", label: "6%" },
+                                { value: "13", label: "13%" },
+                                { value: "23", label: "23%" },
                             ]}
-                            value={values.vatRate}
-                            onChange={(value) => setValues({ ...values, vatRate: Number(value) })}
+                            value={String(values.vatRate)}
+                            onChange={(value) => setValues({ ...values, vatRate: Number(value) as 6 | 13 | 23 })}
                         />
                         <Checkbox
                             disabled={loading}
