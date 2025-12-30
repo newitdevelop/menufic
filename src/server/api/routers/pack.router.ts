@@ -161,15 +161,15 @@ export const packRouter = createTRPCRouter({
                 );
             }
 
-            // Use transaction to ensure atomic delete and update
+            // Use transaction to ensure atomic operations
             const pack = await ctx.prisma.$transaction(async (tx) => {
                 // Delete existing sections first
                 await tx.packSection.deleteMany({
                     where: { packId: input.id, userId: ctx.session.user.id },
                 });
 
-                // Update pack with new sections
-                return tx.pack.update({
+                // Update pack (without sections in the same operation)
+                const updatedPack = await tx.pack.update({
                     where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
                     data: {
                         name: input.name,
@@ -180,16 +180,24 @@ export const packRouter = createTRPCRouter({
                         vatIncluded: input.vatIncluded,
                         isActive: input.isActive,
                         imageId,
-                        sections: {
-                            create: input.sections.map((section) => ({
-                                title: section.title,
-                                items: section.items,
-                                itemAllergens: allergenMap, // Store AI-detected allergens
-                                position: section.position,
-                                userId: ctx.session.user.id,
-                            })),
-                        },
                     },
+                });
+
+                // Create new sections separately
+                await tx.packSection.createMany({
+                    data: input.sections.map((section) => ({
+                        packId: input.id,
+                        title: section.title,
+                        items: section.items,
+                        itemAllergens: allergenMap,
+                        position: section.position,
+                        userId: ctx.session.user.id,
+                    })),
+                });
+
+                // Fetch the complete pack with sections
+                const packWithSections = await tx.pack.findUnique({
+                    where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
                     include: {
                         sections: {
                             orderBy: { position: "asc" },
@@ -197,6 +205,15 @@ export const packRouter = createTRPCRouter({
                         image: true,
                     },
                 });
+
+                if (!packWithSections) {
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: "Pack not found after update",
+                    });
+                }
+
+                return packWithSections;
             });
 
             // Invalidate translations when pack is updated
