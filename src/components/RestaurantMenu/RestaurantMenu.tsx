@@ -127,9 +127,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
 
-    // Smart TV detection: Sort menus to show room* menus first on TVs only
+    // Menu sorting: Show room menus first (on Smart TV), then package menus, then standard menus
     const sortedMenus = useMemo(() => {
         const menus = restaurant?.menus || [];
+
+        // Helper to check if menu has packs
+        const hasPacks = (menu: any) => menu.packs && menu.packs.length > 0;
 
         // Only sort for Smart TVs, keep original order for laptops/desktops
         if (isSmartTV()) {
@@ -141,12 +144,18 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 !menu.name.toLowerCase().startsWith("room")
             );
 
-            // Put room* menus first, then others
-            return [...roomMenus, ...otherMenus];
+            // Within other menus, separate package menus from standard menus
+            const packageMenus = otherMenus.filter(hasPacks);
+            const standardMenus = otherMenus.filter(menu => !hasPacks(menu));
+
+            // Put room* menus first, then package menus, then standard menus
+            return [...roomMenus, ...packageMenus, ...standardMenus];
         }
 
-        // For non-TV devices, return original order
-        return menus;
+        // For non-TV devices, prioritize package menus over standard menus
+        const packageMenus = menus.filter(hasPacks);
+        const standardMenus = menus.filter(menu => !hasPacks(menu));
+        return [...packageMenus, ...standardMenus];
     }, [restaurant?.menus]);
 
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
@@ -367,7 +376,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 }),
                             })}
                         >
-                            <Text color={theme.black} size="lg" translate="no" weight={selectedMenu === menu.id ? "bold" : "normal"}>
+                            <Text
+                                color={theme.black}
+                                size="lg"
+                                translate={(menu as any).isFestive || (menu as any).isTemporary ? "yes" : "no"}
+                                weight={selectedMenu === menu.id ? "bold" : "normal"}
+                            >
                                 {(menu as any).isFestive ? `${getFestiveEmoji()} ${menu.name}` : menu.name}
                             </Text>
                             <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">

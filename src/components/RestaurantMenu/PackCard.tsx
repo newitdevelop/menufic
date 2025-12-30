@@ -1,13 +1,14 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 
-import { Box, createStyles, Divider, Group, Paper, Stack, Text } from "@mantine/core";
+import { Box, createStyles, Divider, Paper, Stack, Text } from "@mantine/core";
 
 import type { Image } from "@prisma/client";
 
 import { calculateVATInclusivePrice } from "src/utils/helpers";
 import { getFestiveColors, getProfessionalColors } from "src/utils/getFestiveColors";
 import { ImageKitImage } from "../ImageKitImage";
+import { CompactAllergenDisplay } from "./CompactAllergenDisplay";
 
 export interface StyleProps {
     imageColor?: string;
@@ -117,6 +118,7 @@ interface PackSection {
     id: string;
     title: string;
     items: string[];
+    itemAllergens?: Record<string, string[]>; // Map of item text to allergen codes
     position: number;
 }
 
@@ -132,6 +134,7 @@ interface Pack {
     image: Image | null;
     uiTranslations?: {
         vatIncluded: string;
+        allergens?: Record<string, string>;
     };
 }
 
@@ -147,6 +150,7 @@ export const PackCard: FC<Props> = ({ pack, isFestive }) => {
     // Get UI translations (server-side translated via DeepL)
     const uiTranslations = pack.uiTranslations || {
         vatIncluded: "IVA incluído",
+        allergens: {},
     };
 
     const displayPrice = calculateVATInclusivePrice(
@@ -192,11 +196,27 @@ export const PackCard: FC<Props> = ({ pack, isFestive }) => {
                                     {section.title}
                                 </Text>
                                 <div className={classes.sectionItems}>
-                                    {section.items.map((item, index) => (
-                                        <Text key={index} className={classes.item} translate="yes">
-                                            {item}
-                                        </Text>
-                                    ))}
+                                    {section.items.map((item, index) => {
+                                        // Get allergens for this specific item from the AI-generated map
+                                        const itemAllergens = section.itemAllergens
+                                            ? (section.itemAllergens as Record<string, string[]>)[item] || []
+                                            : [];
+
+                                        return (
+                                            <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                                                <Text className={classes.item} translate="yes" sx={{ margin: 0 }}>
+                                                    {item}
+                                                </Text>
+                                                {itemAllergens.length > 0 && (
+                                                    <CompactAllergenDisplay
+                                                        allergens={itemAllergens}
+                                                        allergenTranslations={uiTranslations.allergens || {}}
+                                                        size="1rem"
+                                                    />
+                                                )}
+                                            </Box>
+                                        );
+                                    })}
                                 </div>
                             </Stack>
                         ))}

@@ -138,15 +138,16 @@ model Pack {
 }
 
 model PackSection {
-    id          String   @unique @default(cuid())
-    userId      String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    title       String   // e.g., "COLD DISHES", "HOT DISHES"
-    items       String[] // Array of item descriptions
-    position    Int      // Display order within pack
-    pack        Pack?    @relation("PackSections", fields: [packId], references: [id], onDelete: Cascade)
-    packId      String?
+    id             String   @unique @default(cuid())
+    userId         String
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+    title          String   // e.g., "COLD DISHES", "HOT DISHES"
+    items          String[] // Array of item descriptions
+    itemAllergens  Json?    @default("{}") // Map of item text to allergen codes array (AI-generated)
+    position       Int      // Display order within pack
+    pack           Pack?    @relation("PackSections", fields: [packId], references: [id], onDelete: Cascade)
+    packId         String?
 
     @@id([id, userId])
     @@index([packId])

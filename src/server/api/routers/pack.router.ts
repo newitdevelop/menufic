@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
+import { detectAllergensWithAI, isAllergenAIAvailable } from "src/server/services/openai.service";
 import { invalidateTranslations } from "src/server/services/translation.service";
 import { id, menuId, packId, packInput } from "src/utils/validators";
 
@@ -35,7 +36,27 @@ export const packRouter = createTRPCRouter({
             imageId = image.id;
         }
 
-        // Create pack with sections
+        // Detect allergens for all items in all sections using AI (if available)
+        const allergenMap: Record<string, string[]> = {};
+        if (isAllergenAIAvailable()) {
+            const allItems = input.sections.flatMap(section => section.items);
+
+            // Batch detect allergens for all items
+            await Promise.all(
+                allItems.map(async (item) => {
+                    try {
+                        const allergens = await detectAllergensWithAI(item, "");
+                        // Filter out "none" - we store empty array instead
+                        allergenMap[item] = allergens.filter(code => code !== "none");
+                    } catch (error) {
+                        console.error(`Failed to detect allergens for "${item}":`, error);
+                        allergenMap[item] = [];
+                    }
+                })
+            );
+        }
+
+        // Create pack with sections including allergen data
         const pack = await ctx.prisma.pack.create({
             data: {
                 name: input.name,
@@ -53,6 +74,7 @@ export const packRouter = createTRPCRouter({
                     create: input.sections.map((section) => ({
                         title: section.title,
                         items: section.items,
+                        itemAllergens: allergenMap, // Store AI-detected allergens
                         position: section.position,
                         userId: ctx.session.user.id,
                     })),
@@ -119,6 +141,26 @@ export const packRouter = createTRPCRouter({
                 imageId = image.id;
             }
 
+            // Detect allergens for all items in all sections using AI (if available)
+            const allergenMap: Record<string, string[]> = {};
+            if (isAllergenAIAvailable()) {
+                const allItems = input.sections.flatMap(section => section.items);
+
+                // Batch detect allergens for all items
+                await Promise.all(
+                    allItems.map(async (item) => {
+                        try {
+                            const allergens = await detectAllergensWithAI(item, "");
+                            // Filter out "none" - we store empty array instead
+                            allergenMap[item] = allergens.filter(code => code !== "none");
+                        } catch (error) {
+                            console.error(`Failed to detect allergens for "${item}":`, error);
+                            allergenMap[item] = [];
+                        }
+                    })
+                );
+            }
+
             // Delete existing sections
             await ctx.prisma.packSection.deleteMany({
                 where: { packId: input.id, userId: ctx.session.user.id },
@@ -140,6 +182,7 @@ export const packRouter = createTRPCRouter({
                         create: input.sections.map((section) => ({
                             title: section.title,
                             items: section.items,
+                            itemAllergens: allergenMap, // Store AI-detected allergens
                             position: section.position,
                             userId: ctx.session.user.id,
                         })),

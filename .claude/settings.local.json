@@ -38,7 +38,11 @@
       "Bash(docker:*)",
       "Bash(timeout /t 15 /nobreak)",
       "Bash(findstr build:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git checkout:*)",
+      "Bash(timeout 120 npm run build:*)",
+      "Bash(timeout 180 npm run build:*)",
+      "Bash(SKIP_ENV_VALIDATION=true npm run build:*)"
     ]
   }
 }
