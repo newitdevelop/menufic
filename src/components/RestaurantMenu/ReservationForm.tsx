@@ -172,7 +172,7 @@ export const ReservationForm: FC<Props> = ({
                                 onChange={(date) => setFieldValue("date", date)}
                                 minDate={new Date()}
                                 maxDate={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)} // 90 days ahead
-                                firstDayOfWeek={1} // Monday
+                                firstDayOfWeek="monday"
                                 fullWidth
                             />
                         </Stack>
