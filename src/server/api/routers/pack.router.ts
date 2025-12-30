@@ -161,39 +161,42 @@ export const packRouter = createTRPCRouter({
                 );
             }
 
-            // Delete existing sections
-            await ctx.prisma.packSection.deleteMany({
-                where: { packId: input.id, userId: ctx.session.user.id },
-            });
+            // Use transaction to ensure atomic delete and update
+            const pack = await ctx.prisma.$transaction(async (tx) => {
+                // Delete existing sections first
+                await tx.packSection.deleteMany({
+                    where: { packId: input.id, userId: ctx.session.user.id },
+                });
 
-            // Update pack with new sections
-            const pack = await ctx.prisma.pack.update({
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
-                data: {
-                    name: input.name,
-                    description: input.description,
-                    price: input.price,
-                    currency: input.currency,
-                    vatRate: input.vatRate,
-                    vatIncluded: input.vatIncluded,
-                    isActive: input.isActive,
-                    imageId,
-                    sections: {
-                        create: input.sections.map((section) => ({
-                            title: section.title,
-                            items: section.items,
-                            itemAllergens: allergenMap, // Store AI-detected allergens
-                            position: section.position,
-                            userId: ctx.session.user.id,
-                        })),
+                // Update pack with new sections
+                return tx.pack.update({
+                    where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                    data: {
+                        name: input.name,
+                        description: input.description,
+                        price: input.price,
+                        currency: input.currency,
+                        vatRate: input.vatRate,
+                        vatIncluded: input.vatIncluded,
+                        isActive: input.isActive,
+                        imageId,
+                        sections: {
+                            create: input.sections.map((section) => ({
+                                title: section.title,
+                                items: section.items,
+                                itemAllergens: allergenMap, // Store AI-detected allergens
+                                position: section.position,
+                                userId: ctx.session.user.id,
+                            })),
+                        },
                     },
-                },
-                include: {
-                    sections: {
-                        orderBy: { position: "asc" },
+                    include: {
+                        sections: {
+                            orderBy: { position: "asc" },
+                        },
+                        image: true,
                     },
-                    image: true,
-                },
+                });
             });
 
             // Invalidate translations when pack is updated

@@ -1,9 +1,10 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Checkbox, Group, Stack, Textarea, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Group, Stack, Textarea, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
+import { IconPlus, IconTrash } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 
 import type { ModalProps } from "@mantine/core";
@@ -14,6 +15,11 @@ import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 import { menuInput } from "src/utils/validators";
 
 import { Modal } from "../Modal";
+
+interface TimeRange {
+    startTime: Date | null;
+    endTime: Date | null;
+}
 
 interface Props extends ModalProps {
     /** Menu to be edited */
@@ -49,10 +55,9 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
         },
     });
 
-    // Parse availableTime into start and end times as Date objects
-    const parseAvailableTime = (timeString: string) => {
-        if (!timeString) return { startTime: null, endTime: null };
-        const parts = timeString.split(" - ");
+    // Parse availableTime string into array of TimeRange objects
+    const parseAvailableTime = (timeString: string): TimeRange[] => {
+        if (!timeString) return [{ startTime: null, endTime: null }];
 
         const parseTime = (timeStr: string): Date | null => {
             if (!timeStr) return null;
@@ -66,18 +71,23 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             return date;
         };
 
-        return {
-            startTime: parseTime(parts[0] || ""),
-            endTime: parseTime(parts[1] || ""),
-        };
+        // Split by comma for multiple time ranges, then by dash for start-end
+        const ranges = timeString.split(",").map(range => {
+            const parts = range.trim().split(" - ");
+            return {
+                startTime: parseTime(parts[0] || ""),
+                endTime: parseTime(parts[1] || ""),
+            };
+        });
+
+        return ranges.length > 0 ? ranges : [{ startTime: null, endTime: null }];
     };
 
-    const { startTime: initialStartTime, endTime: initialEndTime } = parseAvailableTime(menuItem?.availableTime || "");
+    const initialTimeRanges = parseAvailableTime(menuItem?.availableTime || "");
 
-    const { getInputProps, onSubmit, isDirty, resetDirty, setValues, values } = useForm({
+    const { getInputProps, onSubmit, isDirty, resetDirty, setValues, values, setFieldValue, insertListItem, removeListItem } = useForm({
         initialValues: {
-            startTime: initialStartTime,
-            endTime: initialEndTime,
+            timeRanges: initialTimeRanges,
             email: menuItem?.email || "",
             reservations: (menuItem as any)?.reservations || "",
             message: menuItem?.message || "",
@@ -93,10 +103,9 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
 
     useEffect(() => {
         if (opened) {
-            const { startTime, endTime } = parseAvailableTime(menuItem?.availableTime || "");
-            const values = {
-                startTime,
-                endTime,
+            const timeRanges = parseAvailableTime(menuItem?.availableTime || "");
+            const newValues = {
+                timeRanges,
                 email: menuItem?.email || "",
                 reservations: (menuItem as any)?.reservations || "",
                 message: menuItem?.message || "",
@@ -108,12 +117,22 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 isFestive: (menuItem as any)?.isFestive || false,
                 isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
             };
-            setValues(values);
-            resetDirty(values);
+            setValues(newValues);
+            resetDirty(newValues);
         }
     }, [menuItem, opened]);
 
     const loading = isCreating || isUpdating;
+
+    const addTimeRange = () => {
+        insertListItem("timeRanges", { startTime: null, endTime: null });
+    };
+
+    const removeTimeRange = (index: number) => {
+        if (values.timeRanges.length > 1) {
+            removeListItem("timeRanges", index);
+        }
+    };
 
     return (
         <Modal
@@ -133,15 +152,21 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         return `${hours}:${minutes}`;
                     };
 
-                    // Combine start and end times into availableTime string
-                    const startTimeStr = formatTime(values.startTime);
-                    const endTimeStr = formatTime(values.endTime);
-                    const availableTime = startTimeStr && endTimeStr
-                        ? `${startTimeStr} - ${endTimeStr}`
-                        : startTimeStr || endTimeStr || "";
+                    // Combine all time ranges into comma-separated availableTime string
+                    const availableTime = values.timeRanges
+                        .map(range => {
+                            const startTimeStr = formatTime(range.startTime);
+                            const endTimeStr = formatTime(range.endTime);
+                            if (startTimeStr && endTimeStr) {
+                                return `${startTimeStr} - ${endTimeStr}`;
+                            }
+                            return "";
+                        })
+                        .filter(Boolean)
+                        .join(", ");
 
-                    // Remove startTime and endTime from the data, only send availableTime
-                    const { startTime, endTime, ...restValues } = values;
+                    // Remove timeRanges from the data, only send availableTime
+                    const { timeRanges, ...restValues } = values;
                     const submitData = {
                         ...restValues,
                         availableTime,
@@ -162,24 +187,52 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         withAsterisk
                         {...getInputProps("name")}
                     />
-                    <Group grow>
-                        <TimeInput
+
+                    <div>
+                        <Text size="sm" weight={500} mb={8}>
+                            Available Times
+                        </Text>
+                        {values.timeRanges.map((_, index) => (
+                            <Group key={index} grow mb="xs" align="flex-end">
+                                <TimeInput
+                                    disabled={loading}
+                                    label={index === 0 ? "Start Time" : undefined}
+                                    placeholder="e.g., 11:00"
+                                    format="24"
+                                    clearable
+                                    {...getInputProps(`timeRanges.${index}.startTime`)}
+                                />
+                                <TimeInput
+                                    disabled={loading}
+                                    label={index === 0 ? "End Time" : undefined}
+                                    placeholder="e.g., 23:00"
+                                    format="24"
+                                    clearable
+                                    {...getInputProps(`timeRanges.${index}.endTime`)}
+                                />
+                                <ActionIcon
+                                    color="red"
+                                    variant="subtle"
+                                    onClick={() => removeTimeRange(index)}
+                                    disabled={loading || values.timeRanges.length === 1}
+                                    mb={4}
+                                >
+                                    <IconTrash size={18} />
+                                </ActionIcon>
+                            </Group>
+                        ))}
+                        <Button
+                            variant="subtle"
+                            leftIcon={<IconPlus size={16} />}
+                            onClick={addTimeRange}
                             disabled={loading}
-                            label="Start Time"
-                            placeholder="e.g., 11:00"
-                            format="24"
-                            clearable
-                            {...getInputProps("startTime")}
-                        />
-                        <TimeInput
-                            disabled={loading}
-                            label="End Time"
-                            placeholder="e.g., 23:00"
-                            format="24"
-                            clearable
-                            {...getInputProps("endTime")}
-                        />
-                    </Group>
+                            size="xs"
+                            mt={4}
+                        >
+                            Add Time Range
+                        </Button>
+                    </div>
+
                     <TextInput
                         disabled={loading}
                         label={t("inputTelephoneLabel")}
