@@ -433,7 +433,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             leftIcon={<IconCalendar size={16} />}
                             variant="filled"
                             color="primary"
-                            sx={{ minWidth: '200px' }}
+                            sx={{ width: 'fit-content' }}
                         >
                             {t("reservations")}
                         </Button>
@@ -444,7 +444,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             variant="filled"
                             color="primary"
                             onClick={() => setReservationModalOpened(true)}
-                            sx={{ minWidth: '200px' }}
+                            sx={{ width: 'fit-content' }}
                         >
                             {t("reservations")}
                         </Button>

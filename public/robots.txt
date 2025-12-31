@@ -5,6 +5,9 @@ Allow: /
 # Disallow admin/dashboard pages
 Disallow: /dashboard
 
+# Disallow edit-menu pages (admin only)
+Disallow: /venue/*/edit-menu
+
 # Host
 Host: ${NEXT_PUBLIC_PROD_URL}
 

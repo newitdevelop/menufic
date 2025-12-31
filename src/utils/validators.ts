@@ -55,6 +55,7 @@ export const reservationSubmissionInput = z.object({
     time: z.string(),
     partySize: z.number().int().min(1).max(50),
     email: z.string().email("Invalid email address"),
+    phone: z.string().optional(),
 });
 
 export const menuInput = z.object({

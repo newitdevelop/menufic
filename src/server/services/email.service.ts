@@ -95,8 +95,9 @@ export async function sendReservationEmail(params: {
     time: string;
     partySize: number;
     customerEmail: string;
+    customerPhone?: string;
 }): Promise<void> {
-    const { to, restaurantName, menuName, date, time, partySize, customerEmail } = params;
+    const { to, restaurantName, menuName, date, time, partySize, customerEmail, customerPhone } = params;
 
     const formattedDate = date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -116,7 +117,7 @@ Menu: ${menuName}
 Date: ${formattedDate}
 Time: ${time}
 Party Size: ${partySize} ${partySize === 1 ? "person" : "people"}
-Customer Email: ${customerEmail}
+Customer Email: ${customerEmail}${customerPhone ? `\nCustomer Phone: ${customerPhone}` : ""}
 
 Please contact the customer to confirm this reservation.
     `.trim();
@@ -167,6 +168,11 @@ Please contact the customer to confirm this reservation.
                 <span class="label">Customer Email:</span>
                 <span class="value"><a href="mailto:${customerEmail}">${customerEmail}</a></span>
             </div>
+            ${customerPhone ? `
+            <div class="detail">
+                <span class="label">Customer Phone:</span>
+                <span class="value"><a href="tel:${customerPhone}">${customerPhone}</a></span>
+            </div>` : ""}
         </div>
         <div class="footer">
             <p>Please contact the customer to confirm this reservation.</p>

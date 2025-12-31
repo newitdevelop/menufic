@@ -10,8 +10,8 @@ const useStyles = createStyles((theme) => {
     return {
         image: {
             objectFit: "scale-down",
-            width: 150,
-            [`@media (max-width: ${theme.breakpoints.sm}px)`]: { width: 120 },
+            width: 100,
+            [`@media (max-width: ${theme.breakpoints.sm}px)`]: { width: 80 },
         },
         titleLink: {
             "&:hover": { filter: "brightness(90%)" },

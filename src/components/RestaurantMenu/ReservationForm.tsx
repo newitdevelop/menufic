@@ -159,6 +159,7 @@ export const ReservationForm: FC<Props> = ({
             time: "",
             partySize: 2,
             email: "",
+            phone: "",
         },
         validate: zodResolver(
             z.object({
@@ -166,6 +167,7 @@ export const ReservationForm: FC<Props> = ({
                 time: z.string().min(1, "Please select a time"),
                 partySize: z.number().int().min(1, "At least 1 person").max(maxPartySize, `Maximum ${maxPartySize} people`),
                 email: z.string().email("Invalid email address"),
+                phone: z.string().optional(),
             })
         ),
     });
@@ -382,11 +384,12 @@ export const ReservationForm: FC<Props> = ({
                     <Stepper.Step
                         icon={<IconMail size={18} />}
                         label="Contact Info"
+                        description="Your info"
                         allowStepSelect={activeStep > 3}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
-                                Enter your email to confirm the reservation
+                                Enter your contact information to confirm the reservation
                             </Text>
                             <TextInput
                                 label="Email Address"
@@ -394,6 +397,12 @@ export const ReservationForm: FC<Props> = ({
                                 type="email"
                                 withAsterisk
                                 {...getInputProps("email")}
+                            />
+                            <TextInput
+                                label="Phone Number (Optional)"
+                                placeholder="+351 123 456 789"
+                                type="tel"
+                                {...getInputProps("phone")}
                             />
                             <Paper p="md" sx={(theme) => ({ backgroundColor: theme.colors.gray[0] })}>
                                 <Stack spacing="xs">

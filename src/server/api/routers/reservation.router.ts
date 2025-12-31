@@ -85,6 +85,7 @@ export const reservationRouter = createTRPCRouter({
                 time: input.time,
                 partySize: input.partySize,
                 customerEmail: input.email,
+                customerPhone: input.phone,
             });
         } catch (error) {
             console.error("Failed to send reservation email:", error);

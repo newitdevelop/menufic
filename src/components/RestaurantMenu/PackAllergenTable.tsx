@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { Box, Paper, Table, Text, createStyles } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons";
 
+import { allergenSymbols } from "src/utils/validators";
+
 const useStyles = createStyles((theme) => ({
     tableContainer: {
         marginTop: theme.spacing.lg,
@@ -90,22 +92,18 @@ export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = 
             <div className={classes.tableHeader}>
                 <IconAlertTriangle size={20} />
                 <Text weight={600} size="sm">
-                    Allergen Information / Informações sobre Alergénios / Informations sur les allergènes
+                    {allergenTranslations.allergensInfo || "Allergen Information"}
                 </Text>
             </div>
 
             <Table className={classes.table} striped highlightOnHover>
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Allergen / Alergénio / Allergène</th>
-                    </tr>
-                </thead>
                 <tbody>
                     {allergenSummary.map((code) => (
                         <tr key={code}>
                             <td>
-                                <Text className={classes.allergenCode}>{code}</Text>
+                                <Text style={{ fontSize: "1.5rem" }}>
+                                    {allergenSymbols[code as keyof typeof allergenSymbols] || "❓"}
+                                </Text>
                             </td>
                             <td>
                                 <Text className={classes.allergenName}>
@@ -116,16 +114,6 @@ export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = 
                     ))}
                 </tbody>
             </Table>
-
-            <Text size="xs" color="dimmed" mt="xs" align="center">
-                This pack contains dishes with the allergens listed above. Please inform staff of any dietary requirements.
-            </Text>
-            <Text size="xs" color="dimmed" align="center">
-                Este pack contém pratos com os alergénios listados acima. Informe a equipe sobre quaisquer requisitos dietéticos.
-            </Text>
-            <Text size="xs" color="dimmed" align="center">
-                Ce pack contient des plats avec les allergènes listés ci-dessus. Veuillez informer le personnel de toute exigence alimentaire.
-            </Text>
         </Paper>
     );
 };
