@@ -186,6 +186,14 @@
             "githubButtonLabel": "Github"
         }
     },
+    "venueSelection": {
+        "title": "Select Your Venue",
+        "subtitle": "Explore our collection of venues and discover their menus",
+        "viewMenu": "View Menu",
+        "noImage": "No Image",
+        "noVenues": "No venues available at the moment",
+        "loading": "Loading venues..."
+    },
     "menu": {
         "noMenusForVenue": "There aren't any menus available for this venue. Try checking out later",
         "noItemsForMenu": "There aren't any menu items for the chosen venue menu. Try checking out later.",

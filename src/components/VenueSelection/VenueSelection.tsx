@@ -3,12 +3,14 @@ import type { FC } from "react";
 import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { api } from "src/utils/api";
 import { ImageKitImage } from "../ImageKitImage";
 
 export const VenueSelection: FC = () => {
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
+    const t = useTranslations("venueSelection");
 
     if (isLoading) {
         return (
@@ -26,7 +28,7 @@ export const VenueSelection: FC = () => {
                 <Center style={{ minHeight: 400 }}>
                     <Stack align="center" spacing="md">
                         <Text size="xl" color="dimmed">
-                            No venues available at the moment
+                            {t("noVenues")}
                         </Text>
                     </Stack>
                 </Center>
@@ -56,10 +58,10 @@ export const VenueSelection: FC = () => {
                             })}
                             weight={700}
                         >
-                            Select Your Venue
+                            {t("title")}
                         </Title>
                         <Text align="center" color="dimmed" size="xl" sx={{ maxWidth: 600 }}>
-                            Explore our collection of venues and discover their menus
+                            {t("subtitle")}
                         </Text>
                     </Stack>
 
@@ -113,7 +115,7 @@ export const VenueSelection: FC = () => {
                                                             })}
                                                         >
                                                             <Text color="dimmed" size="sm">
-                                                                No Image
+                                                                {t("noImage")}
                                                             </Text>
                                                         </Box>
                                                     )}
@@ -139,7 +141,7 @@ export const VenueSelection: FC = () => {
                                                         size="sm"
                                                         variant="light"
                                                     >
-                                                        View Menu
+                                                        {t("viewMenu")}
                                                     </Badge>
                                                 </Group>
 
