@@ -9,6 +9,9 @@ import { api } from "src/utils/api";
 export const VenueSelection: FC = () => {
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
 
+    // Debug logging
+    console.log("Restaurants data:", restaurants);
+
     if (isLoading) {
         return (
             <Container size="xl" py={80}>
@@ -64,9 +67,11 @@ export const VenueSelection: FC = () => {
 
                     <Grid gutter={30}>
                         {restaurants.map((restaurant) => {
-                            const imageUrl = restaurant.image
+                            const imageUrl = restaurant.image?.path
                                 ? `https://ik.imagekit.io/menufic/${restaurant.image.path}`
-                                : "/placeholder-restaurant.jpg";
+                                : null;
+
+                            console.log(`Restaurant: ${restaurant.name}, Image path: ${restaurant.image?.path}, Full URL: ${imageUrl}`);
 
                             return (
                                 <Grid.Col key={restaurant.id} xs={12} sm={6} md={4}>
@@ -88,19 +93,46 @@ export const VenueSelection: FC = () => {
                                             })}
                                         >
                                             <Card.Section>
-                                                <Box sx={{ overflow: "hidden", paddingTop: "66.67%", position: "relative" }}>
-                                                    <Image
-                                                        alt={restaurant.name}
-                                                        fit="cover"
-                                                        src={imageUrl}
-                                                        sx={{
-                                                            height: "100%",
-                                                            left: 0,
-                                                            position: "absolute",
-                                                            top: 0,
-                                                            width: "100%",
-                                                        }}
-                                                    />
+                                                <Box
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        paddingTop: "66.67%",
+                                                        position: "relative",
+                                                    }}
+                                                >
+                                                    {imageUrl ? (
+                                                        <Image
+                                                            alt={restaurant.name}
+                                                            fit="cover"
+                                                            src={imageUrl}
+                                                            sx={{
+                                                                height: "100%",
+                                                                left: 0,
+                                                                position: "absolute",
+                                                                top: 0,
+                                                                width: "100%",
+                                                            }}
+                                                            withPlaceholder
+                                                        />
+                                                    ) : (
+                                                        <Box
+                                                            sx={(theme) => ({
+                                                                alignItems: "center",
+                                                                backgroundColor: theme.colors.gray[1],
+                                                                display: "flex",
+                                                                height: "100%",
+                                                                justifyContent: "center",
+                                                                left: 0,
+                                                                position: "absolute",
+                                                                top: 0,
+                                                                width: "100%",
+                                                            })}
+                                                        >
+                                                            <Text color="dimmed" size="sm">
+                                                                No Image
+                                                            </Text>
+                                                        </Box>
+                                                    )}
                                                 </Box>
                                             </Card.Section>
 
