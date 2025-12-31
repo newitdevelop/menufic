@@ -216,6 +216,16 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     // Keyboard shortcuts for language switching (Smart TV remote control)
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
+            // Don't trigger language shortcuts if user is typing in an input/textarea
+            const target = event.target as HTMLElement;
+            const isTyping = target.tagName === 'INPUT' ||
+                            target.tagName === 'TEXTAREA' ||
+                            target.isContentEditable;
+
+            if (isTyping) {
+                return; // Allow normal typing in form fields
+            }
+
             // Number key shortcuts for languages
             const languageMap: Record<string, string> = {
                 '1': 'PT', // Portuguese

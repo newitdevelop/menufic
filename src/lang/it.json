@@ -6,5 +6,876 @@
         "noImage": "Nessuna Immagine",
         "noVenues": "Nessun locale disponibile al momento",
         "loading": "Caricamento locali..."
+    },
+    "common": {
+        "title": "[IT] Menufic",
+        "edit": "[IT] Edit",
+        "save": "[IT] Save",
+        "create": "[IT] Create",
+        "update": "[IT] Update",
+        "delete": "[IT] Delete",
+        "cancel": "[IT] Cancel",
+        "confirmDelete": "[IT] Confirm Delete",
+        "deleteSuccess": "[IT] Successfully deleted",
+        "createSuccess": "[IT] Successfully created",
+        "updateSuccess": "[IT] Successfully updated",
+        "privacyPolicy": "[IT] Privacy Policy",
+        "terms&Conditions": "[IT] Terms & Conditions",
+        "complaintBook": "[IT] Complaint Book",
+        "footerCopyright": "[IT] © {year} Copyright: {appName}",
+        "allergens": {
+            "title": "[IT] Allergens",
+            "cereals": "[IT] Cereals containing gluten",
+            "crustaceans": "[IT] Crustaceans",
+            "eggs": "[IT] Eggs",
+            "fish": "[IT] Fish",
+            "peanuts": "[IT] Peanuts",
+            "soybeans": "[IT] Soybeans",
+            "milk": "[IT] Milk",
+            "nuts": "[IT] Nuts",
+            "celery": "[IT] Celery",
+            "mustard": "[IT] Mustard",
+            "sesame": "[IT] Sesame seeds",
+            "sulphites": "[IT] Sulphur dioxide and sulphites",
+            "lupin": "[IT] Lupin",
+            "molluscs": "[IT] Molluscs",
+            "none": "[IT] None"
+        },
+        "login": "[IT] Login",
+        "logout": "[IT] Logout",
+        "openDashboard": "[IT] Go to Dashboard",
+        "translatePage": "[IT] Translate this page",
+        "translateInstructions": "[IT] Use your browser's built-in translation feature to view this menu in your language:",
+        "translateChrome": "[IT] Click the translate icon in the address bar, or right-click and select 'Translate to...'",
+        "translateSafari": "[IT] Tap the aA button in the address bar, then select 'Translate to...'",
+        "translateFirefox": "[IT] Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "auth": {
+        "azureSignIn": "[IT] Sign in with Microsoft",
+        "googleSignIn": "[IT] Sign in with Google",
+        "githubSignIn": "[IT] Sign in with GitHub",
+        "keyRequired": "[IT] Key is required",
+        "loginFailed": "[IT] Failed to sign in",
+        "testLoginDesc": "[IT] Login key is only used for testing purposes",
+        "loginKeyInputLabel": "[IT] Login Key",
+        "loginKeyInputPlaceholder": "[IT] Paste login key here",
+        "loginButtonLabel": "[IT] Login"
+    },
+    "errorPage": {
+        "401": {
+            "title": "[IT] No authorization found",
+            "description": "[IT] You do not have permission to access the requested page. Please login and try again"
+        },
+        "404": {
+            "title": "[IT] You have found a secret place.",
+            "description": "[IT] Unfortunately, this is only a 404 page. You may have mistyped the address, or the page has been moved to another URL."
+        },
+        "500": {
+            "title": "[IT] Internal server error",
+            "description": "[IT] Oops, something went wrong in the server"
+        },
+        "defaultMessage": "[IT] Aaaah! Something went wrong",
+        "homePageButtonLabel": "[IT] Take me back to home page"
+    },
+    "landing": {
+        "hero": {
+            "tagLine1": "[IT] The best way to create",
+            "tagLine2": "[IT] Digital Menus",
+            "tagLine3": "[IT] for your venue",
+            "getStarted": "[IT] Get started for free"
+        },
+        "steps": {
+            "title": "[IT] How it works?",
+            "stepItems": {
+                "0": {
+                    "title": "[IT] Create venue",
+                    "description": "[IT] Create your venue with basic details"
+                },
+                "1": {
+                    "title": "[IT] Add content",
+                    "description": "[IT] Add menu related content to your venue"
+                },
+                "2": {
+                    "title": "[IT] Publish venue",
+                    "description": "[IT] Publish your venue in order to make it accessible by anyone"
+                },
+                "3": {
+                    "title": "[IT] Share",
+                    "description": "[IT] Share the generated QR code or the menu URL with the rest of the world"
+                }
+            }
+        },
+        "features": {
+            "tagLine": "[IT] Why Menufic?",
+            "title": "[IT] Build your venue's menu with ease",
+            "subTitle": "[IT]  Menufic has several awesome features that makes it perfect to take your venue's menu to the next level",
+            "featuresItems": {
+                "0": {
+                    "key": "[IT] webOptimized",
+                    "title": "[IT] Optimized for the web",
+                    "description": "[IT] The generated menu page has been optimized for search engines as well as for social media crawlers and this will assure that your venue menu has a higher reach."
+                },
+                "1": {
+                    "key": "[IT] themeSupport",
+                    "title": "[IT] Dark and Light themes",
+                    "description": "[IT] As Menufic supports both Light and dark themes, you and your venue customers will have the independence to switch between these two modes."
+                },
+                "2": {
+                    "key": "[IT] banners",
+                    "title": "[IT] Promotions using banners",
+                    "description": "[IT] Add multiple banners to your venue which can help you to convey details such as offers or promotions to your customers."
+                },
+                "3": {
+                    "key": "[IT] organize",
+                    "title": "[IT] Organize your data easily",
+                    "description": "[IT] Menufic provides an intuitive interface to easily manage your menus. Each venue can have multiple menus with multiple sub categories."
+                },
+                "4": {
+                    "key": "[IT] responsiveDesign",
+                    "title": "[IT] View from any device",
+                    "description": "[IT] Customers can view your digital menu from the safety of their personal devices at any time, without any app install. The menu is built to adapt its layout based on the user's device."
+                },
+                "5": {
+                    "key": "[IT] qrCode",
+                    "title": "[IT] QR code",
+                    "description": "[IT] Generate a QR code, print and share it with your customers by simply placing it on your venue tables, entrance, food packaging or delivery vehicles."
+                }
+            }
+        },
+        "sampleMenu": {
+            "title": "[IT] What is your digital menu going to look like?",
+            "subTitle": "[IT] Scan this QR code or click the following button to view a sample menu",
+            "buttonLabel": "[IT] Sample Menu"
+        },
+        "pricing": {
+            "title": "[IT] Pricing",
+            "freeTier": {
+                "label": "[IT] Free",
+                "maxVenueCount": "[IT] Create up to {count} venues",
+                "maxMenuCount": "[IT] Add up to {count} menus per venue",
+                "maxCategoryCount": "[IT] Add up to {count} categories per menu",
+                "maxMenuItemCount": "[IT] Add up to {count} items per category",
+                "maxBannerCount": "[IT] Add up to {count} banners per venue",
+                "supportType": "[IT] Basic support",
+                "getStartedBtnLabel": "[IT] Get Started"
+            },
+            "enterpriseTier": {
+                "label": "[IT] Enterprise",
+                "maxVenueCount": "[IT] Create any number of venues",
+                "maxMenuCount": "[IT] Add any number of menus per venue",
+                "maxCategoryCount": "[IT] Add any number of categories per menu",
+                "maxMenuItemCount": "[IT] Add any number of items per category",
+                "maxBannerCount": "[IT] Add any number of banners per venue",
+                "supportType": "[IT] Basic support",
+                "contactUsButtonLabel": "[IT] Contact us"
+            }
+        },
+        "contactUs": {
+            "title": "[IT] Get in touch",
+            "name": {
+                "label": "[IT] Name",
+                "placeholder": "[IT] Your name"
+            },
+            "email": {
+                "label": "[IT] Email",
+                "placeholder": "[IT] user@email.com"
+            },
+            "subject": {
+                "label": "[IT] Subject",
+                "placeholder": "[IT] Subject"
+            },
+            "message": {
+                "label": "[IT] Message",
+                "placeholder": "[IT] Your message"
+            },
+            "submitButtonLabel": "[IT] Send message",
+            "successToastTitle": "[IT] Successfully submitted your message",
+            "successToastDesc": "[IT] Our team will get in touch with you soon.",
+            "errorToastTitle": "[IT] Failed to submit your message",
+            "errorToastDesc": "[IT] Please try again in a while"
+        },
+        "aboutUs": {
+            "title": "[IT] About Us",
+            "subtitle": {
+                "line1": "[IT] Menufic is an ",
+                "line2": "[IT] open source ",
+                "line3": "[IT] project built with "
+            },
+            "goal": "[IT] Our goal is to provide a simple and effective solution that venues could use to improve their reach and enhance how their customers interact with them.",
+            "appreciation": "[IT] We highly appreciate any feedback or contribution that could help us improve.",
+            "githubButtonLabel": "[IT] Github"
+        }
+    },
+    "menu": {
+        "noMenusForVenue": "[IT] There aren't any menus available for this venue. Try checking out later",
+        "noItemsForMenu": "[IT] There aren't any menu items for the chosen venue menu. Try checking out later.",
+        "noDetailsAvailable": "[IT] This venue details are unavailable at the moment. We are sorry for the inconvenience. Please try again in a while",
+        "loading": "[IT] Loading menu...",
+        "loadingTooLong": "[IT] Loading is taking longer than expected. Please check your internet connection and try again.",
+        "errorLoading": "[IT] Failed to load menu. Please try again.",
+        "retry": "[IT] Retry",
+        "reservations": "[IT] Reservations",
+        "remoteShortcuts": "[IT] Remote Control Shortcuts",
+        "seoTitle": "[IT] {name} Menu",
+        "seoDescription": {
+            "venueName": "[IT] Menu of venue {name}",
+            "venueLocation": "[IT] Location: {location}.",
+            "venueContactNo": "[IT]  Contact Number: {contactNo}.",
+            "menufic": "[IT] This menu was generated using Menufic.com"
+        }
+    },
+    "preview": {
+        "seoTitle": "[IT] Venue Preview",
+        "seoDescription": "[IT] Preview how the published venue menu would look like",
+        "alertTitle": "[IT] Preview mode",
+        "alertContent": "[IT] This preview URL is not meant to be shared with anyone.",
+        "alertDesc": "[IT]  Once you have finalized your changes, you will be able to publish your venue menu and generate a sharable URL which can then be shared with your customers."
+    },
+    "dashboard": {
+        "noContent": "[IT] whoops, nothing to see here ...",
+        "imageUpload": {
+            "titleLabel": "[IT] Image",
+            "uploadHelperText": "[IT] Drag a jpeg image here or click to select a jpeg image file",
+            "zoom": "[IT] Zoom",
+            "rotation": "[IT] Rotation",
+            "crop": "[IT] Crop",
+            "cropModalTitle": "[IT] Crop Image"
+        },
+        "publishButton": {
+            "statusUpdateError": "[IT] Failed to update status of the venue menu",
+            "publishedBtnLabel": "[IT] Published",
+            "notPublishedBtnLabel": "[IT] Not Published",
+            "modalTitle": "[IT] Publish and share your menu",
+            "modalAlertPublishedTitle": "[IT] Menu is published",
+            "modalAlertNotPublishedTitle": "[IT] Menu is not published",
+            "publishedMenuDesc": "[IT] Changes to the menu could take around 30 minutes to be reflected in the published menu page",
+            "publishedMenuUrlLabel": "[IT] Published menu URL",
+            "copyUrlTooltip": "[IT] Copy URL",
+            "copiedUrlTooltip": "[IT] URL copied",
+            "notPublishedMenuDesc": "[IT] Please publish the menu once you have finalized your changes. Once published, you will be able to either share the direct URL or the QR code for your menu, with your customers",
+            "publishSwitchLabel": "[IT] Publish Menu",
+            "downloadQrButtonLabel": "[IT] Download QR code",
+            "previewUrlAlertTitle": "[IT] Preview URL",
+            "previewUrlAlertDesc": "[IT] The following URL can be used for testing purposes as it will mimic the interface of actual menu while also updating in real time"
+        },
+        "editMenu": {
+            "seoTitle": "[IT] Edit Menu",
+            "seoDescription": "[IT] Manage the menus of your venue",
+            "breadcrumb": "[IT] Menu",
+            "menu": {
+                "fetchError": "[IT] Failed to retrieve menus",
+                "positionUpdateError": "[IT] Failed to update the position of menu",
+                "deleteMenuError": "[IT] Failed to delete venue menu",
+                "addMenuLabel": "[IT] Add Menu",
+                "deleteConfirmTitle": "[IT] Delete {name} menu",
+                "deleteConfirmDesc": "[IT] Are you sure, you want to delete this menu? This action will also delete all the categories & items associated with this menu and cannot be undone",
+                "deleteSuccessToast": "[IT] Deleted the menu {name} and related details successfully",
+                "createModalTitle": "[IT] Create Menu",
+                "createError": "[IT] Failed to create menu for venue",
+                "createSuccessDesc": "[IT] Created a new menu {name} successfully",
+                "updateModalTitle": "[IT] Update Menu",
+                "updateError": "[IT] Failed to update menu",
+                "updateSuccessDesc": "[IT] Updated details of ${data.name} menu successfully",
+                "printLanguageModalTitle": "[IT] Select Print Language",
+                "printLanguageModalDescription": "[IT] Choose the language for the printed menu:",
+                "inputNameLabel": "[IT] Name",
+                "inputNamePlaceholder": "[IT] Menu Name",
+                "inputTimeLabel": "[IT] Available Time",
+                "inputTimePlaceholder": "[IT] 10.00 AM - 9.00 PM",
+                "inputTelephoneLabel": "[IT] Telephone",
+                "inputTelephonePlaceholder": "[IT] +1234567890",
+                "inputEmailLabel": "[IT] Email",
+                "inputEmailPlaceholder": "[IT] contact@restaurant.com",
+                "inputReservationsLabel": "[IT] Reservations URL",
+                "inputReservationsPlaceholder": "[IT] https://restaurant.com/reservations",
+                "inputMessageLabel": "[IT] Message",
+                "inputMessagePlaceholder": "[IT] Additional information or special notes",
+                "isActiveLabel": "[IT] Menu is Active (visible to customers)",
+                "isActiveDescription": "[IT] When unchecked, this menu will be hidden from public pages"
+            },
+            "category": {
+                "fetchError": "[IT] Failed to retrieve categories and menu items",
+                "positionUpdateError": "[IT] Failed to update category position",
+                "deleteCategoryError": "[IT] Failed to delete category",
+                "addCategoryLabel": "[IT] Add Category",
+                "deleteConfirmTitle": "[IT] Delete {name} category",
+                "deleteConfirmDesc": "[IT] Are you sure, you want to delete this category? This action will also delete all the items associated with this category and cannot be undone",
+                "deleteSuccessToast": "[IT] Deleted the category {name} and related menu items successfully",
+                "createModalTitle": "[IT] Create Category",
+                "createError": "[IT] Failed to create new category",
+                "createSuccessDesc": "[IT] Created a new category {name} successfully",
+                "updateModalTitle": "[IT] Update Category",
+                "updateError": "[IT] Failed to update category",
+                "updateSuccessDesc": "[IT] Updated details of {name} category successfully",
+                "inputNameLabel": "[IT] Name",
+                "inputNamePlaceholder": "[IT] Category Name"
+            },
+            "menuItem": {
+                "positionUpdateError": "[IT] Failed to update menu item position",
+                "deleteMenuItemError": "[IT] Failed to delete menu item",
+                "addMenuItemLabel": "[IT] Add Item",
+                "noImage": "[IT] No Image",
+                "noDescription": "[IT] No Description",
+                "deleteConfirmTitle": "[IT] Delete {name} item",
+                "deleteConfirmDesc": "[IT] Are you sure, you want to delete this menu item? This action cannot be undone",
+                "deleteSuccessToast": "[IT] Deleted the menu item {name} successfully",
+                "createModalTitle": "[IT] Create Menu Item",
+                "createError": "[IT] Failed to create menu item",
+                "createSuccessDesc": "[IT] Created a new menu item {name} successfully",
+                "updateModalTitle": "[IT] Update Menu Item",
+                "updateError": "[IT] Failed to update menu item",
+                "updateSuccessDesc": "[IT] Updated details of {name} category successfully",
+                "inputNameLabel": "[IT] Name",
+                "inputNamePlaceholder": "[IT] Item Name",
+                "inputPriceLabel": "[IT] Price",
+                "inputPricePlaceholder": "[IT] $10.00",
+                "inputDescriptionLabel": "[IT] Description",
+                "isEdibleLabel": "[IT] Edible Product",
+                "isEdibleDescription": "[IT] Check this if the item is food or drink",
+                "allergensLabel": "[IT] Allergens",
+                "allergensDescription": "[IT] Select all allergens present in this product (required for edible items)",
+                "allergensRequired": "[IT] Please select allergens for edible products",
+                "allergensInfo": "[IT] Might contain the following allergens",
+                "vatIncluded": "[IT] VAT included",
+                "aiDetectAllergensButton": "[IT] 🤖 Detect Allergens with AI",
+                "aiDetectionError": "[IT] Failed to detect allergens with AI",
+                "aiDetectionSuccess": "[IT] Allergens detected successfully",
+                "aiDetectConfirmOverride": "[IT] This will replace your current allergen selections with AI-detected allergens. Continue?",
+                "aiImageGenerationButton": "[IT] 🎨 Generate Image with AI",
+                "aiImageGenerationError": "[IT] Failed to generate image with AI",
+                "aiImageGenerationSuccess": "[IT] Image generated successfully",
+                "aiImageConfirmOverride": "[IT] This will replace your current image with an AI-generated image. Continue?"
+            },
+            "pack": {
+                "fetchError": "[IT] Failed to retrieve packs",
+                "positionUpdateError": "[IT] Failed to update pack position",
+                "deletePackError": "[IT] Failed to delete pack",
+                "addPackLabel": "[IT] Add Pack",
+                "sectionsCount": "[IT] sections",
+                "deleteConfirmTitle": "[IT] Delete {name} pack",
+                "deleteConfirmDesc": "[IT] Are you sure, you want to delete this pack? This action will also delete all the sections associated with this pack and cannot be undone",
+                "deleteSuccessToast": "[IT] Deleted the pack {name} and related sections successfully",
+                "createModalTitle": "[IT] Create Pack",
+                "createError": "[IT] Failed to create pack",
+                "createSuccessDesc": "[IT] Created a new pack {name} successfully",
+                "updateModalTitle": "[IT] Update Pack",
+                "updateError": "[IT] Failed to update pack",
+                "updateSuccessDesc": "[IT] Updated details of {name} pack successfully",
+                "inputNameLabel": "[IT] Name",
+                "inputNamePlaceholder": "[IT] Pack Name",
+                "inputPriceLabel": "[IT] Price",
+                "inputPricePlaceholder": "[IT] 25.00",
+                "inputDescriptionLabel": "[IT] Description",
+                "inputDescriptionPlaceholder": "[IT] Describe what's included in this pack",
+                "inputCurrencyLabel": "[IT] Currency",
+                "inputVatRateLabel": "[IT] VAT Rate (%)",
+                "vatIncludedLabel": "[IT] VAT Included",
+                "sectionsLabel": "[IT] Sections",
+                "sectionTitleLabel": "[IT] Section Title",
+                "sectionTitlePlaceholder": "[IT] e.g., Starter, Main Course, Dessert",
+                "sectionItemsLabel": "[IT] Items",
+                "sectionItemsPlaceholder": "[IT] Enter items (one per line)",
+                "addSectionButton": "[IT] Add Section",
+                "removeSectionButton": "[IT] Remove Section",
+                "minSectionsError": "[IT] At least one section is required"
+            },
+            "categoriesTab": "[IT] Standard Menu",
+            "packsTab": "[IT] Groups & Events"
+        },
+        "venue": {
+            "seoTitle": "[IT] Venues",
+            "seoDescription": "[IT] Manage all of the venues that you've created",
+            "navTitle": "[IT] Venues",
+            "addNewCardTitle": "[IT] Add new venue",
+            "addNewCardSubTitle": "[IT] Start creating a new digital menu by adding a new venue",
+            "headerTitle": "[IT] My Venues",
+            "createModalTitle": "[IT] Add Venue",
+            "createError": "[IT] Failed to create venue",
+            "createSuccessDesc": "[IT] Created new {name} venue successfully",
+            "updateModalTitle": "[IT] Edit Venue",
+            "updateError": "[IT] Failed to update venue",
+            "updateSuccessDesc": "[IT] Created venue {name}, successfully",
+            "inputNameLabel": "[IT] Name",
+            "inputNamePlaceholder": "[IT] Venue Name",
+            "inputLocationLabel": "[IT] Location",
+            "inputLocationPlaceholder": "[IT] No 05, Road Name, City",
+            "inputContactNoLabel": "[IT] Contact Number",
+            "inputContactNoPlaceholder": "[IT] +919367788755",
+            "inputPrivacyPolicyUrlLabel": "[IT] Privacy Policy URL (Optional)",
+            "inputPrivacyPolicyUrlPlaceholder": "[IT] https://yourrestaurant.com/privacy",
+            "inputTermsAndConditionsUrlLabel": "[IT] Terms & Conditions URL (Optional)",
+            "inputTermsAndConditionsUrlPlaceholder": "[IT] https://yourrestaurant.com/terms",
+            "fetchVenuesError": "[IT] Failed to retrieve venues",
+            "deleteModalTitle": "[IT] Delete venue {name}",
+            "deleteModalDesc": "[IT] Are you sure, you want to delete this venue? This action will also delete all the items associated with this venue and cannot be undone",
+            "deleteSuccessDesc": "[IT] Deleted the {name} venue and related details successfully",
+            "deleteError": "[IT] Failed to delete venue"
+        },
+        "venueManage": {
+            "seoTitle": "[IT] Manage Venue",
+            "seoDescription": "[IT] Manage your venue's menus and banners",
+            "venueFetchError": "[IT] Failed to retrieve venue details",
+            "breadcrumb": "[IT] Venue",
+            "menuCardTitle": "[IT] Menus",
+            "menuCardSubTitle": "[IT] Manage the menus, categories and individual menu items of your venue",
+            "bannersCardTitle": "[IT] Banners",
+            "bannersCardSubTitle": "[IT] Manage banners that could be used to display promotional content in your venue menu",
+            "feedbackCardTitle": "[IT] Feedback (Coming Soon)",
+            "feedbackCardSubTitle": "[IT] View feedback received from your venue customers",
+            "statsCardTitle": "[IT] Stats (Coming Soon)",
+            "statsCardSubTitle": "[IT] Gain insights on how many people view your published menu and which items are most popular"
+        },
+        "banner": {
+            "seoTitle": "[IT] Banners",
+            "seoDescription": "[IT] Manage the banners of your venue",
+            "breadcrumb": "[IT] Banners",
+            "fetchError": "[IT] Failed to retrieve banners",
+            "createError": "[IT] Failed to create banner for venue",
+            "createSuccessDesc": "[IT] Successfully created new banner for the venue",
+            "addModalTitle": "[IT] Add Banner",
+            "addNewCardTitle": "[IT] Add new banner",
+            "addNewCardSubTitle": "[IT] Start creating a new venue menu by adding a new venue",
+            "deleteError": "[IT] Failed to delete banner",
+            "deleteSuccessDesc": "[IT] Deleted the banner of the venue successfully",
+            "deleteModalTitle": "[IT] Delete venue banner?",
+            "deleteModalDesc": "[IT] Are you sure, you want to delete this venue banner? This action action cannot be undone"
+        },
+        "explore": {
+            "seoTitle": "[IT] Explore venues",
+            "seoDescription": "[IT] Explore venues created and published by others",
+            "navTitle": "[IT] Explore",
+            "pageTitle": "[IT] Explore Venues",
+            "pageSubTitle": "[IT] Following are the venues published by all users",
+            "fetchError": "[IT] Failed to retrieve published venues",
+            "noContent": "[IT] There aren't any published venues"
+        }
+    },
+    "privacyPolicy": {
+        "seoDescription": "[IT] This privacy policy page contains information on how Menufic handles customer data",
+        "lastUpdated": "[IT] Last updated: {date}",
+        "desc1": "[IT] This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.",
+        "desc2": "[IT] We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.",
+        "interpretationAndDefinitions": {
+            "title": "[IT] Interpretation and Definitions",
+            "interpretation": {
+                "title": "[IT] Interpretation",
+                "content": "[IT] The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural."
+            },
+            "definitions": {
+                "title": "[IT] Definitions",
+                "subTitle": "[IT] For the purposes of this Privacy Policy:",
+                "items": {
+                    "0": {
+                        "key": "[IT] Account",
+                        "rest": "[IT] means a unique account created for You to access our Service or parts of our Service."
+                    },
+                    "1": {
+                        "key": "[IT] Company",
+                        "rest": "[IT] (referred to as either 'the Company', 'We', 'Us' or 'Our' in this Agreement) refers to Menufic."
+                    },
+                    "2": {
+                        "key": "[IT] Cookies",
+                        "rest": "[IT] are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses."
+                    },
+                    "3": {
+                        "key": "[IT] Country",
+                        "rest": "[IT] refers to: Sri Lanka"
+                    },
+                    "4": {
+                        "key": "[IT] Device",
+                        "rest": "[IT] means any device that can access the Service such as a computer, a cellphone or a digital tablet."
+                    },
+                    "5": {
+                        "key": "[IT] Personal Data",
+                        "rest": "[IT] is any information that relates to an identified or identifiable individual."
+                    },
+                    "6": {
+                        "key": "[IT] Service",
+                        "rest": "[IT] refers to the Website."
+                    },
+                    "7": {
+                        "key": "[IT] Service Provider",
+                        "rest": "[IT] means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used."
+                    },
+                    "8": {
+                        "key": "[IT] Usage Data",
+                        "rest": "[IT] refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit)."
+                    },
+                    "9": {
+                        "key": "[IT] Website",
+                        "rest": "[IT] refers to Menufic, accessible from "
+                    },
+                    "10": {
+                        "key": "[IT] You",
+                        "rest": "[IT] means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable."
+                    }
+                }
+            }
+        },
+        "collectingPersonalData": {
+            "title": "[IT] Collecting and Using Your Personal Data",
+            "dataTypes": {
+                "title": "[IT] Types of Data Collected",
+                "personalData": {
+                    "title": "[IT] Personal Data",
+                    "desc": "[IT] While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:",
+                    "types": {
+                        "0": "[IT] Email address",
+                        "1": "[IT] First name and last name",
+                        "2": "[IT] Usage Data"
+                    }
+                },
+                "usageData": {
+                    "title": "[IT] Usage Data",
+                    "desc": "[IT] Usage Data is collected automatically when using the Service.",
+                    "items": {
+                        "0": "[IT] Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.",
+                        "1": "[IT] When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.",
+                        "2": "[IT] We may also collect information that Your browser sends whenever You visit our Service or when You access the Service by or through a mobile device."
+                    }
+                },
+                "trackingCookies": {
+                    "title": "[IT] Tracking Technologies and Cookies",
+                    "desc": "[IT] We use Cookies and similar tracking technologies to track the activity on Our Service and store certain information. Tracking technologies used are beacons, tags, and scripts to collect and track information and to improve and analyze Our Service. The technologies We use may include:",
+                    "cookieTypes": {
+                        "0": {
+                            "key": "[IT] Cookies or Browser Cookies.",
+                            "rest": "[IT] A cookie is a small file placed on Your Device. You can instruct Your browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You may not be able to use some parts of our Service. Unless you have adjusted Your browser setting so that it will refuse Cookies, our Service may use Cookies."
+                        },
+                        "1": {
+                            "key": "[IT] Web Beacons.",
+                            "rest": "[IT] Certain sections of our Service and our emails may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags, and single-pixel gifs) that permit the Company, for example, to count users who have visited those pages or opened an email and for other related website statistics (for example, recording the popularity of a certain section and verifying system and server integrity)."
+                        }
+                    },
+                    "cookieDesc": "[IT] Cookies can be 'Persistent' or 'Session' Cookies. Persistent Cookies remain on Your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close.",
+                    "purposeHeader": "[IT] We use both Session and Persistent Cookies for the purposes set out below:",
+                    "purposeList": {
+                        "0": {
+                            "key": "[IT] Necessary / Essential Cookies",
+                            "type": "[IT] Type: Session Cookies",
+                            "administeredBy": "[IT] Administered by: Us",
+                            "purpose": "[IT] Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services."
+                        },
+                        "1": {
+                            "key": "[IT] Cookies Policy / Notice Acceptance Cookies",
+                            "type": "[IT] Type: Persistent Cookies",
+                            "administeredBy": "[IT] Administered by: Us",
+                            "purpose": "[IT] Purpose: These Cookies identify if users have accepted the use of cookies on the Website."
+                        },
+                        "2": {
+                            "key": "[IT] Functionality Cookies",
+                            "type": "[IT] Type: Persistent Cookies",
+                            "administeredBy": "[IT] Administered by: Us",
+                            "purpose": "[IT]  Purpose: These Cookies allow us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website."
+                        }
+                    },
+                    "moreInfo": "[IT] For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of our Privacy Policy."
+                }
+            },
+            "useOfPersonalData": {
+                "title": "[IT] Use of Your Personal Data",
+                "purposeDesc": "[IT] The Company may use Personal Data for the following purposes:",
+                "purposeList": {
+                    "0": {
+                        "key": "[IT] To provide and maintain our Service",
+                        "rest": "[IT] including to monitor the usage of our Service."
+                    },
+                    "1": {
+                        "key": "[IT] To manage Your Account:",
+                        "rest": "[IT] to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user."
+                    },
+                    "2": {
+                        "key": "[IT] For the performance of a contract:",
+                        "rest": "[IT] the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service."
+                    },
+                    "3": {
+                        "key": "[IT] To contact You:",
+                        "rest": "[IT] To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application's push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation."
+                    },
+                    "4": {
+                        "key": "[IT] To provide You",
+                        "rest": "[IT] with news, special offers and general information about other goods, services and events which we offer that are similar to those that you have already purchased or enquired about unless You have opted not to receive such information."
+                    },
+                    "5": {
+                        "key": "[IT] To manage Your requests:",
+                        "rest": "[IT] To attend and manage Your requests to Us."
+                    },
+                    "6": {
+                        "key": "[IT] For business transfers:",
+                        "rest": "[IT] We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Data held by Us about our Service users is among the assets transferred."
+                    },
+                    "7": {
+                        "key": "[IT] For other purposes:",
+                        "rest": "[IT] We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service, products, services, marketing and your experience."
+                    }
+                },
+                "situationDesc": "[IT] We may share Your personal information in the following situations:",
+                "situationList": {
+                    "0": {
+                        "key": "[IT] With Service Providers:",
+                        "rest": "[IT] We may share Your personal information with Service Providers to monitor and analyze the use of our Service, to contact You."
+                    },
+                    "1": {
+                        "key": "[IT] For business transfers:",
+                        "rest": "[IT] We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company."
+                    },
+                    "2": {
+                        "key": "[IT] With Affiliates:",
+                        "rest": "[IT] We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us."
+                    },
+                    "3": {
+                        "key": "[IT] For business transfers:",
+                        "rest": "[IT] We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company."
+                    },
+                    "4": {
+                        "key": "[IT] With other users:",
+                        "rest": "[IT] when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside."
+                    },
+                    "5": {
+                        "key": "[IT] With Your consent:",
+                        "rest": "[IT] We may disclose Your personal information for any other purpose with Your consent."
+                    }
+                }
+            },
+            "retentionOfData": {
+                "title": "[IT] Retention of Your Personal Data",
+                "items": {
+                    "0": "[IT] The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.",
+                    "1": "[IT] The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer time periods."
+                }
+            },
+            "transferOfData": {
+                "title": "[IT] Transfer of Your Personal Data",
+                "items": {
+                    "0": "[IT] Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ than those from Your jurisdiction.",
+                    "1": "[IT] Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.",
+                    "2": "[IT] The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information."
+                }
+            },
+            "deleteData": {
+                "title": "[IT] Delete Your Personal Data",
+                "items": {
+                    "0": "[IT] You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.",
+                    "1": "[IT] Our Service may give You the ability to delete certain information about You from within the Service.",
+                    "2": "[IT] You may update, amend, or delete Your information at any time by signing in to Your Account, if you have one, and visiting the account settings section that allows you to manage Your personal information. You may also contact Us to request access to, correct, or delete any personal information that You have provided to Us.",
+                    "3": "[IT] Please note, however, that We may need to retain certain information when we have a legal obligation or lawful basis to do so."
+                }
+            },
+            "dataDisclosure": {
+                "title": "[IT] Disclosure of Your Personal Data",
+                "businessTransactions": {
+                    "title": "[IT] Business Transactions",
+                    "content": "[IT] If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy."
+                },
+                "lawEnforcement": {
+                    "title": "[IT] Law enforcement",
+                    "content": "[IT] Under certain circumstances, the Company may be required to disclose Your Personal Data if required  to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency)."
+                },
+                "otherLegalRequirements": {
+                    "title": "[IT] Other legal requirements",
+                    "desc": "[IT] The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:",
+                    "items": {
+                        "0": "[IT] Comply with a legal obligation",
+                        "1": "[IT] Protect and defend the rights or property of the Company",
+                        "2": "[IT] Prevent or investigate possible wrongdoing in connection with the Service",
+                        "3": "[IT] Protect the personal safety of Users of the Service or the public",
+                        "4": "[IT] Protect against legal liability"
+                    }
+                }
+            },
+            "dataSecurity": {
+                "title": "[IT] Security of Your Personal Data",
+                "content": "[IT] The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially acceptable means to protect Your Personal Data, We cannot guarantee its absolute security."
+            }
+        },
+        "childrenPrivacy": {
+            "title": "[IT] Children's Privacy",
+            "items": {
+                "0": "[IT] Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.",
+                "1": "[IT] If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information."
+            }
+        },
+        "websiteLinks": {
+            "title": "[IT] Links to Other Websites",
+            "items": {
+                "0": "[IT] Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.",
+                "1": "[IT] We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services."
+            }
+        },
+        "changesToPolicy": {
+            "title": "[IT] Changes to this Privacy Policy",
+            "items": {
+                "0": "[IT] We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.",
+                "1": "[IT] We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the 'Last updated' date at the top of this Privacy Policy.",
+                "2": "[IT] You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page."
+            }
+        },
+        "contactUs": {
+            "title": "[IT] Contact Us",
+            "desc": "[IT] If you have any questions about this Privacy Policy, You can contact us:",
+            "byEmail": "[IT] By email: {email}",
+            "viaWebsite": "[IT] By visiting this page on our website: "
+        }
+    },
+    "termsAndConditions": {
+        "seoDescription": "[IT] The Terms and conditions that needs to be agreed before using Menufic",
+        "lastUpdated": "[IT] Last updated: {date}",
+        "introduction": {
+            "title": "[IT] Introduction",
+            "line1": "[IT] These Terms of Service govern your use of our website located at {url} operated by Menufic.",
+            "line2": "[IT] Our Privacy Policy also governs your use of our Service and explains how we collect, safeguard and disclose information that results from your use of our web pages.",
+            "line3": "[IT] Your agreement with us includes these Terms and our Privacy Policy (“Agreements”). You acknowledge that you have read and understood Agreements, and agree to be bound of them.",
+            "line4": "[IT] If you do not agree with (or cannot comply with) Agreements, then you may not use the Service, but please let us know by emailing at {email} so we can try to find a solution. These Terms apply to all visitors, users and others who wish to access or use Service."
+        },
+        "communication": {
+            "title": "[IT] Communications",
+            "content": "[IT] By using our Service, you agree to subscribe to newsletters, marketing or promotional materials and other information we may send. However, you may opt out of receiving any, or all, of these communications from us by following the unsubscribe link or by emailing at {email}."
+        },
+        "promotions": {
+            "title": "[IT] Contests, Sweepstakes and Promotions",
+            "content": "[IT] Any contests, sweepstakes or other promotions (collectively, “Promotions”) made available through Service may be governed by rules that are separate from these Terms of Service. If you participate in any Promotions, please review the applicable rules as well as our Privacy Policy. If the rules for a Promotion conflict with these Terms of Service, Promotion rules will apply."
+        },
+        "content": {
+            "title": "[IT] Content",
+            "items": {
+                "0": "[IT] Our Service allows you to post, link, store, share and otherwise make available certain information, text, graphics, videos, or other material (“Content”). You are responsible for Content that you post on or through Service, including its legality, reliability, and appropriateness.",
+                "1": "[IT] By posting Content on or through Service, You represent and warrant that: (i) Content is yours (you own it) and/or you have the right to use it and the right to grant us the rights and license as provided in these Terms, and (ii) that the posting of your Content on or through Service does not violate the privacy rights, publicity rights, copyrights, contract rights or any other rights of any person or entity. We reserve the right to terminate the account of anyone found to be infringing on a copyright.",
+                "2": "[IT] You retain any and all of your rights to any Content you submit, post or display on or through Service and you are responsible for protecting those rights. We take no responsibility and assume no liability for Content you or any third party posts on or through Service. However, by posting Content using Service you grant us the right and license to use, modify, publicly perform, publicly display, reproduce, and distribute such Content on and through Service. You agree that this license includes the right for us to make your Content available to other users of Service, who may also use your Content subject to these Terms.",
+                "3": "[IT] Menufic has the right but not the obligation to monitor and edit all Content provided by users.",
+                "4": "[IT] In addition, Content found on or through this Service are the property of Menufic or used with permission. You may not distribute, modify, transmit, reuse, download, repost, copy, or use said Content, whether in whole or in part, for commercial purposes or for personal gain, without express advance written permission from us."
+            }
+        },
+        "prohibitedUses": {
+            "title": "[IT] Prohibited Uses",
+            "desc": "[IT] You may use Service only for lawful purposes and in accordance with Terms. You agree not to use Service:",
+            "items": {
+                "0": "[IT] In any way that violates any applicable national or international law or regulation.",
+                "1": "[IT] For the purpose of exploiting, harming, or attempting to exploit or harm minors in any way by exposing them to inappropriate content or otherwise.",
+                "2": "[IT] To transmit, or procure the sending of, any advertising or promotional material, including any “junk mail”, “chain letter,” “spam,” or any other similar solicitation.",
+                "3": "[IT] To impersonate or attempt to impersonate Company, a Company employee, another user, or any other person or entity.",
+                "4": "[IT] In any way that infringes upon the rights of others, or in any way is illegal, threatening, fraudulent, or harmful, or in connection with any unlawful, illegal, fraudulent, or harmful purpose or activity.",
+                "5": "[IT] To engage in any other conduct that restricts or inhibits anyone’s use or enjoyment of Service, or which, as determined by us, may harm or offend Company or users of Service or expose them to liability."
+            },
+            "additionalDesc": "[IT] Additionally, you agree not to:",
+            "additionalItems": {
+                "0": "[IT] Use Service in any manner that could disable, overburden, damage, or impair Service or interfere with any other party’s use of Service, including their ability to engage in real time activities through Service.",
+                "1": "[IT] Use any robot, spider, or other automatic device, process, or means to access Service for any purpose, including monitoring or copying any of the material on Service.",
+                "2": "[IT] Use any manual process to monitor or copy any of the material on Service or for any other unauthorized purpose without our prior written consent.",
+                "3": "[IT] Use any device, software, or routine that interferes with the proper working of Service.",
+                "4": "[IT] Introduce any viruses, trojan horses, worms, logic bombs, or other material which is malicious or technologically harmful.",
+                "5": "[IT] Attempt to gain unauthorized access to, interfere with, damage, or disrupt any parts of Service, the server on which Service is stored, or any server, computer, or database connected to Service.",
+                "6": "[IT] Attack Service via a denial-of-service attack or a distributed denial-of-service attack.",
+                "7": "[IT] Take any action that may damage or falsify Company rating.",
+                "8": "[IT] Otherwise attempt to interfere with the proper working of Service."
+            }
+        },
+        "analytics": {
+            "title": "[IT] Analytics",
+            "content": "[IT] We may use third-party Service Providers to monitor and analyze the use of our Service."
+        },
+        "usageByMinors": {
+            "title": "[IT] No Use By Minors",
+            "content": "[IT] Service is intended only for access and use by individuals at least eighteen (18) years old. By accessing or using Service, you warrant and represent that you are at least eighteen (18) years of age and with the full authority, right, and capacity to enter into this agreement and abide by all of the terms and conditions of Terms. If you are not at least eighteen (18) years old, you are prohibited from both the access and usage of Service."
+        },
+        "accounts": {
+            "title": "[IT] Accounts",
+            "items": {
+                "0": "[IT] When you create an account with us, you guarantee that you are above the age of 18, and that the information you provide us is accurate, complete, and current at all times. Inaccurate, incomplete, or obsolete information may result in the immediate termination of your account on Service.",
+                "1": "[IT] You are responsible for maintaining the confidentiality of your account and password, including but not limited to the restriction of access to your computer and/or account. You agree to accept responsibility for any and all activities or actions that occur under your account and/or password, whether your password is with our Service or a third-party service. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.",
+                "2": "[IT] You may not use as a username the name of another person or entity or that is not lawfully available for use, a name or trademark that is subject to any rights of another person or entity other than you, without appropriate authorization. You may not use as a username any name that is offensive, vulgar or obscene.",
+                "3": "[IT] We reserve the right to refuse service, terminate accounts, remove or edit content, or cancel orders in our sole discretion."
+            }
+        },
+        "intellectualProperty": {
+            "title": "[IT] Intellectual Property",
+            "content": "[IT] Service and its original content (excluding Content provided by users), features and functionality are and will remain the exclusive property of Menufic and its licensors. Service is protected by copyright, trademark, and other laws of and foreign countries. Our trademarks may not be used in connection with any product or service without the prior written consent of Menufic."
+        },
+        "copyrightPolicy": {
+            "title": "[IT] Copyright Policy",
+            "line1": "[IT] We respect the intellectual property rights of others. It is our policy to respond to any claim that Content posted on Service infringes on the copyright or other intellectual property rights (“Infringement”) of any person or entity.",
+            "line2": "[IT] If you are a copyright owner, or authorized on behalf of one, and you believe that the copyrighted work has been copied in a way that constitutes copyright infringement, please submit your claim via email to {email}, with the subject line: “Copyright Infringement” and include in your claim a detailed description of the alleged Infringement as detailed below, under “DMCA Notice and Procedure for Copyright Infringement Claims”",
+            "line3": "[IT] You may be held accountable for damages (including costs and attorneys’ fees) for misrepresentation or bad-faith claims on the infringement of any Content found on and/or through Service on your copyright."
+        },
+        "copyrightInfringement": {
+            "title": "[IT] DMCA Notice and Procedure for Copyright Infringement Claims",
+            "desc": "[IT] You may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by providing our Copyright Agent with the following information in writing (see 17 U.S.C 512(c)(3) for further detail):",
+            "items": {
+                "0": "[IT] an electronic or physical signature of the person authorized to act on behalf of the owner of the copyright’s interest;",
+                "1": "[IT] a description of the copyrighted work that you claim has been infringed, including the URL (i.e., web page address) of the location where the copyrighted work exists or a copy of the copyrighted work;",
+                "2": "[IT] identification of the URL or other specific location on Service where the material that you claim is infringing is located;",
+                "3": "[IT] your address, telephone number, and email address;",
+                "4": "[IT] a statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law;",
+                "5": "[IT] a statement by you, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or authorized to act on the copyright owner’s behalf."
+            },
+            "contactEmail": "[IT] You can contact our Copyright Agent via email at {email}."
+        },
+        "errorReporting": {
+            "title": "[IT] Error Reporting and Feedback",
+            "content": "[IT] You may provide us either directly at {email} or via third party sites and tools with information and feedback concerning errors, suggestions for improvements, ideas, problems, complaints, and other matters related to our Service (“Feedback”). You acknowledge and agree that: (i) you shall not retain, acquire or assert any intellectual property right or other right, title or interest in or to the Feedback; (ii) Company may have development ideas similar to the Feedback; (iii) Feedback does not contain confidential information or proprietary information from you or any third party; and (iv) Company is not under any obligation of confidentiality with respect to the Feedback. In the event the transfer of the ownership to the Feedback is not possible due to applicable mandatory laws, you grant Company and its affiliates an exclusive, transferable, irrevocable, free-of-charge, sub-licensable, unlimited and perpetual right to use (including copy, modify, create derivative works, publish, distribute and commercialize) Feedback in any manner and for any purpose."
+        },
+        "otherSiteLinks": {
+            "title": "[IT] Links To Other Web Sites",
+            "items": {
+                "0": "[IT] Our Service may contain links to third party web sites or services that are not owned or controlled by Menufic.",
+                "1": "[IT] Menufic has no control over, and assumes no responsibility for the content, privacy policies, or practices of any third party web sites or services. We do not warrant the offerings of any of these entities/individuals or their websites.",
+                "2": "[IT] YOU ACKNOWLEDGE AND AGREE THAT COMPANY SHALL NOT BE RESPONSIBLE OR LIABLE, DIRECTLY OR INDIRECTLY, FOR ANY DAMAGE OR LOSS CAUSED OR ALLEGED TO BE CAUSED BY OR IN CONNECTION WITH USE OF OR RELIANCE ON ANY SUCH CONTENT, GOODS OR SERVICES AVAILABLE ON OR THROUGH ANY SUCH THIRD PARTY WEB SITES OR SERVICES.",
+                "3": "[IT] WE STRONGLY ADVISE YOU TO READ THE TERMS OF SERVICE AND PRIVACY POLICIES OF ANY THIRD PARTY WEB SITES OR SERVICES THAT YOU VISIT."
+            }
+        },
+        "disclaimerOfWarranty": {
+            "title": "[IT] Disclaimer Of Warranty",
+            "items": {
+                "0": "[IT] THESE SERVICES ARE PROVIDED BY COMPANY ON AN “AS IS” AND “AS AVAILABLE” BASIS. COMPANY MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, AS TO THE OPERATION OF THEIR SERVICES, OR THE INFORMATION, CONTENT OR MATERIALS INCLUDED THEREIN. YOU EXPRESSLY AGREE THAT YOUR USE OF THESE SERVICES, THEIR CONTENT, AND ANY SERVICES OR ITEMS OBTAINED FROM US IS AT YOUR SOLE RISK.",
+                "1": "[IT] NEITHER COMPANY NOR ANY PERSON ASSOCIATED WITH COMPANY MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE SERVICES. WITHOUT LIMITING THE FOREGOING, NEITHER COMPANY NOR ANYONE ASSOCIATED WITH COMPANY REPRESENTS OR WARRANTS THAT THE SERVICES, THEIR CONTENT, OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICES WILL BE ACCURATE, RELIABLE, ERROR-FREE, OR UNINTERRUPTED, THAT DEFECTS WILL BE CORRECTED, THAT THE SERVICES OR THE SERVER THAT MAKES IT AVAILABLE ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS OR THAT THE SERVICES OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE SERVICES WILL OTHERWISE MEET YOUR NEEDS OR EXPECTATIONS.",
+                "2": "[IT] COMPANY HEREBY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, AND FITNESS FOR PARTICULAR PURPOSE.",
+                "3": "[IT] THE FOREGOING DOES NOT AFFECT ANY WARRANTIES WHICH CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW."
+            }
+        },
+        "limitationOfLiability": {
+            "title": "[IT] Limitation Of Liability",
+            "content": "[IT] EXCEPT AS PROHIBITED BY LAW, YOU WILL HOLD US AND OUR OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS HARMLESS FOR ANY INDIRECT, PUNITIVE, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGE, HOWEVER IT ARISES (INCLUDING ATTORNEYS’ FEES AND ALL RELATED COSTS AND EXPENSES OF LITIGATION AND ARBITRATION, OR AT TRIAL OR ON APPEAL, IF ANY, WHETHER OR NOT LITIGATION OR ARBITRATION IS INSTITUTED), WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE, OR OTHER TORTIOUS ACTION, OR ARISING OUT OF OR IN CONNECTION WITH THIS AGREEMENT, INCLUDING WITHOUT LIMITATION ANY CLAIM FOR PERSONAL INJURY OR PROPERTY DAMAGE, ARISING FROM THIS AGREEMENT AND ANY VIOLATION BY YOU OF ANY FEDERAL, STATE, OR LOCAL LAWS, STATUTES, RULES, OR REGULATIONS, EVEN IF COMPANY HAS BEEN PREVIOUSLY ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. EXCEPT AS PROHIBITED BY LAW, IF THERE IS LIABILITY FOUND ON THE PART OF COMPANY, IT WILL BE LIMITED TO THE AMOUNT PAID FOR THE PRODUCTS AND/OR SERVICES, AND UNDER NO CIRCUMSTANCES WILL THERE BE CONSEQUENTIAL OR PUNITIVE DAMAGES. SOME STATES DO NOT ALLOW THE EXCLUSION OR LIMITATION OF PUNITIVE, INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THE PRIOR LIMITATION OR EXCLUSION MAY NOT APPLY TO YOU."
+        },
+        "termination": {
+            "title": "[IT] Termination",
+            "items": {
+                "0": "[IT] We may terminate or suspend your account and bar access to Service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever and without limitation, including but not limited to a breach of Terms.",
+                "1": "[IT] If you wish to terminate your account, you may simply discontinue using Service.",
+                "2": "[IT] All provisions of Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations of liability."
+            }
+        },
+        "governingLaw": {
+            "title": "[IT] Governing Law",
+            "items": {
+                "0": "[IT] These Terms shall be governed and construed in accordance with the laws of Sri Lanka, which governing law applies to agreement without regard to its conflict of law provisions.",
+                "1": "[IT] Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service and supersede and replace any prior agreements we might have had between us regarding Service."
+            }
+        },
+        "changesToService": {
+            "title": "[IT] Changes To Service",
+            "content": "[IT] We reserve the right to withdraw or amend our Service, and any service or material we provide via Service, in our sole discretion without notice. We will not be liable if for any reason all or any part of Service is unavailable at any time or for any period. From time to time, we may restrict access to some parts of Service, or the entire Service, to users, including registered users."
+        },
+        "amendmentsToTerms": {
+            "title": "[IT] Amendments To Terms",
+            "items": {
+                "0": "[IT] We may amend Terms at any time by posting the amended terms on this site. It is your responsibility to review these Terms periodically.",
+                "1": "[IT] Your continued use of the Platform following the posting of revised Terms means that you accept and agree to the changes. You are expected to check this page frequently so you are aware of any changes, as they are binding on you.",
+                "2": "[IT] By continuing to access or use our Service after any revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, you are no longer authorized to use Service."
+            }
+        },
+        "waiverAndSeverability": {
+            "title": "[IT] Waiver And Severability",
+            "items": {
+                "0": "[IT] No waiver by Company of any term or condition set forth in Terms shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure of Company to assert a right or provision under Terms shall not constitute a waiver of such right or provision.",
+                "1": "[IT] If any provision of Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of Terms will continue in full force and effect."
+            }
+        },
+        "acknowledgement": {
+            "title": "[IT] Acknowledgement",
+            "content": "[IT] BY USING SERVICE OR OTHER SERVICES PROVIDED BY US, YOU ACKNOWLEDGE THAT YOU HAVE READ THESE TERMS OF SERVICE AND AGREE TO BE BOUND BY THEM."
+        },
+        "contactUs": {
+            "title": "[IT] Contact Us",
+            "content": "[IT]  Please send your feedback, comments, requests for technical support by email: {email}"
+        }
     }
 }
