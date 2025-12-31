@@ -8,29 +8,31 @@ import { allergenSymbols } from "src/utils/validators";
 
 const useStyles = createStyles((theme) => ({
     tableContainer: {
-        marginTop: theme.spacing.lg,
+        marginTop: theme.spacing.sm,
         backgroundColor: theme.colorScheme === "light" ? theme.colors.yellow[0] : theme.colors.dark[6],
-        border: `2px solid ${theme.colors.yellow[4]}`,
-        padding: theme.spacing.md,
-        borderRadius: theme.radius.md,
+        border: `1px solid ${theme.colors.yellow[4]}`,
+        padding: theme.spacing.xs,
+        borderRadius: theme.radius.sm,
+        maxWidth: "400px",
     },
     tableHeader: {
         display: "flex",
         alignItems: "center",
         gap: theme.spacing.xs,
-        marginBottom: theme.spacing.sm,
+        marginBottom: theme.spacing.xs,
         color: theme.colors.yellow[9],
     },
     table: {
+        fontSize: "0.75rem",
         "& thead tr th": {
             backgroundColor: theme.colorScheme === "light" ? theme.colors.yellow[1] : theme.colors.dark[7],
             fontWeight: 600,
-            fontSize: "0.875rem",
-            padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+            fontSize: "0.75rem",
+            padding: `${theme.spacing.xs / 2}px ${theme.spacing.xs}px`,
         },
         "& tbody tr td": {
-            padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
-            fontSize: "0.875rem",
+            padding: `${theme.spacing.xs / 2}px ${theme.spacing.xs}px`,
+            fontSize: "0.75rem",
         },
         "& tbody tr:hover": {
             backgroundColor: theme.colorScheme === "light" ? theme.colors.yellow[0] : theme.colors.dark[5],
@@ -90,8 +92,8 @@ export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = 
     return (
         <Paper className={classes.tableContainer}>
             <div className={classes.tableHeader}>
-                <IconAlertTriangle size={20} />
-                <Text weight={600} size="sm">
+                <IconAlertTriangle size={14} />
+                <Text weight={600} size="xs">
                     {allergenTranslations.allergensInfo || "Allergen Information"}
                 </Text>
             </div>
@@ -100,8 +102,8 @@ export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = 
                 <tbody>
                     {allergenSummary.map((code) => (
                         <tr key={code}>
-                            <td>
-                                <Text style={{ fontSize: "1.5rem" }}>
+                            <td style={{ width: "30px" }}>
+                                <Text style={{ fontSize: "1rem", lineHeight: 1 }}>
                                     {allergenSymbols[code as keyof typeof allergenSymbols] || "❓"}
                                 </Text>
                             </td>

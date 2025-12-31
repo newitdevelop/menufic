@@ -3,14 +3,19 @@ import type { FC } from "react";
 import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 
 import { api } from "src/utils/api";
 import { ImageKitImage } from "../ImageKitImage";
 
 export const VenueSelection: FC = () => {
+    const router = useRouter();
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
     const t = useTranslations("venueSelection");
+
+    // Get current language from URL
+    const currentLang = router.query?.lang as string;
 
     if (isLoading) {
         return (
@@ -67,10 +72,15 @@ export const VenueSelection: FC = () => {
 
                     <Grid gutter={30}>
                         {restaurants.map((restaurant) => {
+                            // Build venue URL with language parameter if present
+                            const venueUrl = currentLang
+                                ? `/venue/${restaurant.id}/menu?lang=${currentLang}`
+                                : `/venue/${restaurant.id}/menu`;
+
                             return (
                                 <Grid.Col key={restaurant.id} xs={12} sm={6} md={4}>
                                     <Link
-                                        href={`/venue/${restaurant.id}/menu`}
+                                        href={venueUrl}
                                         style={{ textDecoration: "none" }}
                                     >
                                         <Card

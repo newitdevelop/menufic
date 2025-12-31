@@ -51,8 +51,25 @@ const LandingPage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({
-    props: { messages: (await import("src/lang/en.json")).default },
-});
+export const getServerSideProps = async (context: any) => {
+    const lang = (context.query?.lang as string)?.toUpperCase() || "PT";
+
+    // Map language codes to file names (all lowercase)
+    const langFile = lang.toLowerCase();
+
+    let messages;
+    try {
+        // Try to load the requested language file
+        messages = (await import(`src/lang/${langFile}.json`)).default;
+    } catch (error) {
+        // Fallback to English if language file doesn't exist
+        console.warn(`Language file ${langFile}.json not found, falling back to en.json`);
+        messages = (await import("src/lang/en.json")).default;
+    }
+
+    return {
+        props: { messages },
+    };
+};
 
 export default LandingPage;
