@@ -154,7 +154,7 @@ export const restaurantRouter = createTRPCRouter({
     ),
 
     /** Get all the restaurants that have been published by all users */
-    getAllPublished: protectedProcedure.query(({ ctx }) =>
+    getAllPublished: publicProcedure.query(({ ctx }) =>
         ctx.prisma.restaurant.findMany({ include: { image: true }, where: { isPublished: true } })
     ),
 

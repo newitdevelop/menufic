@@ -1,9 +1,12 @@
-import { Card, Container, Grid, Group, Image, Stack, Text, Title, Badge, Loader, Center, Box } from "@mantine/core";
-import { IconMapPin, IconPhone, IconExternalLink } from "@tabler/icons";
+import type { FC } from "react";
+
+import { Badge, Box, Card, Center, Container, Grid, Group, Image, Loader, Stack, Text, Title } from "@mantine/core";
+import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
 import Link from "next/link";
+
 import { api } from "src/utils/api";
 
-export default function VenueSelection() {
+export const VenueSelection: FC = () => {
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
 
     if (isLoading) {
@@ -35,31 +38,26 @@ export default function VenueSelection() {
             sx={(theme) => ({
                 background: `linear-gradient(135deg, ${theme.colors.gray[0]} 0%, ${theme.colors.blue[0]} 100%)`,
                 minHeight: "calc(100vh - 120px)",
-                paddingTop: theme.spacing.xl * 3,
                 paddingBottom: theme.spacing.xl * 3,
+                paddingTop: theme.spacing.xl * 3,
             })}
         >
             <Container size="xl">
                 <Stack spacing={50}>
                     <Stack align="center" spacing="md">
                         <Title
+                            align="center"
                             order={1}
                             size={48}
-                            weight={700}
-                            align="center"
                             sx={(theme) => ({
                                 color: theme.colors.dark[9],
                                 letterSpacing: "-0.02em",
                             })}
+                            weight={700}
                         >
                             Select Your Venue
                         </Title>
-                        <Text
-                            size="xl"
-                            color="dimmed"
-                            align="center"
-                            sx={{ maxWidth: 600 }}
-                        >
+                        <Text align="center" color="dimmed" size="xl" sx={{ maxWidth: 600 }}>
                             Explore our collection of dining venues and discover their menus
                         </Text>
                     </Stack>
@@ -77,79 +75,71 @@ export default function VenueSelection() {
                                         style={{ textDecoration: "none" }}
                                     >
                                         <Card
-                                            shadow="md"
                                             radius="lg"
+                                            shadow="md"
                                             sx={(theme) => ({
-                                                height: "100%",
-                                                cursor: "pointer",
-                                                transition: "all 0.3s ease",
                                                 "&:hover": {
-                                                    transform: "translateY(-8px)",
                                                     boxShadow: theme.shadows.xl,
+                                                    transform: "translateY(-8px)",
                                                 },
+                                                cursor: "pointer",
+                                                height: "100%",
+                                                transition: "all 0.3s ease",
                                             })}
                                         >
                                             <Card.Section>
-                                                <Box sx={{ position: "relative", paddingTop: "66.67%", overflow: "hidden" }}>
+                                                <Box sx={{ overflow: "hidden", paddingTop: "66.67%", position: "relative" }}>
                                                     <Image
-                                                        src={imageUrl}
                                                         alt={restaurant.name}
                                                         fit="cover"
+                                                        src={imageUrl}
                                                         sx={{
+                                                            height: "100%",
+                                                            left: 0,
                                                             position: "absolute",
                                                             top: 0,
-                                                            left: 0,
                                                             width: "100%",
-                                                            height: "100%",
                                                         }}
                                                     />
                                                 </Box>
                                             </Card.Section>
 
-                                            <Stack spacing="md" mt="md" p="md">
-                                                <Group position="apart" align="flex-start">
+                                            <Stack mt="md" p="md" spacing="md">
+                                                <Group align="flex-start" position="apart">
                                                     <Title
                                                         order={3}
                                                         size={22}
-                                                        weight={600}
                                                         sx={(theme) => ({
                                                             color: theme.colors.dark[7],
                                                             lineHeight: 1.3,
                                                         })}
+                                                        weight={600}
                                                     >
                                                         {restaurant.name}
                                                     </Title>
                                                     <Badge
                                                         color="blue"
-                                                        variant="light"
-                                                        size="sm"
                                                         leftSection={<IconExternalLink size={12} />}
+                                                        size="sm"
+                                                        variant="light"
                                                     >
                                                         View Menu
                                                     </Badge>
                                                 </Group>
 
                                                 {restaurant.location && (
-                                                    <Group spacing="xs" noWrap>
-                                                        <IconMapPin size={18} color="gray" />
-                                                        <Text
-                                                            size="sm"
-                                                            color="dimmed"
-                                                            sx={{ flex: 1 }}
-                                                        >
+                                                    <Group noWrap spacing="xs">
+                                                        <IconMapPin color="gray" size={18} />
+                                                        <Text color="dimmed" size="sm" sx={{ flex: 1 }}>
                                                             {restaurant.location}
                                                         </Text>
                                                     </Group>
                                                 )}
 
                                                 {restaurant.contactNo && (
-                                                    <Group spacing="xs" noWrap>
-                                                        <IconPhone size={18} color="gray" />
-                                                        <Text
-                                                            size="sm"
-                                                            color="dimmed"
-                                                            sx={{ flex: 1 }}
-                                                        >
+                                                    <Group noWrap spacing="xs">
+                                                        <IconPhone color="gray" size={18} />
+                                                        <Text color="dimmed" size="sm" sx={{ flex: 1 }}>
                                                             {restaurant.contactNo}
                                                         </Text>
                                                     </Group>
@@ -165,4 +155,6 @@ export default function VenueSelection() {
             </Container>
         </Box>
     );
-}
+};
+
+export default VenueSelection;
