@@ -1,16 +1,17 @@
 import type { FC } from "react";
+import { useState } from "react";
 
-import { Badge, Box, Card, Center, Container, Grid, Group, Image, Loader, Stack, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
 import Link from "next/link";
 
 import { api } from "src/utils/api";
+import { ImageKitImage } from "../ImageKitImage";
+import { LanguageSelector } from "../LanguageSelector";
 
 export const VenueSelection: FC = () => {
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
-
-    // Debug logging
-    console.log("Restaurants data:", restaurants);
+    const [language, setLanguage] = useState<string>("PT");
 
     if (isLoading) {
         return (
@@ -46,6 +47,16 @@ export const VenueSelection: FC = () => {
             })}
         >
             <Container size="xl">
+                <Box
+                    sx={{
+                        position: "absolute",
+                        right: 24,
+                        top: 80,
+                        zIndex: 10,
+                    }}
+                >
+                    <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
+                </Box>
                 <Stack spacing={50}>
                     <Stack align="center" spacing="md">
                         <Title
@@ -61,18 +72,12 @@ export const VenueSelection: FC = () => {
                             Select Your Venue
                         </Title>
                         <Text align="center" color="dimmed" size="xl" sx={{ maxWidth: 600 }}>
-                            Explore our collection of dining venues and discover their menus
+                            Explore our collection of venues and discover their menus
                         </Text>
                     </Stack>
 
                     <Grid gutter={30}>
                         {restaurants.map((restaurant) => {
-                            const imageUrl = restaurant.image?.path
-                                ? `https://ik.imagekit.io/menufic/${restaurant.image.path}`
-                                : null;
-
-                            console.log(`Restaurant: ${restaurant.name}, Image path: ${restaurant.image?.path}, Full URL: ${imageUrl}`);
-
                             return (
                                 <Grid.Col key={restaurant.id} xs={12} sm={6} md={4}>
                                     <Link
@@ -95,24 +100,19 @@ export const VenueSelection: FC = () => {
                                             <Card.Section>
                                                 <Box
                                                     sx={{
+                                                        aspectRatio: "3 / 2",
                                                         overflow: "hidden",
-                                                        paddingTop: "66.67%",
                                                         position: "relative",
                                                     }}
                                                 >
-                                                    {imageUrl ? (
-                                                        <Image
-                                                            alt={restaurant.name}
-                                                            fit="cover"
-                                                            src={imageUrl}
-                                                            sx={{
-                                                                height: "100%",
-                                                                left: 0,
-                                                                position: "absolute",
-                                                                top: 0,
-                                                                width: "100%",
-                                                            }}
-                                                            withPlaceholder
+                                                    {restaurant.image ? (
+                                                        <ImageKitImage
+                                                            blurhash={restaurant.image.blurHash}
+                                                            color={restaurant.image.color}
+                                                            height={400}
+                                                            imageAlt={restaurant.name}
+                                                            imagePath={restaurant.image.path}
+                                                            width={600}
                                                         />
                                                     ) : (
                                                         <Box
@@ -122,9 +122,6 @@ export const VenueSelection: FC = () => {
                                                                 display: "flex",
                                                                 height: "100%",
                                                                 justifyContent: "center",
-                                                                left: 0,
-                                                                position: "absolute",
-                                                                top: 0,
                                                                 width: "100%",
                                                             })}
                                                         >
