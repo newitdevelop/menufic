@@ -81,7 +81,7 @@ const RestaurantsListPage: NextPage = () => {
 
     return (
         <>
-            <NextSeo description={t("seoDescription")} title={t("seoTitle")} />
+            <NextSeo description={t("seoDescription")} title={t("seoTitle")} noindex={true} nofollow={true} />
             <main>
                 <AppShell>
                     <Flex align="center" justify="space-between">

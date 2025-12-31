@@ -35,7 +35,7 @@ const RestaurantManagePage: NextPage = () => {
 
     return (
         <>
-            <NextSeo description={t("seoDescription")} title={t("seoTitle")} />
+            <NextSeo description={t("seoDescription")} title={t("seoTitle")} noindex={true} nofollow={true} />
             <main>
                 <AppShell>
                     <Box ref={itemsParent}>

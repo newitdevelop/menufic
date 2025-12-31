@@ -9,8 +9,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 User-agent: *
 Allow: /
 
-# Disallow admin/dashboard pages
-Disallow: /dashboard
+# Disallow all non-public pages
+Disallow: /auth/
+Disallow: /venue/index
+Disallow: /venue/*/banners
+Disallow: /venue/*/edit-menu
+Disallow: /venue/*/preview
+Disallow: /explore
 
 # Host
 Host: ${prodUrl}

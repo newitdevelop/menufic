@@ -28,7 +28,7 @@ const RestaurantMenuPreviewPage: NextPage = () => {
 
     return (
         <>
-            <NextSeo description={t("seoDescription")} title={t("seoTitle")} />
+            <NextSeo description={t("seoDescription")} title={t("seoTitle")} noindex={true} nofollow={true} />
             <main>
                 <Container py="lg" size="xl">
                     <Alert
