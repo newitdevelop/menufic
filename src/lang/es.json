@@ -1,0 +1,10 @@
+{
+    "venueSelection": {
+        "title": "Seleccione Su Establecimiento",
+        "subtitle": "Explore nuestra colección de establecimientos y descubra sus menús",
+        "viewMenu": "Ver Menú",
+        "noImage": "Sin Imagen",
+        "noVenues": "No hay establecimientos disponibles en este momento",
+        "loading": "Cargando establecimientos..."
+    }
+}

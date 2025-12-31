@@ -1,0 +1,10 @@
+{
+    "venueSelection": {
+        "title": "Sélectionnez Votre Établissement",
+        "subtitle": "Explorez notre collection d'établissements et découvrez leurs menus",
+        "viewMenu": "Voir le Menu",
+        "noImage": "Pas d'Image",
+        "noVenues": "Aucun établissement disponible pour le moment",
+        "loading": "Chargement des établissements..."
+    }
+}

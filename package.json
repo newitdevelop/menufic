@@ -13,7 +13,9 @@
         "tsc": "tsc --noEmit --incremental",
         "format-rest": "npx prettier --ignore-path .gitignore --write \"**/*.{css,md,json,yml}\" \"!package-lock.json\"",
         "translate": "node scripts/generate-translations-selective.js",
-        "translate:full": "node scripts/generate-translations.js"
+        "translate:full": "node scripts/generate-translations.js",
+        "sync-translations": "tsx scripts/sync-translations.ts",
+        "sync-translations:check": "tsx scripts/sync-translations.ts --dry-run"
     },
     "dependencies": {
         "@emotion/react": "^11.10.5",

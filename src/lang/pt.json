@@ -1,0 +1,10 @@
+{
+    "venueSelection": {
+        "title": "Selecione o Seu Local",
+        "subtitle": "Explore a nossa coleção de locais e descubra os seus menus",
+        "viewMenu": "Ver Menu",
+        "noImage": "Sem Imagem",
+        "noVenues": "Nenhum local disponível no momento",
+        "loading": "A carregar locais..."
+    }
+}
