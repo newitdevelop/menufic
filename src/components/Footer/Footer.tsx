@@ -60,10 +60,12 @@ interface Props {
         privacyPolicyUrl?: string | null;
         termsAndConditionsUrl?: string | null;
     };
+    /** Show only copyright, hide other links */
+    copyrightOnly?: boolean;
 }
 
 /** Footer to be shown throughout the app */
-export const CustomFooter: FC<Props> = ({ restaurant }) => {
+export const CustomFooter: FC<Props> = ({ restaurant, copyrightOnly = false }) => {
     const { classes, theme } = useStyles();
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
     const t = useTranslations("common");
@@ -72,24 +74,27 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
 
     const footerLinks: Array<{ label: string; link: string }> = [];
 
-    // If restaurant is provided, only use venue-specific URLs (no fallback to defaults)
-    // If restaurant is not provided, use default URLs from environment
-    const privacyUrl = restaurant !== undefined
-        ? restaurant.privacyPolicyUrl
-        : env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
-    if (privacyUrl) {
-        footerLinks.push({ label: t("privacyPolicy"), link: privacyUrl });
-    }
+    // Only show links if copyrightOnly is false
+    if (!copyrightOnly) {
+        // If restaurant is provided, only use venue-specific URLs (no fallback to defaults)
+        // If restaurant is not provided, use default URLs from environment
+        const privacyUrl = restaurant !== undefined
+            ? restaurant.privacyPolicyUrl
+            : env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
+        if (privacyUrl) {
+            footerLinks.push({ label: t("privacyPolicy"), link: privacyUrl });
+        }
 
-    const termsUrl = restaurant !== undefined
-        ? restaurant.termsAndConditionsUrl
-        : env.NEXT_PUBLIC_TERMS_CONDITIONS_URL;
-    if (termsUrl) {
-        footerLinks.push({ label: t("terms&Conditions"), link: termsUrl });
-    }
+        const termsUrl = restaurant !== undefined
+            ? restaurant.termsAndConditionsUrl
+            : env.NEXT_PUBLIC_TERMS_CONDITIONS_URL;
+        if (termsUrl) {
+            footerLinks.push({ label: t("terms&Conditions"), link: termsUrl });
+        }
 
-    // Complaint Book is always shown for Portuguese venues
-    footerLinks.push({ label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" });
+        // Complaint Book is always shown for Portuguese venues
+        footerLinks.push({ label: t("complaintBook"), link: "https://www.livroreclamacoes.pt/inicio" });
+    }
 
     const items = footerLinks.map((link) => (
         <Link key={link.label} className={classes.linkItem} href={link.link} rel="noopener noreferrer" target="_blank">
@@ -103,7 +108,7 @@ export const CustomFooter: FC<Props> = ({ restaurant }) => {
                 <Link className={classes.copyRights} href={env.NEXT_PUBLIC_APP_URL}>
                     {t("footerCopyright", { appName: env.NEXT_PUBLIC_APP_NAME, year: currentYear })}
                 </Link>
-                <Group className={classes.links}>{items}</Group>
+                {!copyrightOnly && <Group className={classes.links}>{items}</Group>}
             </Container>
         </Footer>
     );

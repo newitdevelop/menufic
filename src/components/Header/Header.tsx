@@ -40,6 +40,8 @@ interface Props {
      */
     showLoginButton?: boolean;
     withShadow?: boolean;
+    /** Language selector component to show in header (optional) */
+    languageSelector?: React.ReactNode;
 }
 
 const useStyles = createStyles((theme, params: { withShadow?: boolean }) => ({
@@ -78,6 +80,7 @@ export const NavHeader: FC<Props> = ({
     showLoginButton,
     withShadow,
     showInternalLinks = false,
+    languageSelector,
 }) => {
     const theme = useMantineTheme();
     const { data: sessionData, status } = useSession();
@@ -188,6 +191,8 @@ export const NavHeader: FC<Props> = ({
                                         )}
                                     </>
                                 )}
+
+                                {languageSelector}
 
                                 <ActionIcon
                                     aria-label="theme-switch"

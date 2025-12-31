@@ -1,5 +1,4 @@
 import type { FC } from "react";
-import { useState } from "react";
 
 import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
@@ -7,11 +6,9 @@ import Link from "next/link";
 
 import { api } from "src/utils/api";
 import { ImageKitImage } from "../ImageKitImage";
-import { LanguageSelector } from "../LanguageSelector";
 
 export const VenueSelection: FC = () => {
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
-    const [language, setLanguage] = useState<string>("PT");
 
     if (isLoading) {
         return (
@@ -47,16 +44,6 @@ export const VenueSelection: FC = () => {
             })}
         >
             <Container size="xl">
-                <Box
-                    sx={{
-                        position: "absolute",
-                        right: 24,
-                        top: 80,
-                        zIndex: 10,
-                    }}
-                >
-                    <LanguageSelector currentLanguage={language} onLanguageChange={setLanguage} />
-                </Box>
                 <Stack spacing={50}>
                     <Stack align="center" spacing="md">
                         <Title
