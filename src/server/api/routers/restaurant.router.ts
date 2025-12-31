@@ -198,13 +198,13 @@ export const restaurantRouter = createTRPCRouter({
             });
 
             // Import translation services
-            const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, getImageDisclaimer, getUITranslation, getAllergenTranslation } = await import(
+            const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, getImageDisclaimer, getUITranslation, getAllergenTranslation, getReservationTranslations } = await import(
                 "src/server/services/translation.service"
             );
 
             // Get UI translations
             const targetLang = input.language || "PT";
-            const [vatIncluded, allergensInfo, allergenTranslations] = await Promise.all([
+            const [vatIncluded, allergensInfo, allergenTranslations, reservationTranslations] = await Promise.all([
                 getUITranslation("vatIncluded", targetLang),
                 getUITranslation("allergensInfo", targetLang),
                 Promise.all([
@@ -224,6 +224,7 @@ export const restaurantRouter = createTRPCRouter({
                     getAllergenTranslation("molluscs", targetLang),
                     getAllergenTranslation("none", targetLang),
                 ]),
+                getReservationTranslations(targetLang),
             ]);
 
             const uiTranslations = {
@@ -246,6 +247,7 @@ export const restaurantRouter = createTRPCRouter({
                     molluscs: allergenTranslations[13],
                     none: allergenTranslations[14],
                 },
+                reservation: reservationTranslations,
             };
 
             // If no language specified or language is Portuguese, add disclaimers but don't translate

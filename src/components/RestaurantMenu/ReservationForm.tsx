@@ -10,6 +10,34 @@ import { z } from "zod";
 import { api } from "src/utils/api";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 
+interface ReservationTranslations {
+    title: string;
+    dateLabel: string;
+    dateDescription: string;
+    datePrompt: string;
+    timeLabel: string;
+    timeDescription: string;
+    timePrompt: string;
+    timeContext: string;
+    guestsLabel: string;
+    guestsDescription: string;
+    guestsPrompt: string;
+    moreThan12: string;
+    contactLabel: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    emailPrompt: string;
+    summaryTitle: string;
+    person: string;
+    people: string;
+    backButton: string;
+    nextButton: string;
+    confirmButton: string;
+    successTitle: string;
+    successMessage: string;
+    errorTitle: string;
+}
+
 interface Props {
     menuId: string;
     menuName: string;
@@ -17,11 +45,43 @@ interface Props {
     startTime: string; // HH:mm format
     endTime: string; // HH:mm format
     maxPartySize: number;
+    menuStartDate?: Date | null;
+    menuEndDate?: Date | null;
+    translations?: ReservationTranslations;
     opened: boolean;
     onClose: () => void;
 }
 
 /** 4-step reservation form similar to TheFork */
+// Default English translations as fallback
+const DEFAULT_TRANSLATIONS: ReservationTranslations = {
+    title: "Reserve a Table",
+    dateLabel: "Date",
+    dateDescription: "Select date",
+    datePrompt: "Select a date",
+    timeLabel: "Time",
+    timeDescription: "Select time",
+    timePrompt: "Select a time",
+    timeContext: "For {date}",
+    guestsLabel: "Guests",
+    guestsDescription: "Number of people",
+    guestsPrompt: "Number of people",
+    moreThan12: "More than 12?",
+    contactLabel: "Contact Info",
+    emailLabel: "Email Address",
+    emailPlaceholder: "your.email@example.com",
+    emailPrompt: "Enter your email to confirm the reservation",
+    summaryTitle: "Reservation Summary:",
+    person: "person",
+    people: "people",
+    backButton: "Back",
+    nextButton: "Next",
+    confirmButton: "Confirm Reservation",
+    successTitle: "Reservation Sent",
+    successMessage: "Your reservation request has been sent successfully!",
+    errorTitle: "Reservation Error",
+};
+
 export const ReservationForm: FC<Props> = ({
     menuId,
     menuName,
@@ -29,10 +89,14 @@ export const ReservationForm: FC<Props> = ({
     startTime,
     endTime,
     maxPartySize,
+    menuStartDate,
+    menuEndDate,
+    translations,
     opened,
     onClose,
 }) => {
     const theme = useMantineTheme();
+    const t = translations || DEFAULT_TRANSLATIONS;
     const [activeStep, setActiveStep] = useState(0);
 
     // Generate available time slots based on start and end times
@@ -63,6 +127,32 @@ export const ReservationForm: FC<Props> = ({
 
     const timeSlots = generateTimeSlots();
 
+    // Calculate min and max dates for reservations
+    const getMinDate = (): Date => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (menuStartDate) {
+            const menuStart = new Date(menuStartDate);
+            menuStart.setHours(0, 0, 0, 0);
+            // Use the later of today or menu start date
+            return menuStart > today ? menuStart : today;
+        }
+        return today;
+    };
+
+    const getMaxDate = (): Date => {
+        const defaultMaxDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days ahead
+
+        if (menuEndDate) {
+            const menuEnd = new Date(menuEndDate);
+            menuEnd.setHours(23, 59, 59, 999);
+            // Use the earlier of default max or menu end date
+            return menuEnd < defaultMaxDate ? menuEnd : defaultMaxDate;
+        }
+        return defaultMaxDate;
+    };
+
     const { getInputProps, onSubmit, values, setFieldValue, reset } = useForm({
         initialValues: {
             date: null as Date | null,
@@ -81,9 +171,9 @@ export const ReservationForm: FC<Props> = ({
     });
 
     const { mutate: submitReservation, isLoading } = (api.reservation as any).submit.useMutation({
-        onError: (err: unknown) => showErrorToast("Reservation Error", err as { message: string }),
+        onError: (err: unknown) => showErrorToast(t.errorTitle, err as { message: string }),
         onSuccess: () => {
-            showSuccessToast("Reservation Sent", "Your reservation request has been sent successfully!");
+            showSuccessToast(t.successTitle, t.successMessage);
             reset();
             setActiveStep(0);
             onClose();
@@ -170,8 +260,8 @@ export const ReservationForm: FC<Props> = ({
                             <Calendar
                                 value={values.date}
                                 onChange={(date) => setFieldValue("date", date)}
-                                minDate={new Date()}
-                                maxDate={new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)} // 90 days ahead
+                                minDate={getMinDate()}
+                                maxDate={getMaxDate()}
                                 firstDayOfWeek="monday"
                                 fullWidth
                             />
@@ -291,8 +381,7 @@ export const ReservationForm: FC<Props> = ({
                     {/* Step 4: Contact Info */}
                     <Stepper.Step
                         icon={<IconMail size={18} />}
-                        label="Contact"
-                        description="Your email"
+                        label="Contact Info"
                         allowStepSelect={activeStep > 3}
                     >
                         <Stack spacing="md" my="lg">

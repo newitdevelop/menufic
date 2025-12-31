@@ -293,6 +293,33 @@ const UI_TRANSLATIONS_PT = {
         molluscs: "Moluscos",
         none: "Nenhum",
     },
+    reservation: {
+        title: "Reserve a Table",
+        dateLabel: "Date",
+        dateDescription: "Select date",
+        datePrompt: "Select a date",
+        timeLabel: "Time",
+        timeDescription: "Select time",
+        timePrompt: "Select a time",
+        timeContext: "For {date}",
+        guestsLabel: "Guests",
+        guestsDescription: "Number of people",
+        guestsPrompt: "Number of people",
+        moreThan12: "More than 12?",
+        contactLabel: "Contact Info",
+        emailLabel: "Email Address",
+        emailPlaceholder: "your.email@example.com",
+        emailPrompt: "Enter your email to confirm the reservation",
+        summaryTitle: "Reservation Summary:",
+        person: "person",
+        people: "people",
+        backButton: "Back",
+        nextButton: "Next",
+        confirmButton: "Confirm Reservation",
+        successTitle: "Reservation Sent",
+        successMessage: "Your reservation request has been sent successfully!",
+        errorTitle: "Reservation Error",
+    },
 } as const;
 
 /**
@@ -335,6 +362,32 @@ export async function getAllergenTranslation(allergenCode: string, targetLang: s
     const cached = await getOrCreateTranslation("menu", "ui-allergens", allergenCode, sourceText, targetLang, "PT");
 
     return cached;
+}
+
+/**
+ * Get all reservation form translations
+ * Source language is English (EN) since the reservation form was created in English
+ * @param targetLang Target language code
+ * @returns Object with all reservation form translations
+ */
+export async function getReservationTranslations(targetLang: string): Promise<typeof UI_TRANSLATIONS_PT.reservation> {
+    if (!targetLang || targetLang.toUpperCase() === "EN") {
+        // Return English (source language for reservation forms)
+        return UI_TRANSLATIONS_PT.reservation;
+    }
+
+    // Translate all reservation UI strings in parallel from English to target language
+    const keys = Object.keys(UI_TRANSLATIONS_PT.reservation) as Array<keyof typeof UI_TRANSLATIONS_PT.reservation>;
+
+    const translations = await Promise.all(
+        keys.map(async (key) => {
+            const sourceText = UI_TRANSLATIONS_PT.reservation[key];
+            const translated = await getOrCreateTranslation("menu", "ui-reservation", key, sourceText, targetLang, "EN");
+            return [key, translated] as const;
+        })
+    );
+
+    return Object.fromEntries(translations) as typeof UI_TRANSLATIONS_PT.reservation;
 }
 
 /**

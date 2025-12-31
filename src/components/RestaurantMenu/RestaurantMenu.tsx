@@ -31,6 +31,7 @@ import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { PackCard } from "./PackCard";
+import { PackAllergenTable } from "./PackAllergenTable";
 import { ReservationForm } from "./ReservationForm";
 import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
@@ -422,14 +423,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             </Tabs>
             {menuDetails && (
                 <Stack spacing="xs" mb="lg" className="no-print">
-                    {/* New Reservation System */}
+                    {/* New Reservation System - Standardized Button Style */}
                     {(menuDetails as any).reservationType === "EXTERNAL" && (menuDetails as any).reservationUrl && (
-                        <Flex align="center" gap={8}>
-                            <IconCalendar size={16} color={mantineTheme.colors.primary[6]} />
-                            <a href={(menuDetails as any).reservationUrl} rel="noopener noreferrer" target="_blank" style={{ textDecoration: 'underline' }}>
-                                <Text size="sm" translate="yes" weight={600} color={mantineTheme.colors.primary[6]}>{t("reservations")}</Text>
-                            </a>
-                        </Flex>
+                        <Button
+                            component="a"
+                            href={(menuDetails as any).reservationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            leftIcon={<IconCalendar size={16} />}
+                            variant="filled"
+                            color="primary"
+                            sx={{ minWidth: '200px' }}
+                        >
+                            {t("reservations")}
+                        </Button>
                     )}
                     {(menuDetails as any).reservationType === "FORM" && (
                         <Button
@@ -437,7 +444,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             variant="filled"
                             color="primary"
                             onClick={() => setReservationModalOpened(true)}
-                            compact
+                            sx={{ minWidth: '200px' }}
                         >
                             {t("reservations")}
                         </Button>
@@ -486,6 +493,9 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     startTime={(menuDetails as any).reservationStartTime || "10:00"}
                     endTime={(menuDetails as any).reservationEndTime || "22:00"}
                     maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
+                    menuStartDate={(menuDetails as any).startDate}
+                    menuEndDate={(menuDetails as any).endDate}
+                    translations={(uiTranslations as any).reservation}
                     opened={reservationModalOpened}
                     onClose={() => setReservationModalOpened(false)}
                 />
@@ -504,6 +514,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 {(menuDetails as any)?.packs?.map((pack: any) => (
                     <Box key={pack.id} mb={40}>
                         <PackCard pack={pack} isFestive={(menuDetails as any)?.isFestive} />
+                        <PackAllergenTable
+                            sections={pack.sections || []}
+                            allergenTranslations={pack.uiTranslations?.allergens || {}}
+                        />
                     </Box>
                 ))}
                 {menuDetails?.categories

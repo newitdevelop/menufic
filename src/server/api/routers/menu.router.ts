@@ -28,9 +28,33 @@ export const menuRouter = createTRPCRouter({
             });
         }
 
-        // Calculate isActive: user's toggle AND date logic (if temporary menu is past end date, it's inactive)
+        // Calculate isActive: user's toggle AND date logic
+        // If temporary menu, check if we're still within the date range
         const userActiveState = input.isActive ?? true;
-        const isWithinDateRange = input.isTemporary && input.endDate ? new Date() <= input.endDate : true;
+        let isWithinDateRange = true;
+
+        if (input.isTemporary) {
+            const now = new Date();
+
+            // If start date is set, check if we've reached it (menu starts at beginning of start date)
+            if (input.startDate) {
+                const startOfStartDate = new Date(input.startDate);
+                startOfStartDate.setHours(0, 0, 0, 0);
+                if (now < startOfStartDate) {
+                    isWithinDateRange = false; // Not started yet
+                }
+            }
+
+            // If end date is set, check if we've passed it (menu ends at end of end date)
+            if (input.endDate) {
+                const endOfEndDate = new Date(input.endDate);
+                endOfEndDate.setHours(23, 59, 59, 999); // End of the day
+                if (now > endOfEndDate) {
+                    isWithinDateRange = false; // Already ended
+                }
+            }
+        }
+
         const finalIsActive = userActiveState && isWithinDateRange;
 
         return ctx.prisma.menu.create({
@@ -118,9 +142,33 @@ export const menuRouter = createTRPCRouter({
             input.availableTime !== currentMenu.availableTime ||
             input.message !== currentMenu.message;
 
-        // Calculate isActive: user's toggle AND date logic (if temporary menu is past end date, it's inactive)
+        // Calculate isActive: user's toggle AND date logic
+        // If temporary menu, check if we're still within the date range
         const userActiveState = input.isActive ?? true;
-        const isWithinDateRange = input.isTemporary && input.endDate ? new Date() <= input.endDate : true;
+        let isWithinDateRange = true;
+
+        if (input.isTemporary) {
+            const now = new Date();
+
+            // If start date is set, check if we've reached it (menu starts at beginning of start date)
+            if (input.startDate) {
+                const startOfStartDate = new Date(input.startDate);
+                startOfStartDate.setHours(0, 0, 0, 0);
+                if (now < startOfStartDate) {
+                    isWithinDateRange = false; // Not started yet
+                }
+            }
+
+            // If end date is set, check if we've passed it (menu ends at end of end date)
+            if (input.endDate) {
+                const endOfEndDate = new Date(input.endDate);
+                endOfEndDate.setHours(23, 59, 59, 999); // End of the day
+                if (now > endOfEndDate) {
+                    isWithinDateRange = false; // Already ended
+                }
+            }
+        }
+
         const finalIsActive = userActiveState && isWithinDateRange;
 
         const [updatedMenu] = await Promise.all([

@@ -339,7 +339,7 @@ export const PackForm: FC<Props> = ({ opened, onClose, menuId, pack: packItem, .
                             }}
                             variant="light"
                         >
-                            Detect Allergens with AI
+                            🤖 Detect Allergens with AI
                         </Button>
 
                         {Object.keys(allergenMap).length > 0 && (
