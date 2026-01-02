@@ -12,7 +12,7 @@ import type { Image } from "@prisma/client";
 import { api } from "src/utils/api";
 import { env } from "src/env/client.mjs";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
-import { bannerInput } from "src/utils/validators";
+import { bannerInput, bannerUpdateInput } from "src/utils/validators";
 
 import { ImageUpload } from "../ImageUpload";
 import { Modal } from "../Modal";
@@ -56,6 +56,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
 
     const { onSubmit, setValues, getInputProps, isDirty, resetDirty, errors } = useForm({
         initialValues: {
+            id: banner?.id || "",
             imageBase64: "",
             restaurantId,
             expiryDate: null as Date | null,
@@ -69,18 +70,19 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
             periodStartDate: null as Date | null,
             periodEndDate: null as Date | null,
         },
-        validate: zodResolver(bannerInput),
+        validate: zodResolver(isEditMode ? bannerUpdateInput : bannerInput),
     });
 
     useEffect(() => {
         if (opened) {
             if (banner) {
                 // Edit mode - populate form with existing banner data
-                const imageSrc = banner.path ? `${env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/${banner.path}` : "";
-                setImagePath(imageSrc);
+                // Just use the path - ImageKitImage component will prepend the base URL
+                setImagePath(banner.path || "");
                 setHasExpiry(!!banner.expiryDate);
 
                 const values = {
+                    id: banner.id,
                     imageBase64: "", // Will be filled if user uploads new image
                     restaurantId,
                     expiryDate: banner.expiryDate ? new Date(banner.expiryDate) : null,
@@ -101,6 +103,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                 setImagePath("");
                 setHasExpiry(false);
                 const values = {
+                    id: "",
                     imageBase64: "",
                     restaurantId,
                     expiryDate: null as Date | null,
@@ -132,9 +135,10 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                 onSubmit={onSubmit((values) => {
                     if (isDirty()) {
                         if (isEditMode && banner) {
-                            updateBanner({ ...values, id: banner.id });
+                            updateBanner(values as any);
                         } else {
-                            addBanner(values);
+                            const { id, ...createValues } = values;
+                            addBanner(createValues);
                         }
                     } else {
                         onClose();
@@ -231,12 +235,11 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                             }))}
                             searchable
                             disabled={isCreating || isUpdating}
-                            {...getInputProps("monthlyDays")}
                             mt="sm"
+                            value={getInputProps("monthlyDays").value.map(String)}
                             onChange={(values) => {
                                 setValues({ monthlyDays: values.map(Number) });
                             }}
-                            value={getInputProps("monthlyDays").value.map(String)}
                         />
                     )}
 
@@ -250,10 +253,14 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                     value={
                                         getInputProps("yearlyStartDate").value
                                             ? (() => {
-                                                const parts = getInputProps("yearlyStartDate").value.split("-");
-                                                const month = parseInt(parts[0]) - 1;
-                                                const day = parseInt(parts[1]);
-                                                return new Date(new Date().getFullYear(), month, day);
+                                                try {
+                                                    const parts = getInputProps("yearlyStartDate").value.split("-");
+                                                    const month = parseInt(parts[0]) - 1;
+                                                    const day = parseInt(parts[1]);
+                                                    return new Date(new Date().getFullYear(), month, day);
+                                                } catch {
+                                                    return null;
+                                                }
                                             })()
                                             : null
                                     }
@@ -276,10 +283,14 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                     value={
                                         getInputProps("yearlyEndDate").value
                                             ? (() => {
-                                                const parts = getInputProps("yearlyEndDate").value.split("-");
-                                                const month = parseInt(parts[0]) - 1;
-                                                const day = parseInt(parts[1]);
-                                                return new Date(new Date().getFullYear(), month, day);
+                                                try {
+                                                    const parts = getInputProps("yearlyEndDate").value.split("-");
+                                                    const month = parseInt(parts[0]) - 1;
+                                                    const day = parseInt(parts[1]);
+                                                    return new Date(new Date().getFullYear(), month, day);
+                                                } catch {
+                                                    return null;
+                                                }
                                             })()
                                             : null
                                     }
