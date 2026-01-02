@@ -190,18 +190,30 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 label="Start Time"
                                 description="Banner starts displaying at this time each day"
                                 disabled={isCreating || isUpdating}
-                                value={getInputProps("dailyStartTime").value || ""}
-                                onChange={(event) => {
-                                    setValues({ dailyStartTime: event.currentTarget.value });
+                                value={getInputProps("dailyStartTime").value ? new Date(`2000-01-01T${getInputProps("dailyStartTime").value}`) : undefined}
+                                onChange={(date) => {
+                                    if (date) {
+                                        const hours = String(date.getHours()).padStart(2, "0");
+                                        const minutes = String(date.getMinutes()).padStart(2, "0");
+                                        setValues({ dailyStartTime: `${hours}:${minutes}` });
+                                    } else {
+                                        setValues({ dailyStartTime: null });
+                                    }
                                 }}
                             />
                             <TimeInput
                                 label="End Time"
                                 description="Banner stops displaying at this time each day"
                                 disabled={isCreating || isUpdating}
-                                value={getInputProps("dailyEndTime").value || ""}
-                                onChange={(event) => {
-                                    setValues({ dailyEndTime: event.currentTarget.value });
+                                value={getInputProps("dailyEndTime").value ? new Date(`2000-01-01T${getInputProps("dailyEndTime").value}`) : undefined}
+                                onChange={(date) => {
+                                    if (date) {
+                                        const hours = String(date.getHours()).padStart(2, "0");
+                                        const minutes = String(date.getMinutes()).padStart(2, "0");
+                                        setValues({ dailyEndTime: `${hours}:${minutes}` });
+                                    } else {
+                                        setValues({ dailyEndTime: null });
+                                    }
                                 }}
                             />
                         </Group>
