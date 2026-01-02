@@ -44,13 +44,13 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
     });
 
     const { mutate: updateBanner, isLoading: isUpdating } = api.restaurant.updateBanner.useMutation({
-        onError: (err: unknown) => showErrorToast(t("updateError"), err as { message: string }),
+        onError: (err: unknown) => showErrorToast(t("createError"), err as { message: string }),
         onSuccess: (data: any) => {
             onClose();
             (trpcCtx.restaurant as any).getBanners.setData({ id: restaurantId }, (banners = []) =>
                 banners.map((b: any) => b.id === data.id ? data : b)
             );
-            showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc"));
+            showSuccessToast(tCommon("updateSuccess"), t("createSuccessDesc"));
         },
     });
 
@@ -125,7 +125,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
             loading={isCreating || isUpdating}
             onClose={onClose}
             opened={opened}
-            title={isEditMode ? t("editModalTitle") : t("addModalTitle")}
+            title={t("addModalTitle")}
             {...rest}
         >
             <form
