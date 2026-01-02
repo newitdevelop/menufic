@@ -190,13 +190,19 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 label="Start Time"
                                 description="Banner starts displaying at this time each day"
                                 disabled={isCreating || isUpdating}
-                                {...getInputProps("dailyStartTime")}
+                                value={getInputProps("dailyStartTime").value || ""}
+                                onChange={(event) => {
+                                    setValues({ dailyStartTime: event.currentTarget.value });
+                                }}
                             />
                             <TimeInput
                                 label="End Time"
                                 description="Banner stops displaying at this time each day"
                                 disabled={isCreating || isUpdating}
-                                {...getInputProps("dailyEndTime")}
+                                value={getInputProps("dailyEndTime").value || ""}
+                                onChange={(event) => {
+                                    setValues({ dailyEndTime: event.currentTarget.value });
+                                }}
                             />
                         </Group>
                     )}
