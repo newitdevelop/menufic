@@ -76,7 +76,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
         if (opened) {
             if (banner) {
                 // Edit mode - populate form with existing banner data
-                const imageSrc = banner.path ? `${env.NEXT_PUBLIC_IMAGEKIT_BASE_URL}/${banner.path}` : "";
+                const imageSrc = banner.path ? `${env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/${banner.path}` : "";
                 setImagePath(imageSrc);
                 setHasExpiry(!!banner.expiryDate);
 
