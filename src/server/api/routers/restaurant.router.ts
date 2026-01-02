@@ -6,7 +6,7 @@ import type { Image, Prisma, PrismaPromise, Restaurant } from "@prisma/client";
 import { env } from "src/env/server.mjs";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "src/server/api/trpc";
 import { encodeImageToBlurhash, getColor, imageKit, rgba2hex, uploadImage } from "src/server/imageUtil";
-import { bannerInput, id, restaurantId, restaurantInput } from "src/utils/validators";
+import { bannerInput, bannerUpdateInput, id, restaurantId, restaurantInput } from "src/utils/validators";
 
 export const restaurantRouter = createTRPCRouter({
     /** Add a banner to a restaurant */
@@ -49,6 +49,54 @@ export const restaurantRouter = createTRPCRouter({
                 periodEndDate: input.periodEndDate || null,
                 restaurantBanner: { connect: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } } },
             },
+        });
+    }),
+
+    /** Update an existing banner */
+    updateBanner: protectedProcedure.input(bannerUpdateInput).mutation(async ({ ctx, input }) => {
+        // Verify the banner belongs to the user's restaurant
+        const restaurant = await ctx.prisma.restaurant.findUniqueOrThrow({
+            include: { banners: true },
+            where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+        });
+
+        const banner = restaurant.banners.find((b) => b.id === input.id);
+        if (!banner) {
+            throw new TRPCError({ code: "FORBIDDEN", message: "Banner not found or does not belong to this restaurant" });
+        }
+
+        // Prepare update data
+        const updateData: any = {
+            expiryDate: input.expiryDate || null,
+            scheduleType: input.scheduleType,
+            dailyStartTime: input.dailyStartTime || null,
+            dailyEndTime: input.dailyEndTime || null,
+            weeklyDays: input.weeklyDays,
+            monthlyDays: input.monthlyDays,
+            yearlyStartDate: input.yearlyStartDate || null,
+            yearlyEndDate: input.yearlyEndDate || null,
+            periodStartDate: input.periodStartDate || null,
+            periodEndDate: input.periodEndDate || null,
+        };
+
+        // If user uploaded a new image, process it
+        if (input.imageBase64) {
+            const [uploadedResponse, blurHash, color] = await Promise.all([
+                uploadImage(input.imageBase64, `user/${ctx.session.user.id}/venue/banners`),
+                encodeImageToBlurhash(input.imageBase64),
+                getColor(input.imageBase64),
+                imageKit.deleteFile(banner.id), // Delete old image
+            ]);
+
+            updateData.blurHash = blurHash;
+            updateData.color = rgba2hex(color[0], color[1], color[2]);
+            updateData.id = uploadedResponse.fileId;
+            updateData.path = uploadedResponse.filePath;
+        }
+
+        return ctx.prisma.image.update({
+            where: { id: input.id },
+            data: updateData,
         });
     }),
 

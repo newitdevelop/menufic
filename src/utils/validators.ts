@@ -189,7 +189,48 @@ export const bannerInput = z.object({
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
     periodEndDate: z.date().nullable().optional(),
-});
+}).refine(
+    (data) => {
+        // For PERIOD schedule type, end date must be >= start date
+        if (data.scheduleType === "PERIOD" && data.periodStartDate && data.periodEndDate) {
+            return data.periodEndDate >= data.periodStartDate;
+        }
+        return true;
+    },
+    {
+        message: "End date must be greater than or equal to start date",
+        path: ["periodEndDate"],
+    }
+);
+
+export const bannerUpdateInput = z.object({
+    id: z.string(),
+    imageBase64: z.string().optional(), // Optional for updates - only if changing image
+    restaurantId: z.string().cuid(),
+    expiryDate: z.date().nullable().optional(),
+    // Schedule fields
+    scheduleType: bannerScheduleType.default("ALWAYS"),
+    dailyStartTime: z.string().nullable().optional(),
+    dailyEndTime: z.string().nullable().optional(),
+    weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
+    monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    yearlyStartDate: z.string().nullable().optional(), // MM-DD format
+    yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
+    periodStartDate: z.date().nullable().optional(),
+    periodEndDate: z.date().nullable().optional(),
+}).refine(
+    (data) => {
+        // For PERIOD schedule type, end date must be >= start date
+        if (data.scheduleType === "PERIOD" && data.periodStartDate && data.periodEndDate) {
+            return data.periodEndDate >= data.periodStartDate;
+        }
+        return true;
+    },
+    {
+        message: "End date must be greater than or equal to start date",
+        path: ["periodEndDate"],
+    }
+);
 
 export const packSectionInput = z.object({
     title: z.string().trim().min(1, "Section title is required").max(50, "Title cannot be longer than 50 characters"),

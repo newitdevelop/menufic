@@ -22,8 +22,8 @@ import { api } from "src/utils/api";
 import { loadTranslations } from "src/utils/loadTranslations";
 import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 
-/** ImageCard component that represents each banner with delete functionality */
-const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string }> = ({ item, restaurantName, index }) => {
+/** ImageCard component that represents each banner with edit/delete functionality */
+const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string; onEdit: (banner: Image) => void }> = ({ item, restaurantName, index, onEdit }) => {
     const trpcCtx = api.useContext();
     const router = useRouter();
     const [deleteFormOpen, setDeleteFormOpen] = useState(false);
@@ -45,7 +45,10 @@ const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string }> =
     return (
         <>
             <ImageCard
-                editDeleteOptions={{ onDeleteClick: () => setDeleteFormOpen(true) }}
+                editDeleteOptions={{
+                    onEditClick: () => onEdit(item),
+                    onDeleteClick: () => setDeleteFormOpen(true),
+                }}
                 image={item}
                 imageAlt={`${restaurantName}-banner-${index}`}
                 testId={`banner-card-${index}`}
@@ -66,6 +69,7 @@ const BannerCard: FC<{ index?: number; item: Image; restaurantName?: string }> =
 const BannersPage: NextPage = () => {
     const router = useRouter();
     const [bannerFormOpen, setBannerFormOpen] = useState(false);
+    const [editingBanner, setEditingBanner] = useState<Image | null>(null);
     const restaurantId = router.query?.restaurantId as string;
     const [gridItemParent] = useAutoAnimate<HTMLDivElement>();
     const t = useTranslations("dashboard.banner");
@@ -86,6 +90,21 @@ const BannersPage: NextPage = () => {
             },
         }
     );
+
+    const handleEdit = (banner: Image) => {
+        setEditingBanner(banner);
+        setBannerFormOpen(true);
+    };
+
+    const handleCloseForm = () => {
+        setBannerFormOpen(false);
+        setEditingBanner(null);
+    };
+
+    const handleAddNew = () => {
+        setEditingBanner(null);
+        setBannerFormOpen(true);
+    };
 
     return (
         <>
@@ -127,6 +146,7 @@ const BannersPage: NextPage = () => {
                                             index={index}
                                             item={item}
                                             restaurantName={restaurant?.name}
+                                            onEdit={handleEdit}
                                         />
                                     ))}
                                     {banners &&
@@ -134,7 +154,7 @@ const BannersPage: NextPage = () => {
                                             <IconCard
                                                 key="add-new-banner"
                                                 Icon={IconCirclePlus}
-                                                onClick={() => setBannerFormOpen(true)}
+                                                onClick={handleAddNew}
                                                 subTitle={t("addNewCardSubTitle")}
                                                 testId="add-new-banner"
                                                 title={t("addNewCardTitle")}
@@ -148,7 +168,8 @@ const BannersPage: NextPage = () => {
 
                 {restaurant?.id && (
                     <BannerForm
-                        onClose={() => setBannerFormOpen(false)}
+                        banner={editingBanner}
+                        onClose={handleCloseForm}
                         opened={bannerFormOpen}
                         restaurantId={restaurant?.id}
                     />
