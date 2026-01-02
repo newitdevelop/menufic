@@ -190,6 +190,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 label="Start Time"
                                 description="Banner starts displaying at this time each day"
                                 disabled={isCreating || isUpdating}
+                                format="24"
                                 value={getInputProps("dailyStartTime").value ? new Date(`2000-01-01T${getInputProps("dailyStartTime").value}`) : undefined}
                                 onChange={(date) => {
                                     if (date) {
@@ -205,6 +206,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 label="End Time"
                                 description="Banner stops displaying at this time each day"
                                 disabled={isCreating || isUpdating}
+                                format="24"
                                 value={getInputProps("dailyEndTime").value ? new Date(`2000-01-01T${getInputProps("dailyEndTime").value}`) : undefined}
                                 onChange={(date) => {
                                     if (date) {
