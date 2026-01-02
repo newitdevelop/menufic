@@ -36,6 +36,17 @@ export const restaurantRouter = createTRPCRouter({
                 color: rgba2hex(color[0], color[1], color[2]),
                 id: uploadedResponse.fileId,
                 path: uploadedResponse.filePath,
+                expiryDate: input.expiryDate || null,
+                // Schedule fields
+                scheduleType: input.scheduleType,
+                dailyStartTime: input.dailyStartTime || null,
+                dailyEndTime: input.dailyEndTime || null,
+                weeklyDays: input.weeklyDays,
+                monthlyDays: input.monthlyDays,
+                yearlyStartDate: input.yearlyStartDate || null,
+                yearlyEndDate: input.yearlyEndDate || null,
+                periodStartDate: input.periodStartDate || null,
+                periodEndDate: input.periodEndDate || null,
                 restaurantBanner: { connect: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } } },
             },
         });

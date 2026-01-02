@@ -5,7 +5,6 @@ import { Button, LoadingOverlay, Popover, Stack, useMantineTheme } from "@mantin
 import { IconBrandGithub, IconBrandWindows } from "@tabler/icons";
 import { useRouter } from "next/router";
 import { getProviders, signIn } from "next-auth/react";
-import { useTranslations } from "next-intl";
 
 import type { ButtonProps as MantineButtonProps, PopoverBaseProps } from "@mantine/core";
 import type { BuiltInProviderType } from "next-auth/providers";
@@ -75,7 +74,6 @@ const AzureButton = (props: ButtonProps) => {
 
 export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, setLoading }) => {
     const router = useRouter();
-    const t = useTranslations("auth");
     const [availableProviders, setAvailableProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
     const [isLoadingProviders, setIsLoadingProviders] = useState(true);
 
@@ -118,9 +116,9 @@ export const LoginOptionsContent: FC<LoginOptionsProps> = ({ loading = false, se
             <LoadingOverlay overlayBlur={2} visible={loading || isLoadingProviders} />
             {!isLoadingProviders && (
                 <>
-                    {hasAzure && <AzureButton onClick={() => clickLoginOption("azure-ad")}>{t("azureSignIn")}</AzureButton>}
-                    {hasGoogle && <GoogleButton onClick={() => clickLoginOption("google")}>{t("googleSignIn")}</GoogleButton>}
-                    {hasGithub && <GithubButton onClick={() => clickLoginOption("github")}>{t("githubSignIn")}</GithubButton>}
+                    {hasAzure && <AzureButton onClick={() => clickLoginOption("azure-ad")}>Sign in with Microsoft</AzureButton>}
+                    {hasGoogle && <GoogleButton onClick={() => clickLoginOption("google")}>Sign in with Google</GoogleButton>}
+                    {hasGithub && <GithubButton onClick={() => clickLoginOption("github")}>Sign in with GitHub</GithubButton>}
                 </>
             )}
         </Stack>

@@ -173,9 +173,22 @@ export const restaurantInput = z.object({
         .pipe(z.string().url("Invalid URL").optional())
         .optional(),
 });
+export const bannerScheduleType = z.enum(["ALWAYS", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "PERIOD"]);
+
 export const bannerInput = z.object({
     imageBase64: z.string().min(1, "Image is required"),
     restaurantId: z.string().cuid(),
+    expiryDate: z.date().nullable().optional(),
+    // Schedule fields
+    scheduleType: bannerScheduleType.default("ALWAYS"),
+    dailyStartTime: z.string().nullable().optional(),
+    dailyEndTime: z.string().nullable().optional(),
+    weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
+    monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    yearlyStartDate: z.string().nullable().optional(), // MM-DD format
+    yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
+    periodStartDate: z.date().nullable().optional(),
+    periodEndDate: z.date().nullable().optional(),
 });
 
 export const packSectionInput = z.object({

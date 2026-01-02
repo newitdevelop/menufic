@@ -112,19 +112,46 @@ model MenuItem {
     @@index([categoryId])
 }
 
+enum BannerScheduleType {
+    ALWAYS      // Always display (default)
+    DAILY       // Display daily within time range
+    WEEKLY      // Display on specific days of week
+    MONTHLY     // Display on specific days of month
+    YEARLY      // Display within specific date range each year
+    PERIOD      // Display within specific start-end date period
+}
+
 model Image {
-    id               String      @unique
+    id               String              @unique
     path             String
     blurHash         String
     color            String
-    isAiGenerated    Boolean     @default(false)
-    menuItem         MenuItem?   @relation("ImageOfMenuItem")
-    pack             Pack?       @relation("ImageOfPack")
-    restaurant       Restaurant? @relation("ImageOfRestaurant")
-    restaurantBanner Restaurant? @relation("BannersOfRestaurant", fields: [restaurantId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+    isAiGenerated    Boolean             @default(false)
+    expiryDate       DateTime?           // Optional expiry date for banners (null = no expiry)
+    // Banner scheduling fields
+    scheduleType     BannerScheduleType  @default(ALWAYS)
+    // Daily schedule: start and end time (e.g., "09:00", "18:00")
+    dailyStartTime   String?
+    dailyEndTime     String?
+    // Weekly schedule: days of week (0=Sunday, 1=Monday, ..., 6=Saturday)
+    weeklyDays       Int[]               @default([])
+    // Monthly schedule: days of month (1-31)
+    monthlyDays      Int[]               @default([])
+    // Yearly schedule: start and end dates (MM-DD format, e.g., "12-24", "01-06")
+    yearlyStartDate  String?
+    yearlyEndDate    String?
+    // Period schedule: specific start and end dates
+    periodStartDate  DateTime?
+    periodEndDate    DateTime?
+    menuItem         MenuItem?           @relation("ImageOfMenuItem")
+    pack             Pack?               @relation("ImageOfPack")
+    restaurant       Restaurant?         @relation("ImageOfRestaurant")
+    restaurantBanner Restaurant?         @relation("BannersOfRestaurant", fields: [restaurantId], references: [id], onDelete: Restrict, onUpdate: Restrict)
     restaurantId     String?
 
     @@index([restaurantId])
+    @@index([expiryDate])
+    @@index([scheduleType])
 }
 
 model Pack {
