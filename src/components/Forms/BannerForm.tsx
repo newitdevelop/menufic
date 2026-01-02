@@ -249,7 +249,12 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                     disabled={isCreating || isUpdating}
                                     value={
                                         getInputProps("yearlyStartDate").value
-                                            ? new Date(new Date().getFullYear(), ...getInputProps("yearlyStartDate").value.split("-").map((n, i) => i === 0 ? parseInt(n) - 1 : parseInt(n)))
+                                            ? (() => {
+                                                const parts = getInputProps("yearlyStartDate").value.split("-");
+                                                const month = parseInt(parts[0]) - 1;
+                                                const day = parseInt(parts[1]);
+                                                return new Date(new Date().getFullYear(), month, day);
+                                            })()
                                             : null
                                     }
                                     onChange={(date) => {
@@ -270,7 +275,12 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                     disabled={isCreating || isUpdating}
                                     value={
                                         getInputProps("yearlyEndDate").value
-                                            ? new Date(new Date().getFullYear(), ...getInputProps("yearlyEndDate").value.split("-").map((n, i) => i === 0 ? parseInt(n) - 1 : parseInt(n)))
+                                            ? (() => {
+                                                const parts = getInputProps("yearlyEndDate").value.split("-");
+                                                const month = parseInt(parts[0]) - 1;
+                                                const day = parseInt(parts[1]);
+                                                return new Date(new Date().getFullYear(), month, day);
+                                            })()
                                             : null
                                     }
                                     onChange={(date) => {
