@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title, useMantineColorScheme } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,6 +13,7 @@ export const VenueSelection: FC = () => {
     const router = useRouter();
     const { data: restaurants, isLoading } = api.restaurant.getAllPublished.useQuery();
     const t = useTranslations("venueSelection");
+    const { colorScheme } = useMantineColorScheme();
 
     // Get current language from URL
     const currentLang = router.query?.lang as string;
@@ -44,7 +45,9 @@ export const VenueSelection: FC = () => {
     return (
         <Box
             sx={(theme) => ({
-                background: `linear-gradient(135deg, ${theme.colors.gray[0]} 0%, ${theme.colors.blue[0]} 100%)`,
+                background: colorScheme === "dark"
+                    ? `linear-gradient(135deg, ${theme.colors.dark[8]} 0%, ${theme.colors.dark[7]} 100%)`
+                    : `linear-gradient(135deg, ${theme.colors.gray[0]} 0%, ${theme.colors.blue[0]} 100%)`,
                 minHeight: "calc(100vh - 120px)",
                 paddingBottom: theme.spacing.xl * 3,
                 paddingTop: theme.spacing.xl * 3,
@@ -58,7 +61,7 @@ export const VenueSelection: FC = () => {
                             order={1}
                             size={48}
                             sx={(theme) => ({
-                                color: theme.colors.dark[9],
+                                color: colorScheme === "dark" ? theme.white : theme.colors.dark[9],
                                 letterSpacing: "-0.02em",
                             })}
                             weight={700}
