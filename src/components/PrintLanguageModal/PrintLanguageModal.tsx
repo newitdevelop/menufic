@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Button, Group, Image, Modal, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useTranslations } from "next-intl";
 
 import type { ModalProps } from "@mantine/core";
@@ -62,14 +62,14 @@ export const PrintLanguageModal: FC<Props> = ({ opened, onClose, restaurantId, m
                         fullWidth
                         onClick={() => handlePrint(lang.code)}
                         leftIcon={
-                            <Image
-                                src={getFlagUrl(lang.countryCode, 32)}
+                            <Box
+                                component="img"
+                                {...getFlagUrl(lang.countryCode, 'medium')}
                                 alt={`${lang.label} flag`}
-                                width={32}
-                                height={21}
-                                sx={{
+                                style={{
                                     borderRadius: 2,
                                     objectFit: "cover",
+                                    display: "block",
                                 }}
                             />
                         }

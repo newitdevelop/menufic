@@ -31,15 +31,15 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
                     })}
                     title="Select Language"
                 >
-                    <Image
-                        src={getFlagUrl(current?.countryCode || "pt", 24)}
+                    <Box
+                        component="img"
+                        {...getFlagUrl(current?.countryCode || "pt", 'small')}
                         alt={`${current?.label} flag`}
-                        width={24}
-                        height={16}
                         sx={{
                             borderRadius: 2,
                             boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                             objectFit: "cover",
+                            display: "block",
                         }}
                     />
                     <Text size="sm" sx={{ color: "white", fontWeight: 600 }}>
@@ -54,14 +54,14 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
                     <Menu.Item
                         key={lang.code}
                         icon={
-                            <Image
-                                src={getFlagUrl(lang.countryCode, 24)}
+                            <Box
+                                component="img"
+                                {...getFlagUrl(lang.countryCode, 'small')}
                                 alt={`${lang.label} flag`}
-                                width={24}
-                                height={16}
-                                sx={{
+                                style={{
                                     borderRadius: 2,
                                     objectFit: "cover",
+                                    display: "block",
                                 }}
                             />
                         }
