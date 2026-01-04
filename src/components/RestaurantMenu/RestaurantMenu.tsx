@@ -136,6 +136,31 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     // Menu sorting: Show room menus first (on Smart TV), then package menus, then standard menus
     const sortedMenus = useMemo(() => {
         const menus = restaurant?.menus || [];
+        const now = new Date();
+
+        // Filter out inactive menus and expired temporary menus
+        const activeMenus = menus.filter((menu: any) => {
+            // Check if menu is marked as inactive
+            if (menu.isActive === false) return false;
+
+            // Check if temporary menu is past its end date
+            if (menu.isTemporary && menu.endDate) {
+                const endDate = new Date(menu.endDate);
+                // Set end date to end of day (23:59:59) to include the entire end date
+                endDate.setHours(23, 59, 59, 999);
+                if (now > endDate) return false;
+            }
+
+            // Check if temporary menu hasn't started yet
+            if (menu.isTemporary && menu.startDate) {
+                const startDate = new Date(menu.startDate);
+                // Set start date to beginning of day (00:00:00)
+                startDate.setHours(0, 0, 0, 0);
+                if (now < startDate) return false;
+            }
+
+            return true;
+        });
 
         // Helper to check if menu has packs
         const hasPacks = (menu: any) => menu.packs && menu.packs.length > 0;
@@ -143,10 +168,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         // Only sort for Smart TVs, keep original order for laptops/desktops
         if (isSmartTV()) {
             // Separate room* menus from others
-            const roomMenus = menus.filter(menu =>
+            const roomMenus = activeMenus.filter(menu =>
                 menu.name.toLowerCase().startsWith("room")
             );
-            const otherMenus = menus.filter(menu =>
+            const otherMenus = activeMenus.filter(menu =>
                 !menu.name.toLowerCase().startsWith("room")
             );
 
@@ -159,8 +184,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         }
 
         // For non-TV devices, prioritize package menus over standard menus
-        const packageMenus = menus.filter(hasPacks);
-        const standardMenus = menus.filter(menu => !hasPacks(menu));
+        const packageMenus = activeMenus.filter(hasPacks);
+        const standardMenus = activeMenus.filter(menu => !hasPacks(menu));
         return [...packageMenus, ...standardMenus];
     }, [restaurant?.menus]);
 

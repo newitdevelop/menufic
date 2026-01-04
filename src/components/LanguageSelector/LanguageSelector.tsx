@@ -1,8 +1,8 @@
 import type { FC } from "react";
 
-import { Box, Menu, Text } from "@mantine/core";
+import { Box, Image, Menu, Text } from "@mantine/core";
 
-import { LANGUAGES } from "src/constants/languages";
+import { LANGUAGES, getFlagUrl } from "src/constants/languages";
 
 interface Props {
     currentLanguage?: string;
@@ -31,9 +31,17 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
                     })}
                     title="Select Language"
                 >
-                    <Text size="lg" sx={{ lineHeight: 1 }}>
-                        {current?.flag}
-                    </Text>
+                    <Image
+                        src={getFlagUrl(current?.countryCode || "pt", 24)}
+                        alt={`${current?.label} flag`}
+                        width={24}
+                        height={16}
+                        sx={{
+                            borderRadius: 2,
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                            objectFit: "cover",
+                        }}
+                    />
                     <Text size="sm" sx={{ color: "white", fontWeight: 600 }}>
                         {current?.code}
                     </Text>
@@ -45,7 +53,18 @@ export const LanguageSelector: FC<Props> = ({ currentLanguage = "PT", onLanguage
                 {LANGUAGES.map((lang) => (
                     <Menu.Item
                         key={lang.code}
-                        icon={<span style={{ fontSize: "1.2em" }}>{lang.flag}</span>}
+                        icon={
+                            <Image
+                                src={getFlagUrl(lang.countryCode, 24)}
+                                alt={`${lang.label} flag`}
+                                width={24}
+                                height={16}
+                                sx={{
+                                    borderRadius: 2,
+                                    objectFit: "cover",
+                                }}
+                            />
+                        }
                         onClick={() => onLanguageChange(lang.code)}
                         sx={(theme) => ({
                             backgroundColor: lang.code === current?.code ? theme.colors.gray[1] : undefined,
