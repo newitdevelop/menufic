@@ -80,6 +80,7 @@ export const menuRouter = createTRPCRouter({
                 reservationStartTime: input.reservationStartTime ?? null,
                 reservationEndTime: input.reservationEndTime ?? null,
                 reservationMaxPartySize: input.reservationMaxPartySize ?? null,
+                reservationSlotDuration: input.reservationSlotDuration ?? 30,
             },
         });
     }),
@@ -192,6 +193,7 @@ export const menuRouter = createTRPCRouter({
                     reservationStartTime: input.reservationStartTime ?? null,
                     reservationEndTime: input.reservationEndTime ?? null,
                     reservationMaxPartySize: input.reservationMaxPartySize ?? null,
+                    reservationSlotDuration: input.reservationSlotDuration ?? 30,
                 },
                 where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
             }),

@@ -297,7 +297,7 @@
                 "createSuccessDesc": "Created a new menu {name} successfully",
                 "updateModalTitle": "Update Menu",
                 "updateError": "Failed to update menu",
-                "updateSuccessDesc": "Updated details of ${data.name} menu successfully",
+                "updateSuccessDesc": "Updated details of {name} menu successfully",
                 "printLanguageModalTitle": "Select Print Language",
                 "printLanguageModalDescription": "Choose the language for the printed menu:",
                 "inputNameLabel": "Name",
