@@ -121,15 +121,29 @@ export const menuInput = z.object({
         .transform((val) => (val === "" ? undefined : val))
         .pipe(z.string().email("Invalid reservation email").optional()),
     reservationStartTime: z
-        .string()
-        .trim()
+        .union([z.string(), z.date(), z.null()])
         .optional()
-        .transform((val) => (val === "" ? undefined : val)),
+        .transform((val) => {
+            if (!val) return undefined;
+            if (val instanceof Date) {
+                const hours = val.getHours().toString().padStart(2, "0");
+                const minutes = val.getMinutes().toString().padStart(2, "0");
+                return `${hours}:${minutes}`;
+            }
+            return val === "" ? undefined : val.trim();
+        }),
     reservationEndTime: z
-        .string()
-        .trim()
+        .union([z.string(), z.date(), z.null()])
         .optional()
-        .transform((val) => (val === "" ? undefined : val)),
+        .transform((val) => {
+            if (!val) return undefined;
+            if (val instanceof Date) {
+                const hours = val.getHours().toString().padStart(2, "0");
+                const minutes = val.getMinutes().toString().padStart(2, "0");
+                return `${hours}:${minutes}`;
+            }
+            return val === "" ? undefined : val.trim();
+        }),
     reservationMaxPartySize: z.number().int().min(1).max(50).optional(),
     reservationSlotDuration: z.number().int().min(15).max(120).optional(), // 15 to 120 minutes
 });
