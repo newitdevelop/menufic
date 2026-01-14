@@ -151,20 +151,24 @@ export const ReservationForm: FC<Props> = ({
         if (menuStartDate) {
             const menuStart = new Date(menuStartDate);
             menuStart.setHours(0, 0, 0, 0);
-            // Use the later of today or menu start date
+            // Use the later of today or menu start date (only if menu start is in the future)
             return menuStart > today ? menuStart : today;
         }
         return today;
     };
 
     const getMaxDate = (): Date => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const defaultMaxDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days ahead
 
         if (menuEndDate) {
             const menuEnd = new Date(menuEndDate);
             menuEnd.setHours(23, 59, 59, 999);
-            // Use the earlier of default max or menu end date
-            return menuEnd < defaultMaxDate ? menuEnd : defaultMaxDate;
+            // Only use menu end date if it's in the future, otherwise use default
+            if (menuEnd >= today) {
+                return menuEnd < defaultMaxDate ? menuEnd : defaultMaxDate;
+            }
         }
         return defaultMaxDate;
     };
@@ -289,6 +293,11 @@ export const ReservationForm: FC<Props> = ({
                                 onChange={(date) => setFieldValue("date", date)}
                                 minDate={getMinDate()}
                                 maxDate={getMaxDate()}
+                                excludeDate={(date) => {
+                                    const today = new Date();
+                                    today.setHours(0, 0, 0, 0);
+                                    return date < today;
+                                }}
                                 firstDayOfWeek="monday"
                                 fullWidth
                             />

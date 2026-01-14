@@ -615,8 +615,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     endTime={(menuDetails as any).reservationEndTime || "22:00"}
                     maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
                     slotDuration={(menuDetails as any).reservationSlotDuration || 30}
-                    menuStartDate={(menuDetails as any).startDate}
-                    menuEndDate={(menuDetails as any).endDate}
+                    menuStartDate={(menuDetails as any).isTemporary ? (menuDetails as any).startDate : null}
+                    menuEndDate={(menuDetails as any).isTemporary ? (menuDetails as any).endDate : null}
                     translations={reservationTranslations}
                     opened={reservationModalOpened}
                     onClose={() => setReservationModalOpened(false)}
