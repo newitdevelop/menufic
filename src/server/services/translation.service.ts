@@ -26,18 +26,37 @@ function isTranslationValid(originalText: string, translatedText: string, target
     }
 
     // Check if translation is identical to source (likely failed translation)
-    // Allow some tolerance for proper nouns and short words
-    if (translatedText === originalText && originalText.length > 10) {
-        console.warn(`[Translation] INVALID: Translation is identical to source for target language ${targetLang}`);
-        return false;
+    // For short texts (allergen names), still check if they're identical
+    if (translatedText === originalText) {
+        // For texts over 10 chars, always flag identical as invalid
+        if (originalText.length > 10) {
+            console.warn(`[Translation] INVALID: Translation is identical to source for target language ${targetLang}`);
+            return false;
+        }
+        // For short texts, check for Portuguese-specific patterns that indicate untranslated text
+        // Common Portuguese words that should be translated
+        const portugueseWords = /^(ovos|leite|peixe|soja|aipo|mostarda|tremoço|nenhum|cereais|crustáceos|amendoins|moluscos)$/i;
+        if (portugueseWords.test(translatedText.trim())) {
+            console.warn(`[Translation] INVALID: Short text "${translatedText}" appears to be untranslated Portuguese for target ${targetLang}`);
+            return false;
+        }
     }
 
     // Check if translation contains Portuguese-specific characters when it shouldn't
     // This catches cases where DeepL returned the original Portuguese text
     const portuguesePattern = /[ãõçáéíóúâêôà]/i;
-    if (targetLang.toUpperCase() !== "PT" && portuguesePattern.test(translatedText) && originalText === translatedText) {
-        console.warn(`[Translation] INVALID: Translation contains Portuguese characters for language ${targetLang}: "${translatedText}"`);
-        return false;
+    if (targetLang.toUpperCase() !== "PT" && portuguesePattern.test(translatedText)) {
+        // Check for common Portuguese allergen phrases
+        const portugueseAllergenPhrases = /(cereais que contêm|frutos de casca rija|sementes de sésamo|dióxido de enxofre)/i;
+        if (portugueseAllergenPhrases.test(translatedText)) {
+            console.warn(`[Translation] INVALID: Translation contains Portuguese allergen phrase for language ${targetLang}: "${translatedText}"`);
+            return false;
+        }
+        // Also flag if translation is identical to original with Portuguese chars
+        if (originalText === translatedText) {
+            console.warn(`[Translation] INVALID: Translation contains Portuguese characters for language ${targetLang}: "${translatedText}"`);
+            return false;
+        }
     }
 
     return true;
@@ -159,6 +178,21 @@ export async function invalidateTranslations(entityType: EntityType, entityId: s
         },
     });
     console.log(`[Translation] Deleted ${result.count} cached translations for ${entityType}/${entityId}`);
+}
+
+/**
+ * Invalidate all UI allergen translations
+ * Call this to force re-translation of allergens (e.g., when fixing translation issues)
+ */
+export async function invalidateAllergenTranslations(): Promise<void> {
+    console.log(`[Translation] Invalidating all UI allergen translations`);
+    const result = await prisma.translation.deleteMany({
+        where: {
+            entityType: "menu",
+            entityId: "ui-allergens",
+        },
+    });
+    console.log(`[Translation] Deleted ${result.count} cached allergen translations`);
 }
 
 /**

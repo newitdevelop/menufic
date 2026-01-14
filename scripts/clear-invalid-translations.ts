@@ -22,6 +22,12 @@ async function clearInvalidTranslations(entityType?: string, entityId?: string) 
         // Portuguese-specific character pattern
         const portuguesePattern = /[ãõçáéíóúâêôà]/i;
 
+        // Portuguese allergen words that should be translated
+        const portugueseAllergenWords = /^(ovos|leite|peixe|soja|aipo|mostarda|tremoço|nenhum|cereais|crustáceos|amendoins|moluscos)$/i;
+
+        // Portuguese allergen phrases
+        const portugueseAllergenPhrases = /(cereais que contêm|frutos de casca rija|sementes de sésamo|dióxido de enxofre)/i;
+
         // Get all translations
         const where: any = {};
         if (entityType) {
@@ -44,9 +50,25 @@ async function clearInvalidTranslations(entityType?: string, entityId?: string) 
                 continue;
             }
 
+            let isInvalid = false;
+
             // Check if non-PT translation contains Portuguese characters
             // This indicates it's likely an untranslated Portuguese text
             if (portuguesePattern.test(translation.translated)) {
+                isInvalid = true;
+            }
+
+            // Check for Portuguese allergen words (short words without accents)
+            if (translation.entityId === "ui-allergens" && portugueseAllergenWords.test(translation.translated.trim())) {
+                isInvalid = true;
+            }
+
+            // Check for Portuguese allergen phrases
+            if (portugueseAllergenPhrases.test(translation.translated)) {
+                isInvalid = true;
+            }
+
+            if (isInvalid) {
                 console.log(
                     `❌ Invalid translation found: ${translation.entityType}/${translation.entityId}/${translation.field}/${translation.language}: "${translation.translated}"`
                 );
