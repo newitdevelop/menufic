@@ -48,6 +48,8 @@ export const categoryInput = z.object({
     name: z.string().trim().min(1, "Name is required").max(30, "Name cannot be longer than 30 characters"),
 });
 export const reservationTypeEnum = z.enum(["NONE", "EXTERNAL", "FORM"]);
+export const menuTypeEnum = z.enum(["INTERNAL", "EXTERNAL"]);
+export const contactPreferenceEnum = z.enum(["PHONE", "WHATSAPP", "EMAIL"]);
 
 export const reservationSubmissionInput = z.object({
     menuId: z.string(),
@@ -55,7 +57,8 @@ export const reservationSubmissionInput = z.object({
     time: z.string(),
     partySize: z.number().int().min(1).max(50),
     email: z.string().email("Invalid email address"),
-    phone: z.string().optional(),
+    phone: z.string().min(1, "Phone number is required"),
+    contactPreference: contactPreferenceEnum,
 });
 
 export const menuInput = z.object({
@@ -95,6 +98,14 @@ export const menuInput = z.object({
     endDate: z.date().nullable().optional(),
     isFestive: z.boolean().default(false),
     isActive: z.boolean().default(true),
+    // Menu type fields
+    menuType: menuTypeEnum.default("EXTERNAL"),
+    externalUrl: z
+        .string()
+        .trim()
+        .optional()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().url("Invalid external URL").optional()),
     // New reservation system fields
     reservationType: reservationTypeEnum.default("NONE"),
     reservationUrl: z

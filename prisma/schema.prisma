@@ -40,6 +40,17 @@ enum ReservationType {
     FORM     // Built-in reservation form
 }
 
+enum MenuType {
+    INTERNAL // Internal menu (displayed on Menufic)
+    EXTERNAL // External menu (redirect to external URL)
+}
+
+enum ContactPreference {
+    PHONE    // Prefer phone call
+    WHATSAPP // Prefer WhatsApp
+    EMAIL    // Prefer email
+}
+
 model Menu {
     id                      String           @unique @default(cuid())
     userId                  String
@@ -57,6 +68,8 @@ model Menu {
     endDate                 DateTime?        // End date for temporary menus (menu becomes disabled after this)
     isFestive               Boolean          @default(false) // Whether this is a festive/special menu (highlighted with emoji)
     isActive                Boolean          @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
+    menuType                MenuType         @default(EXTERNAL) // Whether menu is internal or external (defaults to EXTERNAL)
+    externalUrl             String?          // External URL (when menuType = EXTERNAL)
     // New reservation system fields
     reservationType         ReservationType  @default(NONE) // Type of reservation system
     reservationUrl          String?          // External reservation URL (when reservationType = EXTERNAL)
