@@ -237,7 +237,7 @@ export const ReservationForm: FC<Props> = ({
                     values.email !== "" &&
                     z.string().email().safeParse(values.email).success &&
                     values.phone !== "" &&
-                    values.contactPreference !== ""
+                    !!values.contactPreference
                 );
             default:
                 return false;
