@@ -214,6 +214,42 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         return (firstItem as any)?.uiTranslations || { remoteShortcuts: t("remoteShortcuts") };
     }, [restaurant?.menus, t]);
 
+    // Get reservation translations from language files
+    const reservationTranslations = useMemo(() => ({
+        title: t("reservation.title"),
+        dateLabel: t("reservation.dateLabel"),
+        dateDescription: t("reservation.dateDescription"),
+        datePrompt: t("reservation.datePrompt"),
+        timeLabel: t("reservation.timeLabel"),
+        timeDescription: t("reservation.timeDescription"),
+        timePrompt: t("reservation.timePrompt"),
+        timeContext: t("reservation.timeContext"),
+        guestsLabel: t("reservation.guestsLabel"),
+        guestsDescription: t("reservation.guestsDescription"),
+        guestsPrompt: t("reservation.guestsPrompt"),
+        moreThan12: t("reservation.moreThan12"),
+        contactLabel: t("reservation.contactLabel"),
+        contactDescription: t("reservation.contactDescription"),
+        emailLabel: t("reservation.emailLabel"),
+        emailPlaceholder: t("reservation.emailPlaceholder"),
+        phoneLabel: t("reservation.phoneLabel"),
+        phonePlaceholder: t("reservation.phonePlaceholder"),
+        contactPreferenceLabel: t("reservation.contactPreferenceLabel"),
+        contactPreferenceDescription: t("reservation.contactPreferenceDescription"),
+        contactPreferencePhone: t("reservation.contactPreferencePhone"),
+        contactPreferenceWhatsApp: t("reservation.contactPreferenceWhatsApp"),
+        contactPreferenceEmail: t("reservation.contactPreferenceEmail"),
+        summaryTitle: t("reservation.summaryTitle"),
+        person: t("reservation.person"),
+        people: t("reservation.people"),
+        backButton: t("reservation.backButton"),
+        nextButton: t("reservation.nextButton"),
+        confirmButton: t("reservation.confirmButton"),
+        successTitle: t("reservation.successTitle"),
+        successMessage: t("reservation.successMessage"),
+        errorTitle: t("reservation.errorTitle"),
+    }), [t]);
+
     const handleLanguageChange = (newLang: string) => {
         const currentQuery = { ...router.query };
         if (newLang === "PT") {
@@ -580,7 +616,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
                     menuStartDate={(menuDetails as any).startDate}
                     menuEndDate={(menuDetails as any).endDate}
-                    translations={(uiTranslations as any).reservation}
+                    translations={reservationTranslations}
                     opened={reservationModalOpened}
                     onClose={() => setReservationModalOpened(false)}
                 />

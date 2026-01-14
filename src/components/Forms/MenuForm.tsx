@@ -226,26 +226,15 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                     <Select
                         disabled={loading}
                         label="Menu Type"
-                        description="Choose whether this menu is displayed internally on Menufic or redirects to an external URL"
+                        description="Choose who this menu is for"
                         data={[
-                            { value: "INTERNAL", label: "Internal Menu (displayed on Menufic)" },
-                            { value: "EXTERNAL", label: "External Menu (redirect to external URL)" },
+                            { value: "INTERNAL", label: "Internal Menu (for employees)" },
+                            { value: "EXTERNAL", label: "External Menu (for guests)" },
                         ]}
                         withAsterisk
                         {...getInputProps("menuType")}
                     />
 
-                    {values.menuType === "EXTERNAL" && (
-                        <TextInput
-                            disabled={loading}
-                            label="External Menu URL"
-                            description="URL where customers will be redirected when they click this menu"
-                            placeholder="https://example.com/menu.pdf"
-                            type="url"
-                            withAsterisk
-                            {...getInputProps("externalUrl")}
-                        />
-                    )}
 
                     <div>
                         <Text size="sm" weight={500} mb={8}>
