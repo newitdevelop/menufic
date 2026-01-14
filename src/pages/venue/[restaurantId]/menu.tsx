@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Container, Global } from "@mantine/core";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { useRouter } from "next/router";
-import { useTranslations } from "next-intl";
+import { NextIntlProvider, useTranslations } from "next-intl";
 import { NextSeo } from "next-seo";
 import superjson from "superjson";
 
 import type { GetStaticPropsContext, NextPage } from "next";
+import type { AbstractIntlMessages } from "next-intl";
 
 import { Empty } from "src/components/Empty";
 import { Footer } from "src/components/Footer";
@@ -18,11 +19,25 @@ import { createInnerTRPCContext } from "src/server/api/trpc";
 import { api } from "src/utils/api";
 import { loadTranslations } from "src/utils/loadTranslations";
 
-/** Restaurant menu page that will be shared publicly */
-const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId: restaurantIdProp }) => {
-    const router = useRouter();
-    const restaurantId = (restaurantIdProp || router.query?.restaurantId) as string;
-    const language = (router.query?.lang as string) || "PT";
+// Language file imports for client-side dynamic loading
+import enMessages from "src/lang/en.json";
+import ptMessages from "src/lang/pt.json";
+import esMessages from "src/lang/es.json";
+import frMessages from "src/lang/fr.json";
+import deMessages from "src/lang/de.json";
+import itMessages from "src/lang/it.json";
+
+const languageMessages: Record<string, AbstractIntlMessages> = {
+    EN: enMessages as unknown as AbstractIntlMessages,
+    PT: ptMessages as unknown as AbstractIntlMessages,
+    ES: esMessages as unknown as AbstractIntlMessages,
+    FR: frMessages as unknown as AbstractIntlMessages,
+    DE: deMessages as unknown as AbstractIntlMessages,
+    IT: itMessages as unknown as AbstractIntlMessages,
+};
+
+/** Inner component that uses translations */
+const RestaurantMenuContent: React.FC<{ restaurantId: string; language: string }> = ({ restaurantId, language }) => {
     const t = useTranslations("menu");
 
     // Loading timeout for older browsers (Hisense TV)
@@ -225,6 +240,22 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
             </main>
             <Footer restaurant={restaurant} />
         </>
+    );
+};
+
+/** Restaurant menu page that will be shared publicly */
+const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId: restaurantIdProp }) => {
+    const router = useRouter();
+    const restaurantId = (restaurantIdProp || router.query?.restaurantId) as string;
+    const language = ((router.query?.lang as string) || "PT").toUpperCase();
+
+    // Get messages for the current language, fallback to PT
+    const messages = languageMessages[language] || languageMessages.PT;
+
+    return (
+        <NextIntlProvider messages={messages} locale={language.toLowerCase()}>
+            <RestaurantMenuContent restaurantId={restaurantId} language={language} />
+        </NextIntlProvider>
     );
 };
 
