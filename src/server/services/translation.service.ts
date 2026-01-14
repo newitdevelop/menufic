@@ -456,7 +456,7 @@ export async function translatePack(
  * Source language is Portuguese (PT) - the default content language
  */
 export async function translatePackSection(
-    section: { id: string; title: string; items: string[] },
+    section: { id: string; title: string; items: string[]; itemAllergens?: Record<string, string[]> },
     targetLang: string
 ) {
     if (!targetLang || targetLang.toUpperCase() === "PT") {
@@ -474,9 +474,25 @@ export async function translatePackSection(
         )
     );
 
+    // Remap itemAllergens keys from original to translated item names
+    // This ensures allergens can be looked up by the translated item text
+    let translatedItemAllergens: Record<string, string[]> | undefined;
+    if (section.itemAllergens) {
+        translatedItemAllergens = {};
+        for (let i = 0; i < section.items.length; i++) {
+            const originalItem = section.items[i];
+            const translatedItem = items[i];
+            // Copy allergens from original key to translated key
+            if (section.itemAllergens[originalItem]) {
+                translatedItemAllergens[translatedItem] = section.itemAllergens[originalItem];
+            }
+        }
+    }
+
     return {
         ...section,
         title,
         items,
+        itemAllergens: translatedItemAllergens,
     };
 }
