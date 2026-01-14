@@ -34,6 +34,7 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
     const [rootParent] = useAutoAnimate<HTMLDivElement>();
     const [menuFormOpen, setMenuFormOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.menu");
+    const tDashboard = useTranslations("dashboard");
 
     const { isLoading: menusLoading, data: menus = [] } = api.menu.getAll.useQuery(
         { restaurantId },
@@ -115,7 +116,7 @@ export const Menus: FC<Props> = ({ restaurantId, selectedMenu, setSelectedMenu }
                     </Center>
                 )}
                 {!menusLoading && !selectedMenu && (
-                    <Empty height={300} text="Get started by adding the first menu for your restaurant" />
+                    <Empty height={300} title={tDashboard("noContent")} text="Get started by adding the first menu for your restaurant" />
                 )}
                 {!menusLoading && menus?.length < Number(env.NEXT_PUBLIC_MAX_MENUS_PER_RESTAURANT) && (
                     <Box

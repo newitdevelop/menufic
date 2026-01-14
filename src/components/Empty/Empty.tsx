@@ -2,13 +2,14 @@ import type { FC, ReactNode } from "react";
 
 import { Box, Center, keyframes, Text, useMantineTheme } from "@mantine/core";
 import { IconAtom2 } from "@tabler/icons";
-import { useTranslations } from "next-intl";
 
 interface Props {
     /** Height of the empty component */
     height?: string | number;
     /** Text to be display in the empty component */
     text: string | ReactNode;
+    /** Optional title - if not provided, no title is shown */
+    title?: string;
 }
 
 const floatingAnimation = keyframes`
@@ -18,9 +19,8 @@ const floatingAnimation = keyframes`
 `;
 
 /** Component to be displayed if there isn't any date to be displayed */
-export const Empty: FC<Props> = ({ text, height }) => {
+export const Empty: FC<Props> = ({ text, height, title }) => {
     const theme = useMantineTheme();
-    const t = useTranslations("dashboard");
 
     return (
         <Center
@@ -32,10 +32,12 @@ export const Empty: FC<Props> = ({ text, height }) => {
             <Box sx={{ animation: `${floatingAnimation} 6s ease-in-out infinite` }}>
                 <IconAtom2 color={theme.colors.dark[3]} size={100} strokeWidth={1.5} />
             </Box>
-            <Text align="center" maw={400} mt="lg" size="lg" weight="bolder">
-                {t("noContent")}
-            </Text>
-            <Text align="center" maw={500} mt="xs" weight="lighter">
+            {title && (
+                <Text align="center" maw={400} mt="lg" size="lg" weight="bolder">
+                    {title}
+                </Text>
+            )}
+            <Text align="center" maw={500} mt={title ? "xs" : "lg"} weight="lighter">
                 {text}
             </Text>
         </Center>

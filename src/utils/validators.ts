@@ -131,6 +131,7 @@ export const menuInput = z.object({
         .optional()
         .transform((val) => (val === "" ? undefined : val)),
     reservationMaxPartySize: z.number().int().min(1).max(50).optional(),
+    reservationSlotDuration: z.number().int().min(15).max(120).optional(), // 15 to 120 minutes
 });
 export const menuItemInputBase = z.object({
     currency: z.enum(["€", "$"]).default("€"),

@@ -15,6 +15,7 @@ import { showErrorToast } from "src/utils/helpers";
 const ExplorePage: NextPage = () => {
     const theme = useMantineTheme();
     const t = useTranslations("dashboard.explore");
+    const tDashboard = useTranslations("dashboard");
     const [itemsParent] = useAutoAnimate<HTMLDivElement>();
 
     const { data: restaurants = [], isLoading } = api.restaurant.getAllPublished.useQuery(undefined, {
@@ -54,7 +55,7 @@ const ExplorePage: NextPage = () => {
                                 <Loader size="lg" />
                             </Center>
                         )}
-                        {!isLoading && restaurants?.length === 0 && <Empty height="50vh" text={t("noContent")} />}
+                        {!isLoading && restaurants?.length === 0 && <Empty height="50vh" title={tDashboard("noContent")} text={t("noContent")} />}
                     </Box>
                 </AppShell>
             </main>

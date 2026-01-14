@@ -52,6 +52,7 @@ interface Props {
     startTime: string; // HH:mm format
     endTime: string; // HH:mm format
     maxPartySize: number;
+    slotDuration?: number; // Duration of each slot in minutes (default: 30)
     menuStartDate?: Date | null;
     menuEndDate?: Date | null;
     translations?: ReservationTranslations;
@@ -103,6 +104,7 @@ export const ReservationForm: FC<Props> = ({
     startTime,
     endTime,
     maxPartySize,
+    slotDuration = 30,
     menuStartDate,
     menuEndDate,
     translations,
@@ -127,13 +129,13 @@ export const ReservationForm: FC<Props> = ({
         const endDate = new Date();
         endDate.setHours(endHour, endMinute, 0, 0);
 
-        // Generate slots every 30 minutes
+        // Generate slots based on configured duration
         const current = new Date(startDate);
         while (current <= endDate) {
             const hours = current.getHours().toString().padStart(2, "0");
             const minutes = current.getMinutes().toString().padStart(2, "0");
             slots.push(`${hours}:${minutes}`);
-            current.setMinutes(current.getMinutes() + 30);
+            current.setMinutes(current.getMinutes() + slotDuration);
         }
 
         return slots;

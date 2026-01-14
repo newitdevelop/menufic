@@ -118,6 +118,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             reservationStartTime: parseTimeString((menuItem as any)?.reservationStartTime),
             reservationEndTime: parseTimeString((menuItem as any)?.reservationEndTime),
             reservationMaxPartySize: (menuItem as any)?.reservationMaxPartySize || 12,
+            reservationSlotDuration: (menuItem as any)?.reservationSlotDuration || 30,
         },
         validate: zodResolver(menuInput),
     });
@@ -147,6 +148,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 reservationStartTime: parseTimeString((menuItem as any)?.reservationStartTime),
                 reservationEndTime: parseTimeString((menuItem as any)?.reservationEndTime),
                 reservationMaxPartySize: (menuItem as any)?.reservationMaxPartySize || 12,
+                reservationSlotDuration: (menuItem as any)?.reservationSlotDuration || 30,
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -359,16 +361,34 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     {...getInputProps("reservationEndTime")}
                                 />
                             </Group>
-                            <NumberInput
-                                disabled={loading}
-                                label="Maximum Party Size"
-                                description="Maximum number of people per reservation"
-                                placeholder="12"
-                                min={1}
-                                max={50}
-                                withAsterisk
-                                {...getInputProps("reservationMaxPartySize")}
-                            />
+                            <Group grow>
+                                <NumberInput
+                                    disabled={loading}
+                                    label="Maximum Party Size"
+                                    description="Maximum number of people per reservation"
+                                    placeholder="12"
+                                    min={1}
+                                    max={50}
+                                    withAsterisk
+                                    {...getInputProps("reservationMaxPartySize")}
+                                />
+                                <Select
+                                    disabled={loading}
+                                    label="Time Slot Duration"
+                                    description="Duration of each reservation slot"
+                                    data={[
+                                        { value: "15", label: "15 minutes" },
+                                        { value: "30", label: "30 minutes" },
+                                        { value: "45", label: "45 minutes" },
+                                        { value: "60", label: "1 hour" },
+                                        { value: "90", label: "1.5 hours" },
+                                        { value: "120", label: "2 hours" },
+                                    ]}
+                                    value={String(values.reservationSlotDuration)}
+                                    onChange={(val) => setFieldValue("reservationSlotDuration", val ? parseInt(val, 10) : 30)}
+                                    withAsterisk
+                                />
+                            </Group>
                         </Stack>
                     )}
                     <Checkbox

@@ -614,6 +614,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     startTime={(menuDetails as any).reservationStartTime || "10:00"}
                     endTime={(menuDetails as any).reservationEndTime || "22:00"}
                     maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
+                    slotDuration={(menuDetails as any).reservationSlotDuration || 30}
                     menuStartDate={(menuDetails as any).startDate}
                     menuEndDate={(menuDetails as any).endDate}
                     translations={reservationTranslations}

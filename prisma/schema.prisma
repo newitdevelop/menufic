@@ -77,6 +77,7 @@ model Menu {
     reservationStartTime    String?          // Start time for reservations (e.g., "10:00")
     reservationEndTime      String?          // End time for reservations (e.g., "22:00")
     reservationMaxPartySize Int?             // Maximum party size allowed
+    reservationSlotDuration Int?             @default(30) // Duration of each reservation slot in minutes
     categories              Category[]       @relation("CategoriesOfMenu")
     packs                   Pack[]           @relation("PacksOfMenu")
     restaurant              Restaurant?      @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
