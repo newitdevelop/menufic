@@ -49,5 +49,41 @@
         "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
         "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "menu": {
+        "reservation": {
+            "title": "Reservar Mesa",
+            "dateLabel": "Fecha",
+            "dateDescription": "Seleccionar fecha",
+            "datePrompt": "Seleccione una fecha",
+            "timeLabel": "Hora",
+            "timeDescription": "Seleccionar hora",
+            "timePrompt": "Seleccione una hora",
+            "timeContext": "Para {date}",
+            "guestsLabel": "Comensales",
+            "guestsDescription": "Número de personas",
+            "guestsPrompt": "Número de personas",
+            "moreThan12": "¿Más de 12?",
+            "contactLabel": "Información de Contacto",
+            "contactDescription": "Introduzca su información de contacto",
+            "emailLabel": "Correo Electrónico",
+            "emailPlaceholder": "su.correo@ejemplo.com",
+            "phoneLabel": "Número de Teléfono",
+            "phonePlaceholder": "+34 123 456 789",
+            "contactPreferenceLabel": "Método de Contacto Preferido",
+            "contactPreferenceDescription": "¿Cómo deberíamos contactarle?",
+            "contactPreferencePhone": "Llamada Telefónica",
+            "contactPreferenceWhatsApp": "WhatsApp",
+            "contactPreferenceEmail": "Correo Electrónico",
+            "summaryTitle": "Resumen de la Reserva:",
+            "person": "persona",
+            "people": "personas",
+            "backButton": "Atrás",
+            "nextButton": "Siguiente",
+            "confirmButton": "Confirmar Reserva",
+            "successTitle": "Reserva Enviada",
+            "successMessage": "¡Su solicitud de reserva ha sido enviada con éxito!",
+            "errorTitle": "Error en la Reserva"
+        }
     }
 }

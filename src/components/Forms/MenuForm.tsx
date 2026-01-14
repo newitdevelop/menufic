@@ -108,6 +108,9 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
             isFestive: (menuItem as any)?.isFestive || false,
             isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
+            // Menu type fields
+            menuType: (menuItem as any)?.menuType || "EXTERNAL",
+            externalUrl: (menuItem as any)?.externalUrl || "",
             // New reservation system fields
             reservationType: (menuItem as any)?.reservationType || "NONE",
             reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -116,6 +119,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             reservationEndTime: parseTimeString((menuItem as any)?.reservationEndTime),
             reservationMaxPartySize: (menuItem as any)?.reservationMaxPartySize || 12,
         },
+        validate: zodResolver(menuInput),
     });
 
     useEffect(() => {
@@ -133,6 +137,9 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 endDate: (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null,
                 isFestive: (menuItem as any)?.isFestive || false,
                 isActive: (menuItem as any)?.isActive !== undefined ? (menuItem as any).isActive : true,
+                // Menu type fields
+                menuType: (menuItem as any)?.menuType || "EXTERNAL",
+                externalUrl: (menuItem as any)?.externalUrl || "",
                 // New reservation system fields
                 reservationType: (menuItem as any)?.reservationType || "NONE",
                 reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -213,6 +220,32 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         withAsterisk
                         {...getInputProps("name")}
                     />
+
+                    <Divider my="md" label="Menu Type" labelPosition="center" />
+
+                    <Select
+                        disabled={loading}
+                        label="Menu Type"
+                        description="Choose whether this menu is displayed internally on Menufic or redirects to an external URL"
+                        data={[
+                            { value: "INTERNAL", label: "Internal Menu (displayed on Menufic)" },
+                            { value: "EXTERNAL", label: "External Menu (redirect to external URL)" },
+                        ]}
+                        withAsterisk
+                        {...getInputProps("menuType")}
+                    />
+
+                    {values.menuType === "EXTERNAL" && (
+                        <TextInput
+                            disabled={loading}
+                            label="External Menu URL"
+                            description="URL where customers will be redirected when they click this menu"
+                            placeholder="https://example.com/menu.pdf"
+                            type="url"
+                            withAsterisk
+                            {...getInputProps("externalUrl")}
+                        />
+                    )}
 
                     <div>
                         <Text size="sm" weight={500} mb={8}>

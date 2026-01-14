@@ -49,5 +49,41 @@
         "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
         "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "menu": {
+        "reservation": {
+            "title": "Réserver une Table",
+            "dateLabel": "Date",
+            "dateDescription": "Sélectionner la date",
+            "datePrompt": "Sélectionnez une date",
+            "timeLabel": "Heure",
+            "timeDescription": "Sélectionner l'heure",
+            "timePrompt": "Sélectionnez une heure",
+            "timeContext": "Pour {date}",
+            "guestsLabel": "Personnes",
+            "guestsDescription": "Nombre de personnes",
+            "guestsPrompt": "Nombre de personnes",
+            "moreThan12": "Plus de 12 ?",
+            "contactLabel": "Coordonnées",
+            "contactDescription": "Entrez vos coordonnées",
+            "emailLabel": "Adresse Email",
+            "emailPlaceholder": "votre.email@exemple.com",
+            "phoneLabel": "Numéro de Téléphone",
+            "phonePlaceholder": "+33 1 23 45 67 89",
+            "contactPreferenceLabel": "Méthode de Contact Préférée",
+            "contactPreferenceDescription": "Comment devons-nous vous contacter ?",
+            "contactPreferencePhone": "Appel Téléphonique",
+            "contactPreferenceWhatsApp": "WhatsApp",
+            "contactPreferenceEmail": "Email",
+            "summaryTitle": "Récapitulatif de la Réservation :",
+            "person": "personne",
+            "people": "personnes",
+            "backButton": "Retour",
+            "nextButton": "Suivant",
+            "confirmButton": "Confirmer la Réservation",
+            "successTitle": "Réservation Envoyée",
+            "successMessage": "Votre demande de réservation a été envoyée avec succès !",
+            "errorTitle": "Erreur de Réservation"
+        }
     }
 }

@@ -49,5 +49,41 @@
         "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
         "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "menu": {
+        "reservation": {
+            "title": "Tisch Reservieren",
+            "dateLabel": "Datum",
+            "dateDescription": "Datum auswählen",
+            "datePrompt": "Wählen Sie ein Datum",
+            "timeLabel": "Uhrzeit",
+            "timeDescription": "Uhrzeit auswählen",
+            "timePrompt": "Wählen Sie eine Uhrzeit",
+            "timeContext": "Für {date}",
+            "guestsLabel": "Gäste",
+            "guestsDescription": "Anzahl der Personen",
+            "guestsPrompt": "Anzahl der Personen",
+            "moreThan12": "Mehr als 12?",
+            "contactLabel": "Kontaktinformationen",
+            "contactDescription": "Geben Sie Ihre Kontaktinformationen ein",
+            "emailLabel": "E-Mail-Adresse",
+            "emailPlaceholder": "ihre.email@beispiel.com",
+            "phoneLabel": "Telefonnummer",
+            "phonePlaceholder": "+49 123 456 789",
+            "contactPreferenceLabel": "Bevorzugte Kontaktmethode",
+            "contactPreferenceDescription": "Wie sollen wir Sie kontaktieren?",
+            "contactPreferencePhone": "Telefonanruf",
+            "contactPreferenceWhatsApp": "WhatsApp",
+            "contactPreferenceEmail": "E-Mail",
+            "summaryTitle": "Reservierungszusammenfassung:",
+            "person": "Person",
+            "people": "Personen",
+            "backButton": "Zurück",
+            "nextButton": "Weiter",
+            "confirmButton": "Reservierung Bestätigen",
+            "successTitle": "Reservierung Gesendet",
+            "successMessage": "Ihre Reservierungsanfrage wurde erfolgreich gesendet!",
+            "errorTitle": "Reservierungsfehler"
+        }
     }
 }

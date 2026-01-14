@@ -49,5 +49,41 @@
         "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
         "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "menu": {
+        "reservation": {
+            "title": "Prenota un Tavolo",
+            "dateLabel": "Data",
+            "dateDescription": "Seleziona data",
+            "datePrompt": "Seleziona una data",
+            "timeLabel": "Ora",
+            "timeDescription": "Seleziona ora",
+            "timePrompt": "Seleziona un'ora",
+            "timeContext": "Per {date}",
+            "guestsLabel": "Ospiti",
+            "guestsDescription": "Numero di persone",
+            "guestsPrompt": "Numero di persone",
+            "moreThan12": "Più di 12?",
+            "contactLabel": "Informazioni di Contatto",
+            "contactDescription": "Inserisci le tue informazioni di contatto",
+            "emailLabel": "Indirizzo Email",
+            "emailPlaceholder": "tua.email@esempio.com",
+            "phoneLabel": "Numero di Telefono",
+            "phonePlaceholder": "+39 123 456 789",
+            "contactPreferenceLabel": "Metodo di Contatto Preferito",
+            "contactPreferenceDescription": "Come dovremmo contattarti?",
+            "contactPreferencePhone": "Chiamata Telefonica",
+            "contactPreferenceWhatsApp": "WhatsApp",
+            "contactPreferenceEmail": "Email",
+            "summaryTitle": "Riepilogo della Prenotazione:",
+            "person": "persona",
+            "people": "persone",
+            "backButton": "Indietro",
+            "nextButton": "Avanti",
+            "confirmButton": "Conferma Prenotazione",
+            "successTitle": "Prenotazione Inviata",
+            "successMessage": "La tua richiesta di prenotazione è stata inviata con successo!",
+            "errorTitle": "Errore nella Prenotazione"
+        }
     }
 }

@@ -1,10 +1,10 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { Button, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { Button, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme, Select } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
-import { IconCalendar, IconClock, IconMail, IconUsers } from "@tabler/icons";
+import { IconCalendar, IconClock, IconMail, IconUsers, IconPhone } from "@tabler/icons";
 import { z } from "zod";
 
 import { api } from "src/utils/api";
@@ -24,9 +24,16 @@ interface ReservationTranslations {
     guestsPrompt: string;
     moreThan12: string;
     contactLabel: string;
+    contactDescription: string;
     emailLabel: string;
     emailPlaceholder: string;
-    emailPrompt: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
+    contactPreferenceLabel: string;
+    contactPreferenceDescription: string;
+    contactPreferencePhone: string;
+    contactPreferenceWhatsApp: string;
+    contactPreferenceEmail: string;
     summaryTitle: string;
     person: string;
     people: string;
@@ -68,9 +75,16 @@ const DEFAULT_TRANSLATIONS: ReservationTranslations = {
     guestsPrompt: "Number of people",
     moreThan12: "More than 12?",
     contactLabel: "Contact Info",
+    contactDescription: "Enter your contact information",
     emailLabel: "Email Address",
     emailPlaceholder: "your.email@example.com",
-    emailPrompt: "Enter your email to confirm the reservation",
+    phoneLabel: "Phone Number",
+    phonePlaceholder: "+351 123 456 789",
+    contactPreferenceLabel: "Preferred Contact Method",
+    contactPreferenceDescription: "How should we contact you?",
+    contactPreferencePhone: "Phone Call",
+    contactPreferenceWhatsApp: "WhatsApp",
+    contactPreferenceEmail: "Email",
     summaryTitle: "Reservation Summary:",
     person: "person",
     people: "people",
@@ -160,6 +174,7 @@ export const ReservationForm: FC<Props> = ({
             partySize: 2,
             email: "",
             phone: "",
+            contactPreference: "PHONE" as "PHONE" | "WHATSAPP" | "EMAIL",
         },
         validate: zodResolver(
             z.object({
@@ -167,7 +182,8 @@ export const ReservationForm: FC<Props> = ({
                 time: z.string().min(1, "Please select a time"),
                 partySize: z.number().int().min(1, "At least 1 person").max(maxPartySize, `Maximum ${maxPartySize} people`),
                 email: z.string().email("Invalid email address"),
-                phone: z.string().optional(),
+                phone: z.string().min(1, "Phone number is required"),
+                contactPreference: z.enum(["PHONE", "WHATSAPP", "EMAIL"]),
             })
         ),
     });
@@ -203,6 +219,8 @@ export const ReservationForm: FC<Props> = ({
             time: values.time,
             partySize: values.partySize,
             email: values.email,
+            phone: values.phone,
+            contactPreference: values.contactPreference,
         });
     };
 
@@ -215,7 +233,12 @@ export const ReservationForm: FC<Props> = ({
             case 2:
                 return values.partySize >= 1 && values.partySize <= maxPartySize;
             case 3:
-                return values.email !== "" && z.string().email().safeParse(values.email).success;
+                return (
+                    values.email !== "" &&
+                    z.string().email().safeParse(values.email).success &&
+                    values.phone !== "" &&
+                    values.contactPreference !== ""
+                );
             default:
                 return false;
         }
@@ -232,7 +255,7 @@ export const ReservationForm: FC<Props> = ({
             title={
                 <Stack spacing={4}>
                     <Text weight={600} size="lg">
-                        Reserve a Table
+                        {t.title}
                     </Text>
                     <Text size="sm" color="dimmed">
                         {restaurantName} - {menuName}
@@ -251,13 +274,13 @@ export const ReservationForm: FC<Props> = ({
                     {/* Step 1: Date Selection */}
                     <Stepper.Step
                         icon={<IconCalendar size={18} />}
-                        label="Date"
-                        description="Select date"
+                        label={t.dateLabel}
+                        description={t.dateDescription}
                         allowStepSelect={activeStep > 0}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
-                                Select a date
+                                {t.datePrompt}
                             </Text>
                             <Calendar
                                 value={values.date}
@@ -273,13 +296,13 @@ export const ReservationForm: FC<Props> = ({
                     {/* Step 2: Time Selection */}
                     <Stepper.Step
                         icon={<IconClock size={18} />}
-                        label="Time"
-                        description="Select time"
+                        label={t.timeLabel}
+                        description={t.timeDescription}
                         allowStepSelect={activeStep > 1}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
-                                Select a time
+                                {t.timePrompt}
                             </Text>
                             <Text size="xs" color="dimmed">
                                 {values.date
@@ -327,13 +350,13 @@ export const ReservationForm: FC<Props> = ({
                     {/* Step 3: Party Size */}
                     <Stepper.Step
                         icon={<IconUsers size={18} />}
-                        label="Guests"
-                        description="Number of people"
+                        label={t.guestsLabel}
+                        description={t.guestsDescription}
                         allowStepSelect={activeStep > 2}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
-                                Number of people
+                                {t.guestsPrompt}
                             </Text>
                             <div
                                 style={{
@@ -368,7 +391,7 @@ export const ReservationForm: FC<Props> = ({
                             </div>
                             {maxPartySize > 12 && (
                                 <Group>
-                                    <Text size="sm">More than 12?</Text>
+                                    <Text size="sm">{t.moreThan12}</Text>
                                     <NumberInput
                                         {...getInputProps("partySize")}
                                         min={1}
@@ -382,32 +405,44 @@ export const ReservationForm: FC<Props> = ({
 
                     {/* Step 4: Contact Info */}
                     <Stepper.Step
-                        icon={<IconMail size={18} />}
-                        label="Contact Info"
-                        description="Your info"
+                        icon={<IconPhone size={18} />}
+                        label={t.contactLabel}
+                        description={t.contactDescription}
                         allowStepSelect={activeStep > 3}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
-                                Enter your contact information to confirm the reservation
+                                {t.contactDescription}
                             </Text>
                             <TextInput
-                                label="Email Address"
-                                placeholder="your.email@example.com"
+                                label={t.emailLabel}
+                                placeholder={t.emailPlaceholder}
                                 type="email"
                                 withAsterisk
                                 {...getInputProps("email")}
                             />
                             <TextInput
-                                label="Phone Number (Optional)"
-                                placeholder="+351 123 456 789"
+                                label={t.phoneLabel}
+                                placeholder={t.phonePlaceholder}
                                 type="tel"
+                                withAsterisk
                                 {...getInputProps("phone")}
+                            />
+                            <Select
+                                label={t.contactPreferenceLabel}
+                                description={t.contactPreferenceDescription}
+                                data={[
+                                    { value: "PHONE", label: t.contactPreferencePhone },
+                                    { value: "WHATSAPP", label: t.contactPreferenceWhatsApp },
+                                    { value: "EMAIL", label: t.contactPreferenceEmail },
+                                ]}
+                                withAsterisk
+                                {...getInputProps("contactPreference")}
                             />
                             <Paper p="md" sx={(theme) => ({ backgroundColor: theme.colors.gray[0] })}>
                                 <Stack spacing="xs">
                                     <Text size="sm" weight={600}>
-                                        Reservation Summary:
+                                        {t.summaryTitle}
                                     </Text>
                                     <Group spacing="xs">
                                         <IconCalendar size={16} />
@@ -429,7 +464,7 @@ export const ReservationForm: FC<Props> = ({
                                     <Group spacing="xs">
                                         <IconUsers size={16} />
                                         <Text size="sm">
-                                            {values.partySize} {values.partySize === 1 ? "person" : "people"}
+                                            {values.partySize} {values.partySize === 1 ? t.person : t.people}
                                         </Text>
                                     </Group>
                                 </Stack>
@@ -440,15 +475,15 @@ export const ReservationForm: FC<Props> = ({
 
                 <Group position="apart" mt="xl">
                     <Button variant="subtle" onClick={handleBack} disabled={activeStep === 0 || isLoading}>
-                        Back
+                        {t.backButton}
                     </Button>
                     {activeStep < 3 ? (
                         <Button onClick={handleNext} disabled={!canProceed(activeStep) || isLoading}>
-                            Next
+                            {t.nextButton}
                         </Button>
                     ) : (
                         <Button type="submit" loading={isLoading} disabled={!canProceed(activeStep)}>
-                            Confirm Reservation
+                            {t.confirmButton}
                         </Button>
                     )}
                 </Group>

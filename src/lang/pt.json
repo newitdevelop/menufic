@@ -49,5 +49,41 @@
         "translateChrome": "Click the translate icon in the address bar, or right-click and select 'Translate to...'",
         "translateSafari": "Tap the aA button in the address bar, then select 'Translate to...'",
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
+    },
+    "menu": {
+        "reservation": {
+            "title": "Reservar Mesa",
+            "dateLabel": "Data",
+            "dateDescription": "Selecionar data",
+            "datePrompt": "Selecione uma data",
+            "timeLabel": "Hora",
+            "timeDescription": "Selecionar hora",
+            "timePrompt": "Selecione uma hora",
+            "timeContext": "Para {date}",
+            "guestsLabel": "Pessoas",
+            "guestsDescription": "Número de pessoas",
+            "guestsPrompt": "Número de pessoas",
+            "moreThan12": "Mais de 12?",
+            "contactLabel": "Contacto",
+            "contactDescription": "Insira as suas informações de contacto",
+            "emailLabel": "Endereço de Email",
+            "emailPlaceholder": "seu.email@exemplo.com",
+            "phoneLabel": "Número de Telefone",
+            "phonePlaceholder": "+351 123 456 789",
+            "contactPreferenceLabel": "Método de Contacto Preferido",
+            "contactPreferenceDescription": "Como devemos contactá-lo?",
+            "contactPreferencePhone": "Chamada Telefónica",
+            "contactPreferenceWhatsApp": "WhatsApp",
+            "contactPreferenceEmail": "Email",
+            "summaryTitle": "Resumo da Reserva:",
+            "person": "pessoa",
+            "people": "pessoas",
+            "backButton": "Voltar",
+            "nextButton": "Seguinte",
+            "confirmButton": "Confirmar Reserva",
+            "successTitle": "Reserva Enviada",
+            "successMessage": "O seu pedido de reserva foi enviado com sucesso!",
+            "errorTitle": "Erro na Reserva"
+        }
     }
 }
