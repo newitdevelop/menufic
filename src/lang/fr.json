@@ -51,6 +51,15 @@
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
     },
     "menu": {
+        "noMenusForVenue": "Il n'y a pas de menus disponibles pour cet établissement. Réessayez plus tard",
+        "noItemsForMenu": "Il n'y a pas d'éléments de menu pour le menu choisi. Réessayez plus tard.",
+        "noDetailsAvailable": "Les détails de cet établissement ne sont pas disponibles pour le moment. Nous nous excusons pour la gêne occasionnée. Veuillez réessayer plus tard",
+        "loading": "Chargement du menu...",
+        "loadingTooLong": "Le chargement prend plus de temps que prévu. Veuillez vérifier votre connexion internet et réessayer.",
+        "errorLoading": "Échec du chargement du menu. Veuillez réessayer.",
+        "retry": "Réessayer",
+        "reservations": "Réservations",
+        "remoteShortcuts": "Raccourcis de la Télécommande",
         "reservation": {
             "title": "Réserver une Table",
             "dateLabel": "Date",
@@ -84,6 +93,13 @@
             "successTitle": "Réservation Envoyée",
             "successMessage": "Votre demande de réservation a été envoyée avec succès !",
             "errorTitle": "Erreur de Réservation"
+        },
+        "seoTitle": "Menu {name}",
+        "seoDescription": {
+            "venueName": "Menu de l'établissement {name}",
+            "venueLocation": "Emplacement: {location}.",
+            "venueContactNo": " Numéro de contact: {contactNo}.",
+            "menufic": "Ce menu a été généré avec Menufic.com"
         }
     }
 }

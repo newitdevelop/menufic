@@ -51,6 +51,15 @@
         "translateFirefox": "Right-click on the page and select 'Translate Page', or install the Firefox Translations add-on"
     },
     "menu": {
+        "noMenusForVenue": "Non ci sono menu disponibili per questo locale. Riprova più tardi",
+        "noItemsForMenu": "Non ci sono elementi di menu per il menu scelto. Riprova più tardi.",
+        "noDetailsAvailable": "I dettagli di questo locale non sono al momento disponibili. Ci scusiamo per l'inconveniente. Per favore riprova più tardi",
+        "loading": "Caricamento menu...",
+        "loadingTooLong": "Il caricamento sta richiedendo più tempo del previsto. Per favore verifica la tua connessione internet e riprova.",
+        "errorLoading": "Impossibile caricare il menu. Per favore riprova.",
+        "retry": "Riprova",
+        "reservations": "Prenotazioni",
+        "remoteShortcuts": "Scorciatoie del Telecomando",
         "reservation": {
             "title": "Prenota un Tavolo",
             "dateLabel": "Data",
@@ -84,6 +93,13 @@
             "successTitle": "Prenotazione Inviata",
             "successMessage": "La tua richiesta di prenotazione è stata inviata con successo!",
             "errorTitle": "Errore nella Prenotazione"
+        },
+        "seoTitle": "Menu {name}",
+        "seoDescription": {
+            "venueName": "Menu del locale {name}",
+            "venueLocation": "Posizione: {location}.",
+            "venueContactNo": " Numero di contatto: {contactNo}.",
+            "menufic": "Questo menu è stato generato con Menufic.com"
         }
     }
 }
