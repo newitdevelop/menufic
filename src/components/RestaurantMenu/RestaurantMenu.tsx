@@ -639,6 +639,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         <PackAllergenTable
                             sections={pack.sections || []}
                             allergenTranslations={pack.uiTranslations?.allergens || {}}
+                            allergensInfoLabel={pack.uiTranslations?.allergensInfo}
                         />
                     </Box>
                 ))}

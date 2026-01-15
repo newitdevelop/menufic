@@ -58,10 +58,11 @@ interface PackSection {
 interface Props {
     sections: PackSection[];
     allergenTranslations?: Record<string, string>;
+    allergensInfoLabel?: string;
 }
 
 /** Display a summary table of all allergens found in a pack */
-export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = {} }) => {
+export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = {}, allergensInfoLabel }) => {
     const { classes } = useStyles();
 
     // Collect all unique allergens from all sections
@@ -94,7 +95,7 @@ export const PackAllergenTable: FC<Props> = ({ sections, allergenTranslations = 
             <div className={classes.tableHeader}>
                 <IconAlertTriangle size={14} />
                 <Text weight={600} size="xs">
-                    {allergenTranslations.allergensInfo || "Allergen Information"}
+                    {allergensInfoLabel || "Allergen Information"}
                 </Text>
             </div>
 
