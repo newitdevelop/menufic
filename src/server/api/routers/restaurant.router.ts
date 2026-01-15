@@ -230,19 +230,28 @@ export const restaurantRouter = createTRPCRouter({
     getDetails: publicProcedure
         .input(id.extend({ language: z.string().optional() }))
         .query(async ({ ctx, input }) => {
-            // Check if user is logged in
-            const isLoggedIn = !!ctx.session?.user;
+            // Check if user is logged in and owns this restaurant
+            const userId = ctx.session?.user?.id;
+            let isOwner = false;
 
-            // Build menu filter based on authentication status
+            if (userId) {
+                // Check if this user owns the restaurant
+                const ownership = await ctx.prisma.restaurant.findUnique({
+                    where: { id_userId: { id: input.id, userId } },
+                    select: { id: true },
+                });
+                isOwner = !!ownership;
+            }
+
+            // Build menu filter based on ownership status
             // - External menus: show if active (public)
-            // - Internal menus: show only if logged in AND active
-            const menuFilter = isLoggedIn
+            // - Internal menus: show only if user is owner AND active
+            const menuFilter: { menuType?: "EXTERNAL" | "INTERNAL"; isActive: boolean } = isOwner
                 ? {
-                      isActive: true, // Always require active
-                      // Show both external and internal menus when logged in
+                      isActive: true, // Show both external and internal menus to owner
                   }
                 : {
-                      menuType: "EXTERNAL" as const,
+                      menuType: "EXTERNAL",
                       isActive: true,
                   };
 

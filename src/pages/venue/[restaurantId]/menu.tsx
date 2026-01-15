@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Global } from "@mantine/core";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { NextIntlProvider, useTranslations } from "next-intl";
 import { NextSeo } from "next-seo";
 import superjson from "superjson";
@@ -39,10 +40,14 @@ const languageMessages: Record<string, AbstractIntlMessages> = {
 /** Inner component that uses translations */
 const RestaurantMenuContent: React.FC<{ restaurantId: string; language: string }> = ({ restaurantId, language }) => {
     const t = useTranslations("menu");
+    const { data: session, status: sessionStatus } = useSession();
 
     // Loading timeout for older browsers (Hisense TV)
     const [loadingTimeout, setLoadingTimeout] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
+
+    // Use shorter stale time for authenticated users so they see internal menus
+    const isAuthenticated = sessionStatus === "authenticated" && !!session?.user;
 
     const { data: restaurant, error, isLoading, refetch } = (api.restaurant as any).getDetails.useQuery(
         { id: restaurantId, language },
@@ -50,9 +55,18 @@ const RestaurantMenuContent: React.FC<{ restaurantId: string; language: string }
             enabled: !!restaurantId,
             retry: 3,
             retryDelay: 1000,
-            staleTime: 30000, // 30 seconds
+            // For authenticated users, use no stale time to ensure fresh data with internal menus
+            // For public users, use 30 second cache
+            staleTime: isAuthenticated ? 0 : 30000,
         }
     );
+
+    // Refetch when session changes to authenticated
+    useEffect(() => {
+        if (isAuthenticated && restaurantId) {
+            refetch();
+        }
+    }, [isAuthenticated, restaurantId, refetch]);
 
     // Set timeout for loading state (20 seconds)
     useEffect(() => {
