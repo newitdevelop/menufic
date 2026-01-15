@@ -73,6 +73,9 @@ export const menuRouter = createTRPCRouter({
                 endDate: input.endDate ?? null,
                 isFestive: input.isFestive ?? false,
                 isActive: finalIsActive,
+                // Menu type fields
+                menuType: input.menuType ?? "EXTERNAL",
+                externalUrl: input.externalUrl ?? null,
                 // New reservation system fields
                 reservationType: input.reservationType ?? "NONE",
                 reservationUrl: input.reservationUrl ?? null,
@@ -186,6 +189,9 @@ export const menuRouter = createTRPCRouter({
                     endDate: input.endDate ?? null,
                     isFestive: input.isFestive ?? false,
                     isActive: finalIsActive,
+                    // Menu type fields
+                    menuType: input.menuType ?? "EXTERNAL",
+                    externalUrl: input.externalUrl ?? null,
                     // New reservation system fields
                     reservationType: input.reservationType ?? "NONE",
                     reservationUrl: input.reservationUrl ?? null,
