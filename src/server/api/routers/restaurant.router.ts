@@ -230,6 +230,22 @@ export const restaurantRouter = createTRPCRouter({
     getDetails: publicProcedure
         .input(id.extend({ language: z.string().optional() }))
         .query(async ({ ctx, input }) => {
+            // Check if user is logged in
+            const isLoggedIn = !!ctx.session?.user;
+
+            // Build menu filter based on authentication status
+            // - External menus: show if active (public)
+            // - Internal menus: show only if logged in AND active
+            const menuFilter = isLoggedIn
+                ? {
+                      isActive: true, // Always require active
+                      // Show both external and internal menus when logged in
+                  }
+                : {
+                      menuType: "EXTERNAL" as const,
+                      isActive: true,
+                  };
+
             const restaurant = await ctx.prisma.restaurant.findFirstOrThrow({
                 include: {
                     banners: true,
@@ -250,7 +266,7 @@ export const restaurantRouter = createTRPCRouter({
                             },
                         },
                         orderBy: { position: "asc" },
-                        where: { isActive: true }, // Only show active menus (not expired temporary menus)
+                        where: menuFilter,
                     },
                 },
                 where: { id: input.id },
