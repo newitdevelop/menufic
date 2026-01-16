@@ -117,6 +117,8 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             dailyEndTime: (menuItem as any)?.dailyEndTime || null,
             weeklyDays: (menuItem as any)?.weeklyDays || [],
             monthlyDays: (menuItem as any)?.monthlyDays || [],
+            monthlyWeekday: (menuItem as any)?.monthlyWeekday ?? null,
+            monthlyWeekdayOrdinal: (menuItem as any)?.monthlyWeekdayOrdinal ?? null,
             yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
             yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
             // Map legacy startDate/endDate to period fields if isTemporary was set
@@ -158,6 +160,8 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 dailyEndTime: (menuItem as any)?.dailyEndTime || null,
                 weeklyDays: (menuItem as any)?.weeklyDays || [],
                 monthlyDays: (menuItem as any)?.monthlyDays || [],
+                monthlyWeekday: (menuItem as any)?.monthlyWeekday ?? null,
+                monthlyWeekdayOrdinal: (menuItem as any)?.monthlyWeekdayOrdinal ?? null,
                 yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
                 yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
                 // Map legacy startDate/endDate to period fields if isTemporary was set
@@ -506,22 +510,85 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                     )}
 
                     {values.scheduleType === "MONTHLY" && (
-                        <MultiSelect
-                            label="Days of Month"
-                            description="Select which days of the month to display menu"
-                            placeholder="Select days (1-31)"
-                            data={Array.from({ length: 31 }, (_, i) => ({
-                                value: String(i + 1),
-                                label: String(i + 1),
-                            }))}
-                            searchable
-                            disabled={loading}
-                            mt="sm"
-                            value={values.monthlyDays.map(String)}
-                            onChange={(selected) => {
-                                setFieldValue("monthlyDays", selected.map(Number));
-                            }}
-                        />
+                        <Stack spacing="sm" mt="sm">
+                            <Select
+                                label="Monthly Schedule Type"
+                                description="Choose how to schedule monthly display"
+                                data={[
+                                    { value: "days", label: "Specific days of month (e.g., 1st, 15th, 30th)" },
+                                    { value: "weekday", label: "Specific weekday (e.g., first Monday)" },
+                                ]}
+                                disabled={loading}
+                                value={values.monthlyWeekday !== null && values.monthlyWeekday !== undefined ? "weekday" : "days"}
+                                onChange={(value) => {
+                                    if (value === "weekday") {
+                                        setFieldValue("monthlyDays", []);
+                                        setFieldValue("monthlyWeekday", 1); // Default to Monday
+                                        setFieldValue("monthlyWeekdayOrdinal", 1); // Default to first
+                                    } else {
+                                        setFieldValue("monthlyWeekday", null);
+                                        setFieldValue("monthlyWeekdayOrdinal", null);
+                                    }
+                                }}
+                            />
+
+                            {(values.monthlyWeekday === null || values.monthlyWeekday === undefined) && (
+                                <MultiSelect
+                                    label="Days of Month"
+                                    description="Select which days of the month to display menu"
+                                    placeholder="Select days (1-31)"
+                                    data={Array.from({ length: 31 }, (_, i) => ({
+                                        value: String(i + 1),
+                                        label: String(i + 1),
+                                    }))}
+                                    searchable
+                                    disabled={loading}
+                                    value={values.monthlyDays.map(String)}
+                                    onChange={(selected) => {
+                                        setFieldValue("monthlyDays", selected.map(Number));
+                                    }}
+                                />
+                            )}
+
+                            {values.monthlyWeekday !== null && values.monthlyWeekday !== undefined && (
+                                <Group grow>
+                                    <Select
+                                        label="Which occurrence"
+                                        description="Select which occurrence in the month"
+                                        data={[
+                                            { value: "1", label: "First" },
+                                            { value: "2", label: "Second" },
+                                            { value: "3", label: "Third" },
+                                            { value: "4", label: "Fourth" },
+                                            { value: "-1", label: "Last" },
+                                        ]}
+                                        disabled={loading}
+                                        value={String(values.monthlyWeekdayOrdinal ?? 1)}
+                                        onChange={(value) => {
+                                            setFieldValue("monthlyWeekdayOrdinal", value ? parseInt(value) : 1);
+                                        }}
+                                    />
+                                    <Select
+                                        label="Day of week"
+                                        description="Select which day of the week"
+                                        data={[
+                                            { value: "0", label: "Sunday" },
+                                            { value: "1", label: "Monday" },
+                                            { value: "2", label: "Tuesday" },
+                                            { value: "3", label: "Wednesday" },
+                                            { value: "4", label: "Thursday" },
+                                            { value: "5", label: "Friday" },
+                                            { value: "6", label: "Saturday" },
+                                        ]}
+                                        disabled={loading}
+                                        value={String(values.monthlyWeekday ?? 1)}
+                                        onChange={(value) => {
+                                            setFieldValue("monthlyWeekday", value ? parseInt(value) : 1);
+                                        }}
+                                    />
+                                </Group>
+                            )}
+                        </Stack>
                     )}
 
                     {values.scheduleType === "YEARLY" && (

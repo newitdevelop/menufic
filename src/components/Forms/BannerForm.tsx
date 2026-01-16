@@ -65,6 +65,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
             dailyEndTime: null as string | null,
             weeklyDays: [] as number[],
             monthlyDays: [] as number[],
+            monthlyWeekday: null as number | null,
+            monthlyWeekdayOrdinal: null as number | null,
             yearlyStartDate: null as string | null,
             yearlyEndDate: null as string | null,
             periodStartDate: null as Date | null,
@@ -91,6 +93,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     dailyEndTime: banner.dailyEndTime,
                     weeklyDays: banner.weeklyDays || [],
                     monthlyDays: banner.monthlyDays || [],
+                    monthlyWeekday: (banner as any).monthlyWeekday ?? null,
+                    monthlyWeekdayOrdinal: (banner as any).monthlyWeekdayOrdinal ?? null,
                     yearlyStartDate: banner.yearlyStartDate,
                     yearlyEndDate: banner.yearlyEndDate,
                     periodStartDate: banner.periodStartDate ? new Date(banner.periodStartDate) : null,
@@ -112,6 +116,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     dailyEndTime: null as string | null,
                     weeklyDays: [] as number[],
                     monthlyDays: [] as number[],
+                    monthlyWeekday: null as number | null,
+                    monthlyWeekdayOrdinal: null as number | null,
                     yearlyStartDate: null as string | null,
                     yearlyEndDate: null as string | null,
                     periodStartDate: null as Date | null,
@@ -245,22 +251,82 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     )}
 
                     {getInputProps("scheduleType").value === "MONTHLY" && (
-                        <MultiSelect
-                            label="Days of Month"
-                            description="Select which days of the month to display banner"
-                            placeholder="Select days (1-31)"
-                            data={Array.from({ length: 31 }, (_, i) => ({
-                                value: String(i + 1),
-                                label: String(i + 1),
-                            }))}
-                            searchable
-                            disabled={isCreating || isUpdating}
-                            mt="sm"
-                            value={getInputProps("monthlyDays").value.map(String)}
-                            onChange={(values) => {
-                                setValues({ monthlyDays: values.map(Number) });
-                            }}
-                        />
+                        <Stack spacing="sm" mt="sm">
+                            <Select
+                                label="Monthly Schedule Type"
+                                description="Choose how to schedule monthly display"
+                                data={[
+                                    { value: "days", label: "Specific days of month (e.g., 1st, 15th, 30th)" },
+                                    { value: "weekday", label: "Specific weekday (e.g., first Monday)" },
+                                ]}
+                                disabled={isCreating || isUpdating}
+                                value={getInputProps("monthlyWeekday").value !== null && getInputProps("monthlyWeekday").value !== undefined ? "weekday" : "days"}
+                                onChange={(value) => {
+                                    if (value === "weekday") {
+                                        setValues({ monthlyDays: [], monthlyWeekday: 1, monthlyWeekdayOrdinal: 1 });
+                                    } else {
+                                        setValues({ monthlyWeekday: null, monthlyWeekdayOrdinal: null });
+                                    }
+                                }}
+                            />
+
+                            {(getInputProps("monthlyWeekday").value === null || getInputProps("monthlyWeekday").value === undefined) && (
+                                <MultiSelect
+                                    label="Days of Month"
+                                    description="Select which days of the month to display banner"
+                                    placeholder="Select days (1-31)"
+                                    data={Array.from({ length: 31 }, (_, i) => ({
+                                        value: String(i + 1),
+                                        label: String(i + 1),
+                                    }))}
+                                    searchable
+                                    disabled={isCreating || isUpdating}
+                                    value={getInputProps("monthlyDays").value.map(String)}
+                                    onChange={(values) => {
+                                        setValues({ monthlyDays: values.map(Number) });
+                                    }}
+                                />
+                            )}
+
+                            {getInputProps("monthlyWeekday").value !== null && getInputProps("monthlyWeekday").value !== undefined && (
+                                <Group grow>
+                                    <Select
+                                        label="Which occurrence"
+                                        description="Select which occurrence in the month"
+                                        data={[
+                                            { value: "1", label: "First" },
+                                            { value: "2", label: "Second" },
+                                            { value: "3", label: "Third" },
+                                            { value: "4", label: "Fourth" },
+                                            { value: "-1", label: "Last" },
+                                        ]}
+                                        disabled={isCreating || isUpdating}
+                                        value={String(getInputProps("monthlyWeekdayOrdinal").value ?? 1)}
+                                        onChange={(value) => {
+                                            setValues({ monthlyWeekdayOrdinal: value ? parseInt(value) : 1 });
+                                        }}
+                                    />
+                                    <Select
+                                        label="Day of week"
+                                        description="Select which day of the week"
+                                        data={[
+                                            { value: "0", label: "Sunday" },
+                                            { value: "1", label: "Monday" },
+                                            { value: "2", label: "Tuesday" },
+                                            { value: "3", label: "Wednesday" },
+                                            { value: "4", label: "Thursday" },
+                                            { value: "5", label: "Friday" },
+                                            { value: "6", label: "Saturday" },
+                                        ]}
+                                        disabled={isCreating || isUpdating}
+                                        value={String(getInputProps("monthlyWeekday").value ?? 1)}
+                                        onChange={(value) => {
+                                            setValues({ monthlyWeekday: value ? parseInt(value) : 1 });
+                                        }}
+                                    />
+                                </Group>
+                            )}
+                        </Stack>
                     )}
 
                     {getInputProps("scheduleType").value === "YEARLY" && (

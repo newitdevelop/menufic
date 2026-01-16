@@ -113,6 +113,9 @@ export const menuInput = z.object({
     dailyEndTime: z.string().nullable().optional(),
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    // Monthly weekday schedule: e.g., "first Monday of month"
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
@@ -222,6 +225,9 @@ export const bannerInput = z.object({
     dailyEndTime: z.string().nullable().optional(),
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    // Monthly weekday schedule: e.g., "first Monday of month"
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
@@ -251,6 +257,9 @@ export const bannerUpdateInput = z.object({
     dailyEndTime: z.string().nullable().optional(),
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    // Monthly weekday schedule: e.g., "first Monday of month"
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),

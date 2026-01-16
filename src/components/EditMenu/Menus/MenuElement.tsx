@@ -105,6 +105,7 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
                                 className={classes.itemTitle}
                                 sx={{ color: isInactive ? theme.colors.red[7] : undefined }}
                             >
+                                {(item as any).menuType === "INTERNAL" ? "💼 " : ""}
                                 {(item as any).isFestive ? "🎄 " : ""}
                                 {item.name}
                                 {isInactive ? " (Disabled)" : ""}

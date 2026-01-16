@@ -76,6 +76,8 @@ model Menu {
     dailyEndTime            String?             // End time for daily display (HH:mm)
     weeklyDays              Int[]               @default([]) // Days of week to display (0=Sunday, 6=Saturday)
     monthlyDays             Int[]               @default([]) // Days of month to display (1-31)
+    monthlyWeekday          Int?                // Day of week for monthly recurring (0=Sunday, 6=Saturday) - e.g., "every Monday"
+    monthlyWeekdayOrdinal   Int?                // Which occurrence in month (1=first, 2=second, 3=third, 4=fourth, -1=last) - e.g., "first Monday"
     yearlyStartDate         String?             // Start date for yearly display (MM-DD)
     yearlyEndDate           String?             // End date for yearly display (MM-DD)
     periodStartDate         DateTime?           // Start date for period display
@@ -161,6 +163,9 @@ model Image {
     weeklyDays       Int[]               @default([])
     // Monthly schedule: days of month (1-31)
     monthlyDays      Int[]               @default([])
+    // Monthly weekday schedule: e.g., "first Monday of month"
+    monthlyWeekday          Int?         // Day of week (0=Sunday, 6=Saturday)
+    monthlyWeekdayOrdinal   Int?         // Which occurrence (1=first, 2=second, 3=third, 4=fourth, -1=last)
     // Yearly schedule: start and end dates (MM-DD format, e.g., "12-24", "01-06")
     yearlyStartDate  String?
     yearlyEndDate    String?

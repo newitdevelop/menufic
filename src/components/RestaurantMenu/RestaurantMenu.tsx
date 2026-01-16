@@ -224,7 +224,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         timeLabel: t("reservation.timeLabel"),
         timeDescription: t("reservation.timeDescription"),
         timePrompt: t("reservation.timePrompt"),
-        timeContext: t("reservation.timeContext"),
+        timeContext: t("reservation.timeContext", { date: "" }),
         guestsLabel: t("reservation.guestsLabel"),
         guestsDescription: t("reservation.guestsDescription"),
         guestsPrompt: t("reservation.guestsPrompt"),
