@@ -312,8 +312,10 @@
                 "inputReservationsPlaceholder": "https://restaurant.com/reservations",
                 "inputMessageLabel": "Message",
                 "inputMessagePlaceholder": "Additional information or special notes",
-                "isActiveLabel": "Menu is Active (visible to customers)",
-                "isActiveDescription": "When unchecked, this menu will be hidden from public pages"
+                "isActiveLabel": "Menu is Active (visible to {audience})",
+                "isActiveDescription": "When unchecked, this menu will be hidden",
+                "audienceCustomers": "customers",
+                "audienceEmployees": "employees"
             },
             "category": {
                 "fetchError": "Failed to retrieve categories and menu items",

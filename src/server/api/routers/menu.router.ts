@@ -57,6 +57,20 @@ export const menuRouter = createTRPCRouter({
 
         const finalIsActive = userActiveState && isWithinDateRange;
 
+        // Build schedule fields conditionally (only if schedule feature is used)
+        // This allows the app to work before migration is applied
+        const scheduleFields = input.scheduleType && input.scheduleType !== "ALWAYS" ? {
+            scheduleType: input.scheduleType,
+            dailyStartTime: input.dailyStartTime ?? null,
+            dailyEndTime: input.dailyEndTime ?? null,
+            weeklyDays: input.weeklyDays ?? [],
+            monthlyDays: input.monthlyDays ?? [],
+            yearlyStartDate: input.yearlyStartDate ?? null,
+            yearlyEndDate: input.yearlyEndDate ?? null,
+            periodStartDate: input.periodStartDate ?? null,
+            periodEndDate: input.periodEndDate ?? null,
+        } : {};
+
         return ctx.prisma.menu.create({
             data: {
                 availableTime: input.availableTime ?? "",
@@ -76,16 +90,8 @@ export const menuRouter = createTRPCRouter({
                 // Menu type fields
                 menuType: input.menuType ?? "EXTERNAL",
                 externalUrl: input.externalUrl ?? null,
-                // Schedule fields
-                scheduleType: input.scheduleType ?? "ALWAYS",
-                dailyStartTime: input.dailyStartTime ?? null,
-                dailyEndTime: input.dailyEndTime ?? null,
-                weeklyDays: input.weeklyDays ?? [],
-                monthlyDays: input.monthlyDays ?? [],
-                yearlyStartDate: input.yearlyStartDate ?? null,
-                yearlyEndDate: input.yearlyEndDate ?? null,
-                periodStartDate: input.periodStartDate ?? null,
-                periodEndDate: input.periodEndDate ?? null,
+                // Schedule fields (conditionally included)
+                ...scheduleFields,
                 // New reservation system fields
                 reservationType: input.reservationType ?? "NONE",
                 reservationUrl: input.reservationUrl ?? null,
@@ -185,6 +191,20 @@ export const menuRouter = createTRPCRouter({
 
         const finalIsActive = userActiveState && isWithinDateRange;
 
+        // Build schedule fields conditionally (only if schedule feature is used)
+        // This allows the app to work before migration is applied
+        const updateScheduleFields = input.scheduleType && input.scheduleType !== "ALWAYS" ? {
+            scheduleType: input.scheduleType,
+            dailyStartTime: input.dailyStartTime ?? null,
+            dailyEndTime: input.dailyEndTime ?? null,
+            weeklyDays: input.weeklyDays ?? [],
+            monthlyDays: input.monthlyDays ?? [],
+            yearlyStartDate: input.yearlyStartDate ?? null,
+            yearlyEndDate: input.yearlyEndDate ?? null,
+            periodStartDate: input.periodStartDate ?? null,
+            periodEndDate: input.periodEndDate ?? null,
+        } : {};
+
         const [updatedMenu] = await Promise.all([
             ctx.prisma.menu.update({
                 data: {
@@ -202,16 +222,8 @@ export const menuRouter = createTRPCRouter({
                     // Menu type fields
                     menuType: input.menuType ?? "EXTERNAL",
                     externalUrl: input.externalUrl ?? null,
-                    // Schedule fields
-                    scheduleType: input.scheduleType ?? "ALWAYS",
-                    dailyStartTime: input.dailyStartTime ?? null,
-                    dailyEndTime: input.dailyEndTime ?? null,
-                    weeklyDays: input.weeklyDays ?? [],
-                    monthlyDays: input.monthlyDays ?? [],
-                    yearlyStartDate: input.yearlyStartDate ?? null,
-                    yearlyEndDate: input.yearlyEndDate ?? null,
-                    periodStartDate: input.periodStartDate ?? null,
-                    periodEndDate: input.periodEndDate ?? null,
+                    // Schedule fields (conditionally included)
+                    ...updateScheduleFields,
                     // New reservation system fields
                     reservationType: input.reservationType ?? "NONE",
                     reservationUrl: input.reservationUrl ?? null,

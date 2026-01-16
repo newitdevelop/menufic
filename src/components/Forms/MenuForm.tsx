@@ -111,16 +111,17 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             // Menu type fields
             menuType: (menuItem as any)?.menuType || "EXTERNAL",
             externalUrl: (menuItem as any)?.externalUrl || "",
-            // Schedule fields
-            scheduleType: (menuItem as any)?.scheduleType || "ALWAYS",
+            // Schedule fields - map legacy isTemporary to PERIOD schedule type
+            scheduleType: (menuItem as any)?.scheduleType || ((menuItem as any)?.isTemporary ? "PERIOD" : "ALWAYS"),
             dailyStartTime: (menuItem as any)?.dailyStartTime || null,
             dailyEndTime: (menuItem as any)?.dailyEndTime || null,
             weeklyDays: (menuItem as any)?.weeklyDays || [],
             monthlyDays: (menuItem as any)?.monthlyDays || [],
             yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
             yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
-            periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : null,
-            periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : null,
+            // Map legacy startDate/endDate to period fields if isTemporary was set
+            periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : ((menuItem as any)?.isTemporary && (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null),
+            periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : ((menuItem as any)?.isTemporary && (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null),
             // New reservation system fields
             reservationType: (menuItem as any)?.reservationType || "NONE",
             reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -151,16 +152,17 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 // Menu type fields
                 menuType: (menuItem as any)?.menuType || "EXTERNAL",
                 externalUrl: (menuItem as any)?.externalUrl || "",
-                // Schedule fields
-                scheduleType: (menuItem as any)?.scheduleType || "ALWAYS",
+                // Schedule fields - map legacy isTemporary to PERIOD schedule type
+                scheduleType: (menuItem as any)?.scheduleType || ((menuItem as any)?.isTemporary ? "PERIOD" : "ALWAYS"),
                 dailyStartTime: (menuItem as any)?.dailyStartTime || null,
                 dailyEndTime: (menuItem as any)?.dailyEndTime || null,
                 weeklyDays: (menuItem as any)?.weeklyDays || [],
                 monthlyDays: (menuItem as any)?.monthlyDays || [],
                 yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
                 yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
-                periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : null,
-                periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : null,
+                // Map legacy startDate/endDate to period fields if isTemporary was set
+                periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : ((menuItem as any)?.isTemporary && (menuItem as any)?.startDate ? new Date((menuItem as any).startDate) : null),
+                periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : ((menuItem as any)?.isTemporary && (menuItem as any)?.endDate ? new Date((menuItem as any).endDate) : null),
                 // New reservation system fields
                 reservationType: (menuItem as any)?.reservationType || "NONE",
                 reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -220,11 +222,21 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
 
                     // Remove timeRanges from the data, only send availableTime
                     const { timeRanges, reservationStartTime, reservationEndTime, ...restValues } = values;
+
+                    // Map PERIOD schedule type to legacy isTemporary fields for backward compatibility
+                    const isTemporaryFromSchedule = values.scheduleType === "PERIOD";
+                    const startDateFromSchedule = isTemporaryFromSchedule ? values.periodStartDate : null;
+                    const endDateFromSchedule = isTemporaryFromSchedule ? values.periodEndDate : null;
+
                     const submitData = {
                         ...restValues,
                         availableTime,
                         reservationStartTime: formatTime(reservationStartTime),
                         reservationEndTime: formatTime(reservationEndTime),
+                        // Set isTemporary and dates based on PERIOD schedule type
+                        isTemporary: isTemporaryFromSchedule,
+                        startDate: startDateFromSchedule,
+                        endDate: endDateFromSchedule,
                     };
 
                     if (menuItem) {
@@ -416,31 +428,6 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         label="Festive Menu (🎄 highlighted)"
                         {...getInputProps("isFestive", { type: "checkbox" })}
                     />
-                    <Checkbox
-                        disabled={loading}
-                        label="Temporary Menu (with start/end dates)"
-                        {...getInputProps("isTemporary", { type: "checkbox" })}
-                    />
-                    {values.isTemporary && (
-                        <>
-                            <DatePicker
-                                disabled={loading}
-                                label="Start Date"
-                                placeholder="Select start date"
-                                clearable
-                                {...getInputProps("startDate")}
-                            />
-                            <DatePicker
-                                disabled={loading}
-                                label="End Date (menu will be disabled after this)"
-                                placeholder="Select end date"
-                                withAsterisk
-                                clearable
-                                {...getInputProps("endDate")}
-                            />
-                        </>
-                    )}
-
                     <Divider my="md" label="Display Schedule" labelPosition="center" />
 
                     <Select
@@ -623,7 +610,11 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
 
                     <Checkbox
                         disabled={loading}
-                        label={t("isActiveLabel")}
+                        label={t("isActiveLabel", {
+                            audience: values.menuType === "INTERNAL"
+                                ? t("audienceEmployees")
+                                : t("audienceCustomers")
+                        })}
                         description={t("isActiveDescription")}
                         styles={{
                             label: {
