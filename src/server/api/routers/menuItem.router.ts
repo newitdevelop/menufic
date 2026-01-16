@@ -189,9 +189,9 @@ export const menuItemRouter = createTRPCRouter({
         available: isAllergenAIAvailable(),
     })),
 
-    /** Generate food image using AI (DALL-E 3) */
+    /** Generate image using AI (DALL-E 3) - adapts to food or service based on isEdible */
     generateImageAI: protectedProcedure
-        .input(z.object({ name: z.string(), description: z.string() }))
+        .input(z.object({ name: z.string(), description: z.string(), isEdible: z.boolean().optional() }))
         .mutation(async ({ input }) => {
             if (!isImageAIAvailable()) {
                 throw new TRPCError({
@@ -201,7 +201,7 @@ export const menuItemRouter = createTRPCRouter({
             }
 
             try {
-                const imageDataUrl = await generateFoodImage(input.name, input.description);
+                const imageDataUrl = await generateFoodImage(input.name, input.description, input.isEdible ?? true);
                 return { imageDataUrl };
             } catch (error) {
                 throw new TRPCError({

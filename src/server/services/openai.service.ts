@@ -225,27 +225,40 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Generate a realistic food image using DALL-E 3 with retry mechanism
+ * Generate a realistic image using DALL-E 3 with retry mechanism
  * Downloads the image from OpenAI and converts to base64 data URL
  * @param itemName Name of the menu item
  * @param itemDescription Description of the menu item
+ * @param isEdible Whether the item is food/drink (true) or a service/product (false)
  * @param maxRetries Maximum number of retry attempts (default: 3)
  * @returns Base64 data URL (data:image/png;base64,...)
  */
 export async function generateFoodImage(
     itemName: string,
     itemDescription: string,
+    isEdible: boolean = true,
     maxRetries: number = 3
 ): Promise<string> {
     if (!isOpenAIAvailable()) {
         throw new Error("OpenAI API key not configured. Set OPENAI_API_KEY environment variable.");
     }
 
-    // Craft a detailed prompt for professional food photography
-    const prompt = `Professional food photography: ${itemName}. ${itemDescription}.
+    // Craft a detailed prompt based on whether it's food/drink or a service/product
+    let prompt: string;
+    if (isEdible) {
+        // Generate food photography
+        prompt = `Professional food photography: ${itemName}. ${itemDescription}.
 High-quality restaurant menu photo, beautifully plated on white dish,
 shot from 45-degree angle, natural lighting, shallow depth of field,
 appetizing presentation, Michelin-star quality, photorealistic.`;
+    } else {
+        // Generate a professional image for service/product based on context
+        prompt = `Professional photography representing: ${itemName}. ${itemDescription}.
+High-quality commercial photo, elegant presentation, soft natural lighting,
+premium luxury setting appropriate for the service or product described,
+clean aesthetic, professional marketing quality, photorealistic.
+Do not include any food in this image.`;
+    }
 
     let lastError: Error | null = null;
 

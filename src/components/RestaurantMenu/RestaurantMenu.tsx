@@ -565,6 +565,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 translate="no"
                                 weight={selectedMenu === menu.id ? "bold" : "normal"}
                             >
+                                {(menu as any).menuType === "INTERNAL" ? "💼 " : ""}
                                 {(menu as any).isFestive ? `${getFestiveEmoji()} ${menu.name}` : menu.name}
                             </Text>
                             <Text color={theme.colors.dark[8]} opacity={selectedMenu === menu.id ? 1 : 0.5} size="xs" translate="yes">

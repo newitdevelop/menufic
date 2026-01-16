@@ -336,6 +336,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                                     generateImageAI({
                                         name: values.name,
                                         description: values.description || values.name, // Use name as fallback if no description
+                                        isEdible: values.isEdible, // Pass isEdible to generate appropriate image type
                                     });
                                 }}
                                 variant="light"
