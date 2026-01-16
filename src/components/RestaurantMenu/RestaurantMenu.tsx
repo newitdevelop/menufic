@@ -297,24 +297,6 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         }
     }, [menuIdFromQuery]);
 
-    // Clear categoryId from URL if it doesn't belong to the current menu
-    useEffect(() => {
-        if (categoryIdFromQuery && menuDetails) {
-            const categoryBelongsToMenu = menuDetails.categories?.some(
-                (cat) => cat.id === categoryIdFromQuery
-            );
-            if (!categoryBelongsToMenu) {
-                const currentQuery = { ...router.query };
-                delete currentQuery.categoryId;
-                router.replace(
-                    { pathname: router.pathname, query: currentQuery },
-                    undefined,
-                    { shallow: true }
-                );
-            }
-        }
-    }, [categoryIdFromQuery, menuDetails, router]);
-
     // Keyboard shortcuts for language switching (Smart TV remote control)
     useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
@@ -352,6 +334,24 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         () => sortedMenus?.find((item) => item.id === selectedMenu),
         [selectedMenu, sortedMenus]
     );
+
+    // Clear categoryId from URL if it doesn't belong to the current menu
+    useEffect(() => {
+        if (categoryIdFromQuery && menuDetails) {
+            const categoryBelongsToMenu = menuDetails.categories?.some(
+                (cat) => cat.id === categoryIdFromQuery
+            );
+            if (!categoryBelongsToMenu) {
+                const currentQuery = { ...router.query };
+                delete currentQuery.categoryId;
+                router.replace(
+                    { pathname: router.pathname, query: currentQuery },
+                    undefined,
+                    { shallow: true }
+                );
+            }
+        }
+    }, [categoryIdFromQuery, menuDetails, router]);
 
     const images: Image[] = useMemo(() => {
         const now = new Date();
