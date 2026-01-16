@@ -158,11 +158,12 @@ export const menuRouter = createTRPCRouter({
             where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
         });
 
-        // Check if any translatable field changed
+        // Check if any translatable field changed OR isActive changed (affects public visibility)
         const shouldInvalidate =
             input.name !== currentMenu.name ||
             input.availableTime !== currentMenu.availableTime ||
-            input.message !== currentMenu.message;
+            input.message !== currentMenu.message ||
+            input.isActive !== currentMenu.isActive;
 
         // Calculate isActive: user's toggle AND date logic
         // If temporary menu, check if we're still within the date range
@@ -243,10 +244,10 @@ export const menuRouter = createTRPCRouter({
             shouldInvalidate ? invalidateTranslations("menu", input.id) : Promise.resolve(),
         ]);
 
-        // Revalidate the public menu page to reflect translation changes immediately
+        // Revalidate the public menu page to reflect changes immediately (translations or visibility)
         if (shouldInvalidate && currentMenu.restaurant?.id) {
             const restaurantId = currentMenu.restaurant.id;
-            console.log(`[Menu Update] Revalidating /venue/${restaurantId}/menu due to translatable field change`);
+            console.log(`[Menu Update] Revalidating /venue/${restaurantId}/menu due to menu content/visibility change`);
             await ctx.res?.revalidate(`/venue/${restaurantId}/menu`);
         }
 

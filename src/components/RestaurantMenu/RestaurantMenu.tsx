@@ -268,12 +268,52 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         );
     };
 
+    // Handle menu tab change - clear categoryId and packId from URL when switching menus
+    const handleMenuChange = (menuId: string | null) => {
+        setSelectedMenu(menuId);
+
+        // If URL has categoryId or packId, clear them when switching menus
+        // (they belong to a different menu and would cause empty display)
+        if (categoryIdFromQuery || packIdFromQuery || menuIdFromQuery) {
+            const currentQuery = { ...router.query };
+            delete currentQuery.categoryId;
+            delete currentQuery.packId;
+            delete currentQuery.menuId;
+            router.replace(
+                {
+                    pathname: router.pathname,
+                    query: currentQuery,
+                },
+                undefined,
+                { shallow: true }
+            );
+        }
+    };
+
     // Update selected menu when menuId query parameter changes
     useEffect(() => {
         if (menuIdFromQuery && menuIdFromQuery !== selectedMenu) {
             setSelectedMenu(menuIdFromQuery);
         }
     }, [menuIdFromQuery]);
+
+    // Clear categoryId from URL if it doesn't belong to the current menu
+    useEffect(() => {
+        if (categoryIdFromQuery && menuDetails) {
+            const categoryBelongsToMenu = menuDetails.categories?.some(
+                (cat) => cat.id === categoryIdFromQuery
+            );
+            if (!categoryBelongsToMenu) {
+                const currentQuery = { ...router.query };
+                delete currentQuery.categoryId;
+                router.replace(
+                    { pathname: router.pathname, query: currentQuery },
+                    undefined,
+                    { shallow: true }
+                );
+            }
+        }
+    }, [categoryIdFromQuery, menuDetails, router]);
 
     // Keyboard shortcuts for language switching (Smart TV remote control)
     useEffect(() => {
@@ -499,7 +539,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     )}
                 </Stack>
             </MediaQuery>
-            <Tabs my={40} onTabChange={setSelectedMenu} value={selectedMenu}>
+            <Tabs my={40} onTabChange={handleMenuChange} value={selectedMenu}>
                 <Tabs.List className="no-print">
                     {sortedMenus?.map((menu) => (
                         <Tabs.Tab
