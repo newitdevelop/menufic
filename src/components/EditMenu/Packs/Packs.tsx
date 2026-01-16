@@ -19,10 +19,12 @@ import { PackForm } from "../../Forms/PackForm";
 interface Props {
     /** Id of the menu to which the packs belong to */
     menuId: string;
+    /** Id of the restaurant */
+    restaurantId: string;
 }
 
 /** Draggable list of pack items with add, edit and delete options */
-export const Packs: FC<Props> = ({ menuId }) => {
+export const Packs: FC<Props> = ({ menuId, restaurantId }) => {
     const trpcCtx = api.useContext();
     const { classes } = useStyles();
     const [packFormOpen, setPackFormOpen] = useState(false);
@@ -96,7 +98,7 @@ export const Packs: FC<Props> = ({ menuId }) => {
                                 }}
                             >
                                 {packs.map((item: any) => (
-                                    <PackElement key={item.id} packItem={item} menuId={menuId} />
+                                    <PackElement key={item.id} packItem={item} menuId={menuId} restaurantId={restaurantId} />
                                 ))}
                                 {provided.placeholder}
                             </Box>

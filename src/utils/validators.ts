@@ -50,6 +50,7 @@ export const categoryInput = z.object({
 export const reservationTypeEnum = z.enum(["NONE", "EXTERNAL", "FORM"]);
 export const menuTypeEnum = z.enum(["INTERNAL", "EXTERNAL"]);
 export const contactPreferenceEnum = z.enum(["PHONE", "WHATSAPP", "EMAIL"]);
+export const menuScheduleType = z.enum(["ALWAYS", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "PERIOD"]);
 
 export const reservationSubmissionInput = z.object({
     menuId: z.string(),
@@ -106,6 +107,16 @@ export const menuInput = z.object({
         .optional()
         .transform((val) => (val === "" ? undefined : val))
         .pipe(z.string().url("Invalid external URL").optional()),
+    // Schedule fields (for repeating menus)
+    scheduleType: menuScheduleType.default("ALWAYS"),
+    dailyStartTime: z.string().nullable().optional(),
+    dailyEndTime: z.string().nullable().optional(),
+    weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
+    monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
+    yearlyStartDate: z.string().nullable().optional(), // MM-DD format
+    yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
+    periodStartDate: z.date().nullable().optional(),
+    periodEndDate: z.date().nullable().optional(),
     // New reservation system fields
     reservationType: reservationTypeEnum.default("NONE"),
     reservationUrl: z

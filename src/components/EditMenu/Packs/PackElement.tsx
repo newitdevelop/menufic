@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { Box, Center, Text } from "@mantine/core";
-import { IconGripVertical } from "@tabler/icons";
+import { ActionIcon, Box, Center, Text } from "@mantine/core";
+import { IconGripVertical, IconPrinter } from "@tabler/icons";
 import { useTranslations } from "next-intl";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -15,22 +15,31 @@ import { useStyles } from "./styles";
 import { DeleteConfirmModal } from "../../DeleteConfirmModal";
 import { EditDeleteOptions } from "../../EditDeleteOptions";
 import { PackForm } from "../../Forms/PackForm";
+import { PrintLanguageModal } from "../../PrintLanguageModal";
 
 interface Props {
     /** Pack which will be represented by the component */
     packItem: Pack & { sections: PackSection[] };
     /** Id of the menu to which the pack belongs to */
     menuId: string;
+    /** Id of the restaurant */
+    restaurantId: string;
 }
 
 /** Individual pack component with an option to edit or delete */
-export const PackElement: FC<Props> = ({ packItem, menuId }) => {
+export const PackElement: FC<Props> = ({ packItem, menuId, restaurantId }) => {
     const trpcCtx = api.useContext();
     const { classes, cx, theme } = useStyles();
     const [deletePackModalOpen, setDeletePackModalOpen] = useState(false);
     const [packFormOpen, setPackFormOpen] = useState(false);
+    const [printLanguageModalOpen, setPrintLanguageModalOpen] = useState(false);
     const t = useTranslations("dashboard.editMenu.pack");
     const tCommon = useTranslations("common");
+
+    const handlePrint = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        setPrintLanguageModalOpen(true);
+    };
 
     const { mutate: deletePack, isLoading: isDeleting } = (api.pack as any).delete.useMutation({
         onError: (err: unknown) => showErrorToast(t("deletePackError"), err as { message: string }),
@@ -64,6 +73,15 @@ export const PackElement: FC<Props> = ({ packItem, menuId }) => {
                                 {packItem.price} {packItem.currency} • {packItem.sections?.length || 0} {t("sectionsCount")}
                             </Text>
                         </Box>
+                        <ActionIcon
+                            onClick={handlePrint}
+                            size="lg"
+                            variant="subtle"
+                            title="Print Pack"
+                            sx={{ marginRight: 8 }}
+                        >
+                            <IconPrinter size={18} />
+                        </ActionIcon>
                         <EditDeleteOptions
                             onDeleteClick={() => setDeletePackModalOpen(true)}
                             onEditClick={() => setPackFormOpen(true)}
@@ -84,6 +102,13 @@ export const PackElement: FC<Props> = ({ packItem, menuId }) => {
                 onDelete={() => deletePack({ id: packItem?.id })}
                 opened={deletePackModalOpen}
                 title={t("deleteConfirmTitle", { name: packItem.name })}
+            />
+            <PrintLanguageModal
+                menuId={menuId}
+                packId={packItem.id}
+                onClose={() => setPrintLanguageModalOpen(false)}
+                opened={printLanguageModalOpen}
+                restaurantId={restaurantId}
             />
         </>
     );

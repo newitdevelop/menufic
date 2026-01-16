@@ -193,6 +193,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const language = (router.query?.lang as string) || "PT";
     const menuIdFromQuery = router.query?.menuId as string | undefined;
     const categoryIdFromQuery = router.query?.categoryId as string | undefined;
+    const packIdFromQuery = router.query?.packId as string | undefined;
 
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
     // If menuId is provided in query params, use that instead
@@ -633,7 +634,25 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     </Box>
                 )}
 
-                {(menuDetails as any)?.packs?.map((pack: any) => (
+                {/* Print-only header for pack name */}
+                {packIdFromQuery && (
+                    <Box className="print-only" sx={{ display: "none", marginBottom: "1.5rem" }}>
+                        <Text size="xl" weight={700} translate="no">
+                            {(menuDetails as any)?.packs?.find((pack: any) => pack.id === packIdFromQuery)?.name}
+                        </Text>
+                    </Box>
+                )}
+
+                {/* Hide packs when printing a specific category */}
+                {!categoryIdFromQuery && (menuDetails as any)?.packs
+                    ?.filter((pack: any) => {
+                        // Filter by pack ID if provided in query params (for printing)
+                        if (packIdFromQuery) {
+                            return pack.id === packIdFromQuery;
+                        }
+                        return true;
+                    })
+                    ?.map((pack: any) => (
                     <Box key={pack.id} mb={40}>
                         <PackCard pack={pack} isFestive={(menuDetails as any)?.isFestive} />
                         <PackAllergenTable
@@ -643,7 +662,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         />
                     </Box>
                 ))}
-                {menuDetails?.categories
+                {/* Hide categories when printing a specific pack */}
+                {!packIdFromQuery && menuDetails?.categories
                     ?.filter((category) => {
                         // Filter by category ID if provided in query params
                         if (categoryIdFromQuery) {

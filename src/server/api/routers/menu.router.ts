@@ -76,6 +76,16 @@ export const menuRouter = createTRPCRouter({
                 // Menu type fields
                 menuType: input.menuType ?? "EXTERNAL",
                 externalUrl: input.externalUrl ?? null,
+                // Schedule fields
+                scheduleType: input.scheduleType ?? "ALWAYS",
+                dailyStartTime: input.dailyStartTime ?? null,
+                dailyEndTime: input.dailyEndTime ?? null,
+                weeklyDays: input.weeklyDays ?? [],
+                monthlyDays: input.monthlyDays ?? [],
+                yearlyStartDate: input.yearlyStartDate ?? null,
+                yearlyEndDate: input.yearlyEndDate ?? null,
+                periodStartDate: input.periodStartDate ?? null,
+                periodEndDate: input.periodEndDate ?? null,
                 // New reservation system fields
                 reservationType: input.reservationType ?? "NONE",
                 reservationUrl: input.reservationUrl ?? null,
@@ -192,6 +202,16 @@ export const menuRouter = createTRPCRouter({
                     // Menu type fields
                     menuType: input.menuType ?? "EXTERNAL",
                     externalUrl: input.externalUrl ?? null,
+                    // Schedule fields
+                    scheduleType: input.scheduleType ?? "ALWAYS",
+                    dailyStartTime: input.dailyStartTime ?? null,
+                    dailyEndTime: input.dailyEndTime ?? null,
+                    weeklyDays: input.weeklyDays ?? [],
+                    monthlyDays: input.monthlyDays ?? [],
+                    yearlyStartDate: input.yearlyStartDate ?? null,
+                    yearlyEndDate: input.yearlyEndDate ?? null,
+                    periodStartDate: input.periodStartDate ?? null,
+                    periodEndDate: input.periodEndDate ?? null,
                     // New reservation system fields
                     reservationType: input.reservationType ?? "NONE",
                     reservationUrl: input.reservationUrl ?? null,

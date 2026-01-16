@@ -89,7 +89,7 @@ const EditMenuPage: NextPage = () => {
                                                 </Tabs.Panel>
 
                                                 <Tabs.Panel value="packs" pt="md">
-                                                    <Packs menuId={selectedMenu?.id} />
+                                                    <Packs menuId={selectedMenu?.id} restaurantId={restaurantId} />
                                                 </Tabs.Panel>
                                             </Tabs>
                                         </Grid.Col>

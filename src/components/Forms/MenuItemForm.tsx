@@ -71,7 +71,20 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
 
     // AI allergen detection mutation
     const { mutate: detectAllergensAI, isLoading: isDetectingAllergens } = api.menuItem.detectAllergensAI.useMutation({
-        onError: (err: unknown) => showErrorToast(t("aiDetectionError"), err as { message: string }),
+        onError: (err: unknown) => {
+            const error = err as { message: string };
+            // Check if it's a server error that was retried
+            const isServerError = error?.message?.includes('500') ||
+                                  error?.message?.includes('server_error') ||
+                                  error?.message?.includes('after') ||
+                                  error?.message?.includes('attempts');
+
+            const errorMessage = isServerError
+                ? "OpenAI service is temporarily unavailable. Please try again in a few minutes, or select allergens manually."
+                : error?.message || "Failed to detect allergens";
+
+            showErrorToast(t("aiDetectionError"), { message: errorMessage });
+        },
         onSuccess: (data: any) => {
             setValues({ allergens: data.allergens });
             showSuccessToast(t("aiDetectionSuccess"), t("aiDetectionSuccess"));
@@ -80,7 +93,20 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
 
     // AI image generation mutation
     const { mutate: generateImageAI, isLoading: isGeneratingImage } = api.menuItem.generateImageAI.useMutation({
-        onError: (err: unknown) => showErrorToast(t("aiImageGenerationError"), err as { message: string }),
+        onError: (err: unknown) => {
+            const error = err as { message: string };
+            // Check if it's a server error that was retried
+            const isServerError = error?.message?.includes('500') ||
+                                  error?.message?.includes('server_error') ||
+                                  error?.message?.includes('after') ||
+                                  error?.message?.includes('attempts');
+
+            const errorMessage = isServerError
+                ? "OpenAI service is temporarily unavailable. Please try again in a few minutes."
+                : error?.message || "Failed to generate image";
+
+            showErrorToast(t("aiImageGenerationError"), { message: errorMessage });
+        },
         onSuccess: async (data: any) => {
             try {
                 // Backend returns base64 data URL - convert to blob for compression
@@ -294,7 +320,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                             onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "", isAiGeneratedImage: false })}
                             width={400}
                         />
-                        {isImageAIAvailable && values.name && values.description && (
+                        {isImageAIAvailable && values.name && (
                             <Button
                                 compact
                                 disabled={loading || isGeneratingImage}
@@ -309,7 +335,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                                     }
                                     generateImageAI({
                                         name: values.name,
-                                        description: values.description,
+                                        description: values.description || values.name, // Use name as fallback if no description
                                     });
                                 }}
                                 variant="light"

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { ActionIcon, Button, Checkbox, Group, Stack, Textarea, Text, TextInput, useMantineTheme, Select, NumberInput, Divider } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Chip, Group, MultiSelect, Stack, Textarea, Text, TextInput, useMantineTheme, Select, NumberInput, Divider } from "@mantine/core";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons";
@@ -111,6 +111,16 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             // Menu type fields
             menuType: (menuItem as any)?.menuType || "EXTERNAL",
             externalUrl: (menuItem as any)?.externalUrl || "",
+            // Schedule fields
+            scheduleType: (menuItem as any)?.scheduleType || "ALWAYS",
+            dailyStartTime: (menuItem as any)?.dailyStartTime || null,
+            dailyEndTime: (menuItem as any)?.dailyEndTime || null,
+            weeklyDays: (menuItem as any)?.weeklyDays || [],
+            monthlyDays: (menuItem as any)?.monthlyDays || [],
+            yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
+            yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
+            periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : null,
+            periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : null,
             // New reservation system fields
             reservationType: (menuItem as any)?.reservationType || "NONE",
             reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -141,6 +151,16 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 // Menu type fields
                 menuType: (menuItem as any)?.menuType || "EXTERNAL",
                 externalUrl: (menuItem as any)?.externalUrl || "",
+                // Schedule fields
+                scheduleType: (menuItem as any)?.scheduleType || "ALWAYS",
+                dailyStartTime: (menuItem as any)?.dailyStartTime || null,
+                dailyEndTime: (menuItem as any)?.dailyEndTime || null,
+                weeklyDays: (menuItem as any)?.weeklyDays || [],
+                monthlyDays: (menuItem as any)?.monthlyDays || [],
+                yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
+                yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
+                periodStartDate: (menuItem as any)?.periodStartDate ? new Date((menuItem as any).periodStartDate) : null,
+                periodEndDate: (menuItem as any)?.periodEndDate ? new Date((menuItem as any).periodEndDate) : null,
                 // New reservation system fields
                 reservationType: (menuItem as any)?.reservationType || "NONE",
                 reservationUrl: (menuItem as any)?.reservationUrl || "",
@@ -420,6 +440,187 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                             />
                         </>
                     )}
+
+                    <Divider my="md" label="Display Schedule" labelPosition="center" />
+
+                    <Select
+                        disabled={loading}
+                        label="Display Schedule"
+                        description="Choose when this menu should be displayed"
+                        data={[
+                            { value: "ALWAYS", label: "Always Display" },
+                            { value: "DAILY", label: "Daily (specific time range)" },
+                            { value: "WEEKLY", label: "Weekly (specific days)" },
+                            { value: "MONTHLY", label: "Monthly (specific days)" },
+                            { value: "YEARLY", label: "Yearly (seasonal/annual period)" },
+                            { value: "PERIOD", label: "Specific Period (date range)" },
+                        ]}
+                        {...getInputProps("scheduleType")}
+                    />
+
+                    {values.scheduleType === "DAILY" && (
+                        <Group grow mt="sm">
+                            <TimeInput
+                                label="Start Time"
+                                description="Menu starts displaying at this time each day"
+                                disabled={loading}
+                                format="24"
+                                value={values.dailyStartTime ? new Date(`2000-01-01T${values.dailyStartTime}`) : undefined}
+                                onChange={(date) => {
+                                    if (date) {
+                                        const hours = String(date.getHours()).padStart(2, "0");
+                                        const minutes = String(date.getMinutes()).padStart(2, "0");
+                                        setFieldValue("dailyStartTime", `${hours}:${minutes}`);
+                                    } else {
+                                        setFieldValue("dailyStartTime", null);
+                                    }
+                                }}
+                            />
+                            <TimeInput
+                                label="End Time"
+                                description="Menu stops displaying at this time each day"
+                                disabled={loading}
+                                format="24"
+                                value={values.dailyEndTime ? new Date(`2000-01-01T${values.dailyEndTime}`) : undefined}
+                                onChange={(date) => {
+                                    if (date) {
+                                        const hours = String(date.getHours()).padStart(2, "0");
+                                        const minutes = String(date.getMinutes()).padStart(2, "0");
+                                        setFieldValue("dailyEndTime", `${hours}:${minutes}`);
+                                    } else {
+                                        setFieldValue("dailyEndTime", null);
+                                    }
+                                }}
+                            />
+                        </Group>
+                    )}
+
+                    {values.scheduleType === "WEEKLY" && (
+                        <>
+                            <Text size="sm" weight={500} mt="sm">Select Days of Week</Text>
+                            <Chip.Group
+                                multiple
+                                value={values.weeklyDays.map(String)}
+                                onChange={(selected) => {
+                                    setFieldValue("weeklyDays", selected.map(Number));
+                                }}
+                            >
+                                <Group mt="xs">
+                                    <Chip value="0">Sunday</Chip>
+                                    <Chip value="1">Monday</Chip>
+                                    <Chip value="2">Tuesday</Chip>
+                                    <Chip value="3">Wednesday</Chip>
+                                    <Chip value="4">Thursday</Chip>
+                                    <Chip value="5">Friday</Chip>
+                                    <Chip value="6">Saturday</Chip>
+                                </Group>
+                            </Chip.Group>
+                        </>
+                    )}
+
+                    {values.scheduleType === "MONTHLY" && (
+                        <MultiSelect
+                            label="Days of Month"
+                            description="Select which days of the month to display menu"
+                            placeholder="Select days (1-31)"
+                            data={Array.from({ length: 31 }, (_, i) => ({
+                                value: String(i + 1),
+                                label: String(i + 1),
+                            }))}
+                            searchable
+                            disabled={loading}
+                            mt="sm"
+                            value={values.monthlyDays.map(String)}
+                            onChange={(selected) => {
+                                setFieldValue("monthlyDays", selected.map(Number));
+                            }}
+                        />
+                    )}
+
+                    {values.scheduleType === "YEARLY" && (
+                        <Group grow mt="sm">
+                            <Stack spacing={4}>
+                                <Text size="sm" weight={500}>Start Date (Annual)</Text>
+                                <Text size="xs" color="dimmed">Menu starts displaying from this date every year</Text>
+                                <DatePicker
+                                    disabled={loading}
+                                    value={
+                                        values.yearlyStartDate
+                                            ? (() => {
+                                                try {
+                                                    const parts = values.yearlyStartDate.split("-");
+                                                    const month = parseInt(parts[0]) - 1;
+                                                    const day = parseInt(parts[1]);
+                                                    return new Date(new Date().getFullYear(), month, day);
+                                                } catch {
+                                                    return null;
+                                                }
+                                            })()
+                                            : null
+                                    }
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                                            const day = String(date.getDate()).padStart(2, "0");
+                                            setFieldValue("yearlyStartDate", `${month}-${day}`);
+                                        } else {
+                                            setFieldValue("yearlyStartDate", null);
+                                        }
+                                    }}
+                                />
+                            </Stack>
+                            <Stack spacing={4}>
+                                <Text size="sm" weight={500}>End Date (Annual)</Text>
+                                <Text size="xs" color="dimmed">Menu stops displaying after this date every year</Text>
+                                <DatePicker
+                                    disabled={loading}
+                                    value={
+                                        values.yearlyEndDate
+                                            ? (() => {
+                                                try {
+                                                    const parts = values.yearlyEndDate.split("-");
+                                                    const month = parseInt(parts[0]) - 1;
+                                                    const day = parseInt(parts[1]);
+                                                    return new Date(new Date().getFullYear(), month, day);
+                                                } catch {
+                                                    return null;
+                                                }
+                                            })()
+                                            : null
+                                    }
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                                            const day = String(date.getDate()).padStart(2, "0");
+                                            setFieldValue("yearlyEndDate", `${month}-${day}`);
+                                        } else {
+                                            setFieldValue("yearlyEndDate", null);
+                                        }
+                                    }}
+                                />
+                            </Stack>
+                        </Group>
+                    )}
+
+                    {values.scheduleType === "PERIOD" && (
+                        <Group grow mt="sm">
+                            <DatePicker
+                                label="Period Start Date"
+                                description="Menu starts displaying from this date"
+                                disabled={loading}
+                                clearable
+                                {...getInputProps("periodStartDate")}
+                            />
+                            <DatePicker
+                                label="Period End Date"
+                                description="Menu stops displaying after this date"
+                                disabled={loading}
+                                clearable
+                                {...getInputProps("periodEndDate")}
+                            />
+                        </Group>
+                    )}
+
                     <Checkbox
                         disabled={loading}
                         label={t("isActiveLabel")}

@@ -52,35 +52,45 @@ enum ContactPreference {
 }
 
 model Menu {
-    id                      String           @unique @default(cuid())
+    id                      String              @unique @default(cuid())
     userId                  String
-    createdAt               DateTime         @default(now())
-    updatedAt               DateTime         @updatedAt
+    createdAt               DateTime            @default(now())
+    updatedAt               DateTime            @updatedAt
     name                    String
     availableTime           String
     telephone               String?
     email                   String?
-    reservations            String?          // URL for external reservations (deprecated, use reservationType)
+    reservations            String?             // URL for external reservations (deprecated, use reservationType)
     message                 String?
     position                Int
-    isTemporary             Boolean          @default(false) // Whether this is a temporary menu
-    startDate               DateTime?        // Start date for temporary menus
-    endDate                 DateTime?        // End date for temporary menus (menu becomes disabled after this)
-    isFestive               Boolean          @default(false) // Whether this is a festive/special menu (highlighted with emoji)
-    isActive                Boolean          @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
-    menuType                MenuType         @default(EXTERNAL) // Whether menu is internal or external (defaults to EXTERNAL)
-    externalUrl             String?          // External URL (when menuType = EXTERNAL)
+    isTemporary             Boolean             @default(false) // Whether this is a temporary menu
+    startDate               DateTime?           // Start date for temporary menus
+    endDate                 DateTime?           // End date for temporary menus (menu becomes disabled after this)
+    isFestive               Boolean             @default(false) // Whether this is a festive/special menu (highlighted with emoji)
+    isActive                Boolean             @default(true)  // Whether menu is currently active (auto-disabled when past endDate)
+    menuType                MenuType            @default(EXTERNAL) // Whether menu is internal or external (defaults to EXTERNAL)
+    externalUrl             String?             // External URL (when menuType = EXTERNAL)
+    // Schedule fields (for repeating menus)
+    scheduleType            BannerScheduleType  @default(ALWAYS) // When to display the menu
+    dailyStartTime          String?             // Start time for daily display (HH:mm)
+    dailyEndTime            String?             // End time for daily display (HH:mm)
+    weeklyDays              Int[]               @default([]) // Days of week to display (0=Sunday, 6=Saturday)
+    monthlyDays             Int[]               @default([]) // Days of month to display (1-31)
+    yearlyStartDate         String?             // Start date for yearly display (MM-DD)
+    yearlyEndDate           String?             // End date for yearly display (MM-DD)
+    periodStartDate         DateTime?           // Start date for period display
+    periodEndDate           DateTime?           // End date for period display
     // New reservation system fields
-    reservationType         ReservationType  @default(NONE) // Type of reservation system
-    reservationUrl          String?          // External reservation URL (when reservationType = EXTERNAL)
-    reservationEmail        String?          // Email to send reservation requests (when reservationType = FORM)
-    reservationStartTime    String?          // Start time for reservations (e.g., "10:00")
-    reservationEndTime      String?          // End time for reservations (e.g., "22:00")
-    reservationMaxPartySize Int?             // Maximum party size allowed
-    reservationSlotDuration Int?             @default(30) // Duration of each reservation slot in minutes
-    categories              Category[]       @relation("CategoriesOfMenu")
-    packs                   Pack[]           @relation("PacksOfMenu")
-    restaurant              Restaurant?      @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
+    reservationType         ReservationType     @default(NONE) // Type of reservation system
+    reservationUrl          String?             // External reservation URL (when reservationType = EXTERNAL)
+    reservationEmail        String?             // Email to send reservation requests (when reservationType = FORM)
+    reservationStartTime    String?             // Start time for reservations (e.g., "10:00")
+    reservationEndTime      String?             // End time for reservations (e.g., "22:00")
+    reservationMaxPartySize Int?                // Maximum party size allowed
+    reservationSlotDuration Int?                @default(30) // Duration of each reservation slot in minutes
+    categories              Category[]          @relation("CategoriesOfMenu")
+    packs                   Pack[]              @relation("PacksOfMenu")
+    restaurant              Restaurant?         @relation("MenusOfRestaurant", fields: [restaurantId], references: [id])
     restaurantId            String?
 
     @@id([id, userId])
