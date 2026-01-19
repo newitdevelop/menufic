@@ -655,11 +655,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 const isServiceMenu = nonEdibleItems.length > 0 && nonEdibleItems.length === allItems.length;
 
                 // Extract services for the service menu
+                // Convert price to number since Prisma Decimal is serialized as string
                 const services = isServiceMenu
                     ? nonEdibleItems.map((item: any) => ({
                         id: item.id,
                         name: item.name,
-                        price: item.price,
+                        price: item.price != null ? Number(item.price) : null,
                         description: item.description,
                     }))
                     : [];
