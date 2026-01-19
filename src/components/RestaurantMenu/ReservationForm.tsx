@@ -345,21 +345,53 @@ export const ReservationForm: FC<Props> = ({
                     </Text>
                 </Stack>
             }
-            size="lg"
+            size="xl"
             centered
+            styles={{
+                modal: {
+                    maxWidth: '600px',
+                },
+            }}
         >
             <form
                 onSubmit={onSubmit(handleSubmit, (errors) => {
                     console.error("Form validation errors:", errors);
                 })}
             >
-                <Stepper active={activeStep} onStepClick={setActiveStep} breakpoint="sm">
+                <Stepper
+                    active={activeStep}
+                    onStepClick={setActiveStep}
+                    breakpoint="xs"
+                    size="sm"
+                    styles={(theme) => ({
+                        stepLabel: {
+                            fontSize: '0.75rem',
+                        },
+                        stepDescription: {
+                            display: 'none',
+                        },
+                        step: {
+                            padding: '4px',
+                            minWidth: 'auto',
+                        },
+                        stepBody: {
+                            marginLeft: '6px',
+                        },
+                        separator: {
+                            marginLeft: '4px',
+                            marginRight: '4px',
+                            minWidth: '20px',
+                        },
+                        steps: {
+                            flexWrap: 'nowrap',
+                        },
+                    })}
+                >
                     {/* Step 0 (Service Menus Only): Service Selection (Multiple) */}
                     {isServiceMenu && (
                         <Stepper.Step
-                            icon={<IconBriefcase size={18} />}
-                            label={t.servicesLabel || t.serviceLabel || "Services"}
-                            description={t.servicesDescription || t.serviceDescription || "Select services"}
+                            icon={<IconBriefcase size={16} />}
+                            label={t.servicesLabel || "Services"}
                             allowStepSelect={activeStep > 0}
                         >
                             <Stack spacing="md" my="lg">
@@ -444,9 +476,8 @@ export const ReservationForm: FC<Props> = ({
 
                     {/* Date Selection */}
                     <Stepper.Step
-                        icon={<IconCalendar size={18} />}
+                        icon={<IconCalendar size={16} />}
                         label={t.dateLabel}
-                        description={t.dateDescription}
                         allowStepSelect={activeStep > (isServiceMenu ? 1 : 0)}
                     >
                         <Stack spacing="md" my="lg">
@@ -471,9 +502,8 @@ export const ReservationForm: FC<Props> = ({
 
                     {/* Time Selection */}
                     <Stepper.Step
-                        icon={<IconClock size={18} />}
+                        icon={<IconClock size={16} />}
                         label={t.timeLabel}
-                        description={t.timeDescription}
                         allowStepSelect={activeStep > (isServiceMenu ? 2 : 1)}
                     >
                         <Stack spacing="md" my="lg">
@@ -525,9 +555,8 @@ export const ReservationForm: FC<Props> = ({
 
                     {/* Party Size */}
                     <Stepper.Step
-                        icon={<IconUsers size={18} />}
+                        icon={<IconUsers size={16} />}
                         label={t.guestsLabel}
-                        description={t.guestsDescription}
                         allowStepSelect={activeStep > (isServiceMenu ? 3 : 2)}
                     >
                         <Stack spacing="md" my="lg">
@@ -581,9 +610,8 @@ export const ReservationForm: FC<Props> = ({
 
                     {/* Contact Info */}
                     <Stepper.Step
-                        icon={<IconPhone size={18} />}
+                        icon={<IconPhone size={16} />}
                         label={t.contactLabel}
-                        description={t.contactDescription}
                         allowStepSelect={activeStep > (isServiceMenu ? 4 : 3)}
                     >
                         <Stack spacing="md" my="lg">
