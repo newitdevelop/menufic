@@ -1,10 +1,10 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { Button, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme, Select } from "@mantine/core";
+import { Button, Checkbox, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme, Select } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
-import { IconCalendar, IconClock, IconMail, IconUsers, IconPhone } from "@tabler/icons";
+import { IconCalendar, IconClock, IconUsers, IconPhone, IconBriefcase, IconCheck } from "@tabler/icons";
 import { z } from "zod";
 
 import { api } from "src/utils/api";
@@ -12,6 +12,13 @@ import { showErrorToast, showSuccessToast } from "src/utils/helpers";
 
 interface ReservationTranslations {
     title: string;
+    titleService?: string;
+    serviceLabel?: string;
+    serviceDescription?: string;
+    servicePrompt?: string;
+    servicesLabel?: string;
+    servicesDescription?: string;
+    servicesPrompt?: string;
     dateLabel: string;
     dateDescription: string;
     datePrompt: string;
@@ -35,14 +42,26 @@ interface ReservationTranslations {
     contactPreferenceWhatsApp: string;
     contactPreferenceEmail: string;
     summaryTitle: string;
+    summaryService?: string;
+    summaryServices?: string;
     person: string;
     people: string;
     backButton: string;
     nextButton: string;
     confirmButton: string;
+    confirmButtonService?: string;
     successTitle: string;
+    successTitleService?: string;
     successMessage: string;
+    successMessageService?: string;
     errorTitle: string;
+}
+
+interface ServiceItem {
+    id: string;
+    name: string;
+    price?: number | null;
+    description?: string | null;
 }
 
 interface Props {
@@ -58,12 +77,21 @@ interface Props {
     translations?: ReservationTranslations;
     opened: boolean;
     onClose: () => void;
+    isServiceMenu?: boolean; // If true, shows service selection step (for non-edible menus)
+    services?: ServiceItem[]; // List of services/items to choose from (for non-edible menus)
 }
 
-/** 4-step reservation form similar to TheFork */
+/** Multi-step reservation form similar to TheFork */
 // Default English translations as fallback
 const DEFAULT_TRANSLATIONS: ReservationTranslations = {
     title: "Reserve a Table",
+    titleService: "Book a Service",
+    serviceLabel: "Service",
+    serviceDescription: "Select service",
+    servicePrompt: "Select a service to book",
+    servicesLabel: "Services",
+    servicesDescription: "Select services",
+    servicesPrompt: "Select one or more services to book",
     dateLabel: "Date",
     dateDescription: "Select date",
     datePrompt: "Select a date",
@@ -87,13 +115,18 @@ const DEFAULT_TRANSLATIONS: ReservationTranslations = {
     contactPreferenceWhatsApp: "WhatsApp",
     contactPreferenceEmail: "Email",
     summaryTitle: "Reservation Summary:",
+    summaryService: "Service:",
+    summaryServices: "Services:",
     person: "person",
     people: "people",
     backButton: "Back",
     nextButton: "Next",
     confirmButton: "Confirm Reservation",
+    confirmButtonService: "Confirm Booking",
     successTitle: "Reservation Sent",
+    successTitleService: "Booking Sent",
     successMessage: "Your reservation request has been sent successfully!",
+    successMessageService: "Your service booking request has been sent successfully!",
     errorTitle: "Reservation Error",
 };
 
@@ -110,10 +143,17 @@ export const ReservationForm: FC<Props> = ({
     translations,
     opened,
     onClose,
+    isServiceMenu = false,
+    services = [],
 }) => {
     const theme = useMantineTheme();
     const t = translations || DEFAULT_TRANSLATIONS;
     const [activeStep, setActiveStep] = useState(0);
+
+    // For service menus, we have 5 steps (service selection + 4 original steps)
+    // For regular menus, we have 4 steps
+    const totalSteps = isServiceMenu ? 5 : 4;
+    const lastStep = totalSteps - 1;
 
     // Generate available time slots based on start and end times
     const generateTimeSlots = (): string[] => {
@@ -175,6 +215,7 @@ export const ReservationForm: FC<Props> = ({
 
     const { getInputProps, onSubmit, values, setFieldValue, reset } = useForm({
         initialValues: {
+            selectedServices: [] as { id: string; name: string; price?: number | null }[],
             date: null as Date | null,
             time: "",
             partySize: 2,
@@ -184,6 +225,9 @@ export const ReservationForm: FC<Props> = ({
         },
         validate: zodResolver(
             z.object({
+                selectedServices: isServiceMenu
+                    ? z.array(z.object({ id: z.string(), name: z.string(), price: z.number().nullable().optional() })).min(1, "Please select at least one service")
+                    : z.array(z.any()).optional(),
                 date: z.date({ required_error: "Please select a date" }),
                 time: z.string().min(1, "Please select a time"),
                 partySize: z.number().int().min(1, "At least 1 person").max(maxPartySize, `Maximum ${maxPartySize} people`),
@@ -197,7 +241,9 @@ export const ReservationForm: FC<Props> = ({
     const { mutate: submitReservation, isLoading } = (api.reservation as any).submit.useMutation({
         onError: (err: unknown) => showErrorToast(t.errorTitle, err as { message: string }),
         onSuccess: () => {
-            showSuccessToast(t.successTitle, t.successMessage);
+            const successTitle = isServiceMenu ? (t.successTitleService || t.successTitle) : t.successTitle;
+            const successMessage = isServiceMenu ? (t.successMessageService || t.successMessage) : t.successMessage;
+            showSuccessToast(successTitle, successMessage);
             reset();
             setActiveStep(0);
             onClose();
@@ -205,7 +251,7 @@ export const ReservationForm: FC<Props> = ({
     });
 
     const handleNext = () => {
-        if (activeStep < 3) {
+        if (activeStep < lastStep) {
             setActiveStep(activeStep + 1);
         }
     };
@@ -218,9 +264,16 @@ export const ReservationForm: FC<Props> = ({
 
     const handleSubmit = () => {
         if (!values.date || !values.time) return;
+        if (isServiceMenu && values.selectedServices.length === 0) return;
+
+        // For service menus, send the selected services info
+        const serviceNames = isServiceMenu && values.selectedServices.length > 0
+            ? values.selectedServices.map(s => s.name)
+            : undefined;
 
         submitReservation({
             menuId,
+            serviceNames: serviceNames, // Array of selected service names for service bookings
             date: values.date,
             time: values.time,
             partySize: values.partySize,
@@ -231,22 +284,46 @@ export const ReservationForm: FC<Props> = ({
     };
 
     const canProceed = (step: number): boolean => {
-        switch (step) {
-            case 0:
-                return values.date !== null;
-            case 1:
-                return values.time !== "";
-            case 2:
-                return values.partySize >= 1 && values.partySize <= maxPartySize;
-            case 3:
-                return (
-                    values.email !== "" &&
-                    z.string().email().safeParse(values.email).success &&
-                    values.phone !== "" &&
-                    !!values.contactPreference
-                );
-            default:
-                return false;
+        // For service menus, step 0 is service selection
+        // For regular menus, step 0 is date selection
+        if (isServiceMenu) {
+            switch (step) {
+                case 0: // Service selection (multiple)
+                    return values.selectedServices.length > 0;
+                case 1: // Date
+                    return values.date !== null;
+                case 2: // Time
+                    return values.time !== "";
+                case 3: // Party size
+                    return values.partySize >= 1 && values.partySize <= maxPartySize;
+                case 4: // Contact info
+                    return (
+                        values.email !== "" &&
+                        z.string().email().safeParse(values.email).success &&
+                        values.phone !== "" &&
+                        !!values.contactPreference
+                    );
+                default:
+                    return false;
+            }
+        } else {
+            switch (step) {
+                case 0: // Date
+                    return values.date !== null;
+                case 1: // Time
+                    return values.time !== "";
+                case 2: // Party size
+                    return values.partySize >= 1 && values.partySize <= maxPartySize;
+                case 3: // Contact info
+                    return (
+                        values.email !== "" &&
+                        z.string().email().safeParse(values.email).success &&
+                        values.phone !== "" &&
+                        !!values.contactPreference
+                    );
+                default:
+                    return false;
+            }
         }
     };
 
@@ -261,7 +338,7 @@ export const ReservationForm: FC<Props> = ({
             title={
                 <Stack spacing={4}>
                     <Text weight={600} size="lg">
-                        {t.title}
+                        {isServiceMenu ? (t.titleService || t.title) : t.title}
                     </Text>
                     <Text size="sm" color="dimmed">
                         {restaurantName} - {menuName}
@@ -277,12 +354,100 @@ export const ReservationForm: FC<Props> = ({
                 })}
             >
                 <Stepper active={activeStep} onStepClick={setActiveStep} breakpoint="sm">
-                    {/* Step 1: Date Selection */}
+                    {/* Step 0 (Service Menus Only): Service Selection (Multiple) */}
+                    {isServiceMenu && (
+                        <Stepper.Step
+                            icon={<IconBriefcase size={18} />}
+                            label={t.servicesLabel || t.serviceLabel || "Services"}
+                            description={t.servicesDescription || t.serviceDescription || "Select services"}
+                            allowStepSelect={activeStep > 0}
+                        >
+                            <Stack spacing="md" my="lg">
+                                <Text size="sm" weight={500}>
+                                    {t.servicesPrompt || t.servicePrompt || "Select one or more services to book"}
+                                </Text>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "8px",
+                                    }}
+                                >
+                                    {services.map((service) => {
+                                        const isSelected = values.selectedServices.some(s => s.id === service.id);
+                                        return (
+                                            <Paper
+                                                key={service.id}
+                                                p="md"
+                                                sx={(theme) => ({
+                                                    cursor: "pointer",
+                                                    border: `2px solid ${
+                                                        isSelected ? theme.colors.primary[6] : theme.colors.gray[3]
+                                                    }`,
+                                                    backgroundColor: isSelected ? theme.colors.primary[0] : "white",
+                                                    "&:hover": {
+                                                        borderColor: theme.colors.primary[4],
+                                                    },
+                                                })}
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        // Remove from selection
+                                                        setFieldValue(
+                                                            "selectedServices",
+                                                            values.selectedServices.filter(s => s.id !== service.id)
+                                                        );
+                                                    } else {
+                                                        // Add to selection
+                                                        setFieldValue(
+                                                            "selectedServices",
+                                                            [...values.selectedServices, { id: service.id, name: service.name, price: service.price }]
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                <Group position="apart" noWrap>
+                                                    <Group spacing="sm" noWrap style={{ flex: 1 }}>
+                                                        <Checkbox
+                                                            checked={isSelected}
+                                                            onChange={() => {}} // Handled by Paper onClick
+                                                            styles={{ input: { cursor: "pointer" } }}
+                                                        />
+                                                        <div style={{ flex: 1 }}>
+                                                            <Text size="sm" weight={isSelected ? 600 : 400}>
+                                                                {service.name}
+                                                            </Text>
+                                                            {service.description && (
+                                                                <Text size="xs" color="dimmed" lineClamp={2}>
+                                                                    {service.description}
+                                                                </Text>
+                                                            )}
+                                                        </div>
+                                                    </Group>
+                                                    {service.price != null && service.price > 0 && (
+                                                        <Text size="sm" weight={500} style={{ whiteSpace: "nowrap" }}>
+                                                            €{service.price.toFixed(2)}
+                                                        </Text>
+                                                    )}
+                                                </Group>
+                                            </Paper>
+                                        );
+                                    })}
+                                </div>
+                                {values.selectedServices.length > 0 && (
+                                    <Text size="xs" color="dimmed">
+                                        {values.selectedServices.length} service{values.selectedServices.length > 1 ? "s" : ""} selected
+                                    </Text>
+                                )}
+                            </Stack>
+                        </Stepper.Step>
+                    )}
+
+                    {/* Date Selection */}
                     <Stepper.Step
                         icon={<IconCalendar size={18} />}
                         label={t.dateLabel}
                         description={t.dateDescription}
-                        allowStepSelect={activeStep > 0}
+                        allowStepSelect={activeStep > (isServiceMenu ? 1 : 0)}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
@@ -304,12 +469,12 @@ export const ReservationForm: FC<Props> = ({
                         </Stack>
                     </Stepper.Step>
 
-                    {/* Step 2: Time Selection */}
+                    {/* Time Selection */}
                     <Stepper.Step
                         icon={<IconClock size={18} />}
                         label={t.timeLabel}
                         description={t.timeDescription}
-                        allowStepSelect={activeStep > 1}
+                        allowStepSelect={activeStep > (isServiceMenu ? 2 : 1)}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
@@ -358,12 +523,12 @@ export const ReservationForm: FC<Props> = ({
                         </Stack>
                     </Stepper.Step>
 
-                    {/* Step 3: Party Size */}
+                    {/* Party Size */}
                     <Stepper.Step
                         icon={<IconUsers size={18} />}
                         label={t.guestsLabel}
                         description={t.guestsDescription}
-                        allowStepSelect={activeStep > 2}
+                        allowStepSelect={activeStep > (isServiceMenu ? 3 : 2)}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
@@ -414,12 +579,12 @@ export const ReservationForm: FC<Props> = ({
                         </Stack>
                     </Stepper.Step>
 
-                    {/* Step 4: Contact Info */}
+                    {/* Contact Info */}
                     <Stepper.Step
                         icon={<IconPhone size={18} />}
                         label={t.contactLabel}
                         description={t.contactDescription}
-                        allowStepSelect={activeStep > 3}
+                        allowStepSelect={activeStep > (isServiceMenu ? 4 : 3)}
                     >
                         <Stack spacing="md" my="lg">
                             <Text size="sm" weight={500}>
@@ -455,6 +620,23 @@ export const ReservationForm: FC<Props> = ({
                                     <Text size="sm" weight={600}>
                                         {t.summaryTitle}
                                     </Text>
+                                    {isServiceMenu && values.selectedServices.length > 0 && (
+                                        <Group spacing="xs" align="flex-start">
+                                            <IconBriefcase size={16} style={{ marginTop: 2 }} />
+                                            <div>
+                                                <Text size="xs" color="dimmed">
+                                                    {values.selectedServices.length > 1
+                                                        ? (t.summaryServices || "Services:")
+                                                        : (t.summaryService || "Service:")}
+                                                </Text>
+                                                {values.selectedServices.map((s, idx) => (
+                                                    <Text key={s.id} size="sm">
+                                                        {s.name}
+                                                    </Text>
+                                                ))}
+                                            </div>
+                                        </Group>
+                                    )}
                                     <Group spacing="xs">
                                         <IconCalendar size={16} />
                                         <Text size="sm">
@@ -488,13 +670,13 @@ export const ReservationForm: FC<Props> = ({
                     <Button variant="subtle" onClick={handleBack} disabled={activeStep === 0 || isLoading}>
                         {t.backButton}
                     </Button>
-                    {activeStep < 3 ? (
+                    {activeStep < lastStep ? (
                         <Button onClick={handleNext} disabled={!canProceed(activeStep) || isLoading}>
                             {t.nextButton}
                         </Button>
                     ) : (
                         <Button type="submit" loading={isLoading} disabled={!canProceed(activeStep)}>
-                            {t.confirmButton}
+                            {isServiceMenu ? (t.confirmButtonService || t.confirmButton) : t.confirmButton}
                         </Button>
                     )}
                 </Group>

@@ -76,11 +76,13 @@ export const reservationRouter = createTRPCRouter({
         }
 
         // Send reservation email
+        // Only include serviceNames if it's a service booking (non-empty array)
         try {
             await sendReservationEmail({
                 to: reservationEmail,
                 restaurantName: menu.restaurant.name,
                 menuName: menu.name,
+                serviceNames: input.serviceNames && input.serviceNames.length > 0 ? input.serviceNames : undefined,
                 date: input.date,
                 time: input.time,
                 partySize: input.partySize,

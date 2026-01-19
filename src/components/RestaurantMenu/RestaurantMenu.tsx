@@ -648,22 +648,41 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             )}
 
             {/* Reservation Form Modal */}
-            {menuDetails && (menuDetails as any).reservationType === "FORM" && (
-                <ReservationForm
-                    menuId={menuDetails.id}
-                    menuName={menuDetails.name}
-                    restaurantName={restaurant.name}
-                    startTime={(menuDetails as any).reservationStartTime || "10:00"}
-                    endTime={(menuDetails as any).reservationEndTime || "22:00"}
-                    maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
-                    slotDuration={(menuDetails as any).reservationSlotDuration || 30}
-                    menuStartDate={(menuDetails as any).isTemporary ? (menuDetails as any).startDate : null}
-                    menuEndDate={(menuDetails as any).isTemporary ? (menuDetails as any).endDate : null}
-                    translations={reservationTranslations}
-                    opened={reservationModalOpened}
-                    onClose={() => setReservationModalOpened(false)}
-                />
-            )}
+            {menuDetails && (menuDetails as any).reservationType === "FORM" && (() => {
+                // Check if this is a service menu (all items are non-edible)
+                const allItems = menuDetails.categories?.flatMap((cat) => cat.items || []) || [];
+                const nonEdibleItems = allItems.filter((item: any) => !item.isEdible);
+                const isServiceMenu = nonEdibleItems.length > 0 && nonEdibleItems.length === allItems.length;
+
+                // Extract services for the service menu
+                const services = isServiceMenu
+                    ? nonEdibleItems.map((item: any) => ({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        description: item.description,
+                    }))
+                    : [];
+
+                return (
+                    <ReservationForm
+                        menuId={menuDetails.id}
+                        menuName={menuDetails.name}
+                        restaurantName={restaurant.name}
+                        startTime={(menuDetails as any).reservationStartTime || "10:00"}
+                        endTime={(menuDetails as any).reservationEndTime || "22:00"}
+                        maxPartySize={(menuDetails as any).reservationMaxPartySize || 12}
+                        slotDuration={(menuDetails as any).reservationSlotDuration || 30}
+                        menuStartDate={(menuDetails as any).isTemporary ? (menuDetails as any).startDate : null}
+                        menuEndDate={(menuDetails as any).isTemporary ? (menuDetails as any).endDate : null}
+                        translations={reservationTranslations}
+                        opened={reservationModalOpened}
+                        onClose={() => setReservationModalOpened(false)}
+                        isServiceMenu={isServiceMenu}
+                        services={services}
+                    />
+                );
+            })()}
 
             <Box ref={menuParent}>
                 {/* Print-only header for category name */}

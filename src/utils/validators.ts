@@ -54,6 +54,7 @@ export const menuScheduleType = z.enum(["ALWAYS", "DAILY", "WEEKLY", "MONTHLY", 
 
 export const reservationSubmissionInput = z.object({
     menuId: z.string(),
+    serviceNames: z.array(z.string()).optional(), // For service bookings (array of selected service names)
     date: z.date(),
     time: z.string(),
     partySize: z.number().int().min(1).max(50),

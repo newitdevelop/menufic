@@ -91,6 +91,7 @@ export async function sendReservationEmail(params: {
     to: string;
     restaurantName: string;
     menuName: string;
+    serviceNames?: string[]; // For service bookings (array of selected services)
     date: Date;
     time: string;
     partySize: number;
@@ -98,7 +99,9 @@ export async function sendReservationEmail(params: {
     customerPhone: string;
     contactPreference: "PHONE" | "WHATSAPP" | "EMAIL";
 }): Promise<void> {
-    const { to, restaurantName, menuName, date, time, partySize, customerEmail, customerPhone, contactPreference } = params;
+    const { to, restaurantName, menuName, serviceNames, date, time, partySize, customerEmail, customerPhone, contactPreference } = params;
+    const isServiceBooking = serviceNames && serviceNames.length > 0;
+    const hasMultipleServices = serviceNames && serviceNames.length > 1;
 
     const formattedDate = date.toLocaleDateString("en-GB", {
         weekday: "long",
@@ -107,7 +110,9 @@ export async function sendReservationEmail(params: {
         day: "numeric",
     });
 
-    const subject = `🇵🇹 Pedido de Reserva / 🇬🇧 Reservation Request - ${restaurantName}`;
+    const subject = isServiceBooking
+        ? `🇵🇹 Pedido de Marcação / 🇬🇧 Booking Request - ${restaurantName}`
+        : `🇵🇹 Pedido de Reserva / 🇬🇧 Reservation Request - ${restaurantName}`;
 
     const contactPreferenceLabels = {
         pt: {
@@ -122,13 +127,19 @@ export async function sendReservationEmail(params: {
         }
     };
 
+    // Format services for display
+    const servicesListPt = isServiceBooking ? serviceNames!.map(s => `  • ${s}`).join("\n") : "";
+    const servicesListEn = isServiceBooking ? serviceNames!.map(s => `  • ${s}`).join("\n") : "";
+
     const text = `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🇵🇹 PEDIDO DE RESERVA
+🇵🇹 ${isServiceBooking ? "PEDIDO DE MARCAÇÃO" : "PEDIDO DE RESERVA"}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Restaurante: ${restaurantName}
-Menu: ${menuName}
+Menu: ${menuName}${isServiceBooking ? `
+${hasMultipleServices ? "Serviços" : "Serviço"}:
+${servicesListPt}` : ""}
 
 Data: ${formattedDate}
 Hora: ${time}
@@ -139,14 +150,16 @@ Email: ${customerEmail}
 Telefone: ${customerPhone}
 Método de Contacto Preferido: ${contactPreferenceLabels.pt[contactPreference]}
 
-Por favor, contacte o cliente para confirmar esta reserva.
+Por favor, contacte o cliente para confirmar esta ${isServiceBooking ? "marcação" : "reserva"}.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🇬🇧 RESERVATION REQUEST
+🇬🇧 ${isServiceBooking ? "BOOKING REQUEST" : "RESERVATION REQUEST"}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Restaurant: ${restaurantName}
-Menu: ${menuName}
+Menu: ${menuName}${isServiceBooking ? `
+${hasMultipleServices ? "Services" : "Service"}:
+${servicesListEn}` : ""}
 
 Date: ${formattedDate}
 Time: ${time}
@@ -157,8 +170,16 @@ Email: ${customerEmail}
 Phone: ${customerPhone}
 Preferred Contact Method: ${contactPreferenceLabels.en[contactPreference]}
 
-Please contact the customer to confirm this reservation.
+Please contact the customer to confirm this ${isServiceBooking ? "booking" : "reservation"}.
     `.trim();
+
+    // Format services for HTML display
+    const servicesHtmlPt = isServiceBooking
+        ? serviceNames!.map(s => `<span class="service-highlight" style="display: inline-block; margin: 2px 4px 2px 0;">${s}</span>`).join("")
+        : "";
+    const servicesHtmlEn = isServiceBooking
+        ? serviceNames!.map(s => `<span class="service-highlight" style="display: inline-block; margin: 2px 4px 2px 0;">${s}</span>`).join("")
+        : "";
 
     const html = `
 <!DOCTYPE html>
@@ -175,6 +196,7 @@ Please contact the customer to confirm this reservation.
         .value { color: #4a5568; }
         .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #718096; font-size: 14px; }
         .divider { border: none; border-top: 2px solid #cbd5e0; margin: 30px 0; }
+        .service-highlight { background-color: #edf2f7; padding: 4px 8px; border-radius: 4px; font-weight: 600; color: #2d3748; }
     </style>
 </head>
 <body>
@@ -182,7 +204,7 @@ Please contact the customer to confirm this reservation.
         <!-- Portuguese Section -->
         <div class="lang-section">
             <div class="lang-header">
-                🇵🇹 PEDIDO DE RESERVA
+                🇵🇹 ${isServiceBooking ? "PEDIDO DE MARCAÇÃO" : "PEDIDO DE RESERVA"}
             </div>
             <div class="detail">
                 <span class="label">Restaurante:</span>
@@ -191,7 +213,11 @@ Please contact the customer to confirm this reservation.
             <div class="detail">
                 <span class="label">Menu:</span>
                 <span class="value">${menuName}</span>
-            </div>
+            </div>${isServiceBooking ? `
+            <div class="detail">
+                <span class="label">${hasMultipleServices ? "Serviços" : "Serviço"}:</span>
+                <div class="value">${servicesHtmlPt}</div>
+            </div>` : ""}
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
             <div class="detail">
                 <span class="label">Data:</span>
@@ -220,7 +246,7 @@ Please contact the customer to confirm this reservation.
                 <span class="value" style="background-color: #edf2f7; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${contactPreferenceLabels.pt[contactPreference]}</span>
             </div>
             <div class="footer">
-                <p>Por favor, contacte o cliente para confirmar esta reserva.</p>
+                <p>Por favor, contacte o cliente para confirmar esta ${isServiceBooking ? "marcação" : "reserva"}.</p>
             </div>
         </div>
 
@@ -229,7 +255,7 @@ Please contact the customer to confirm this reservation.
         <!-- English Section -->
         <div class="lang-section">
             <div class="lang-header">
-                🇬🇧 RESERVATION REQUEST
+                🇬🇧 ${isServiceBooking ? "BOOKING REQUEST" : "RESERVATION REQUEST"}
             </div>
             <div class="detail">
                 <span class="label">Restaurant:</span>
@@ -238,7 +264,11 @@ Please contact the customer to confirm this reservation.
             <div class="detail">
                 <span class="label">Menu:</span>
                 <span class="value">${menuName}</span>
-            </div>
+            </div>${isServiceBooking ? `
+            <div class="detail">
+                <span class="label">${hasMultipleServices ? "Services" : "Service"}:</span>
+                <div class="value">${servicesHtmlEn}</div>
+            </div>` : ""}
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
             <div class="detail">
                 <span class="label">Date:</span>
@@ -267,7 +297,7 @@ Please contact the customer to confirm this reservation.
                 <span class="value" style="background-color: #edf2f7; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${contactPreferenceLabels.en[contactPreference]}</span>
             </div>
             <div class="footer">
-                <p>Please contact the customer to confirm this reservation.</p>
+                <p>Please contact the customer to confirm this ${isServiceBooking ? "booking" : "reservation"}.</p>
             </div>
         </div>
 
