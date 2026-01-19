@@ -423,9 +423,9 @@ export const ReservationForm: FC<Props> = ({
                                                             )}
                                                         </div>
                                                     </Group>
-                                                    {service.price != null && service.price > 0 && (
+                                                    {service.price != null && Number(service.price) > 0 && (
                                                         <Text size="sm" weight={500} style={{ whiteSpace: "nowrap" }}>
-                                                            €{service.price.toFixed(2)}
+                                                            €{Number(service.price).toFixed(2)}
                                                         </Text>
                                                     )}
                                                 </Group>
