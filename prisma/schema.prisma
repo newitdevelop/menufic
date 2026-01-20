@@ -237,3 +237,36 @@ model Translation {
     @@unique([entityType, entityId, language, field])
     @@index([entityType, entityId, language])
 }
+
+// Analytics: Track page views for restaurants (detailed, kept for retention period then purged)
+model PageView {
+    id           String   @id @default(cuid())
+    restaurantId String   // ID of the restaurant being viewed
+    ip           String?  // Visitor IP (anonymized - last octet removed for privacy)
+    country      String?  // Country code from CF-IPCountry header
+    userAgent    String?  // Browser user agent
+    referer      String?  // Referring URL
+    path         String   // Page path (e.g., "/venue/abc123/menu")
+    createdAt    DateTime @default(now())
+
+    @@index([restaurantId])
+    @@index([createdAt])
+    @@index([restaurantId, createdAt])
+}
+
+// Analytics: Aggregated daily stats (kept long-term, smaller footprint)
+model DailyStats {
+    id             String   @id @default(cuid())
+    restaurantId   String   // ID of the restaurant
+    date           DateTime @db.Date // The day (date only, no time)
+    totalViews     Int      @default(0) // Total page views that day
+    uniqueVisitors Int      @default(0) // Unique visitors (by IP) that day
+    // Country breakdown stored as JSON: { "PT": 10, "US": 5, ... }
+    countryStats   Json?
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    @@unique([restaurantId, date])
+    @@index([restaurantId])
+    @@index([date])
+}

@@ -36,6 +36,11 @@ import { prisma } from "src/server/db";
 type CreateContextOptions = {
     res?: NextApiResponse;
     session: Session | null;
+    // Visitor info for analytics (from Cloudflare headers)
+    visitorIp?: string | null;
+    visitorCountry?: string | null;
+    visitorUserAgent?: string | null;
+    visitorReferer?: string | null;
 };
 
 /**
@@ -52,8 +57,120 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
         prisma,
         res: opts.res,
         session: opts.session,
+        // Visitor info for analytics
+        visitorIp: opts.visitorIp,
+        visitorCountry: opts.visitorCountry,
+        visitorUserAgent: opts.visitorUserAgent,
+        visitorReferer: opts.visitorReferer,
     };
 };
+
+/**
+ * Anonymize IP address by removing the last octet (for privacy/GDPR compliance)
+ * e.g., "192.168.1.100" -> "192.168.1.0"
+ */
+function anonymizeIp(ip: string | null | undefined): string | null {
+    if (!ip) return null;
+
+    // Clean up the IP (remove port if present, handle IPv6 mapped IPv4)
+    let cleanIp = ip.trim();
+
+    // Handle IPv6-mapped IPv4 (e.g., "::ffff:192.168.1.100")
+    if (cleanIp.startsWith('::ffff:')) {
+        cleanIp = cleanIp.substring(7);
+    }
+
+    // Handle IPv4
+    if (cleanIp.includes('.') && !cleanIp.includes(':')) {
+        const parts = cleanIp.split('.');
+        if (parts.length === 4) {
+            parts[3] = '0';
+            return parts.join('.');
+        }
+    }
+
+    // Handle IPv6 - remove last 2 segments
+    if (cleanIp.includes(':')) {
+        const parts = cleanIp.split(':');
+        if (parts.length >= 2) {
+            parts[parts.length - 1] = '0';
+            parts[parts.length - 2] = '0';
+            return parts.join(':');
+        }
+    }
+
+    return cleanIp;
+}
+
+/**
+ * Extract the real client IP from various proxy headers
+ * Priority: Cloudflare > X-Real-IP > X-Forwarded-For > Direct connection
+ * This handles multiple deployment scenarios (Cloudflare, nginx, direct, etc.)
+ */
+function extractClientIp(req: CreateNextContextOptions['req']): string | null {
+    // 1. Cloudflare Tunnel/Proxy - most reliable when using Cloudflare
+    const cfConnectingIp = req.headers['cf-connecting-ip'];
+    if (cfConnectingIp) {
+        return Array.isArray(cfConnectingIp) ? cfConnectingIp[0] : cfConnectingIp;
+    }
+
+    // 2. True-Client-IP (Cloudflare Enterprise, Akamai)
+    const trueClientIp = req.headers['true-client-ip'];
+    if (trueClientIp) {
+        return Array.isArray(trueClientIp) ? trueClientIp[0] : trueClientIp;
+    }
+
+    // 3. X-Real-IP (nginx, common reverse proxy header)
+    const xRealIp = req.headers['x-real-ip'];
+    if (xRealIp) {
+        return Array.isArray(xRealIp) ? xRealIp[0] : xRealIp;
+    }
+
+    // 4. X-Forwarded-For (standard proxy header, may contain multiple IPs)
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    if (xForwardedFor) {
+        const forwardedIps = Array.isArray(xForwardedFor)
+            ? xForwardedFor[0]
+            : xForwardedFor;
+        // First IP in the list is typically the original client
+        const firstIp = forwardedIps?.split(',')[0]?.trim();
+        if (firstIp) return firstIp;
+    }
+
+    // 5. Direct connection (no proxy)
+    const remoteAddress = req.socket?.remoteAddress;
+    if (remoteAddress) {
+        return remoteAddress;
+    }
+
+    return null;
+}
+
+/**
+ * Extract country code from various headers
+ * Handles Cloudflare, AWS CloudFront, and other CDNs
+ */
+function extractCountry(req: CreateNextContextOptions['req']): string | null {
+    // Cloudflare
+    const cfCountry = req.headers['cf-ipcountry'];
+    if (cfCountry) {
+        return (Array.isArray(cfCountry) ? cfCountry[0] : cfCountry)?.toUpperCase() || null;
+    }
+
+    // AWS CloudFront
+    const cfViewerCountry = req.headers['cloudfront-viewer-country'];
+    if (cfViewerCountry) {
+        return (Array.isArray(cfViewerCountry) ? cfViewerCountry[0] : cfViewerCountry)?.toUpperCase() || null;
+    }
+
+    // Generic geo header (some CDNs/proxies)
+    const xGeoCountry = req.headers['x-geo-country'] || req.headers['x-country-code'];
+    if (xGeoCountry) {
+        return (Array.isArray(xGeoCountry) ? xGeoCountry[0] : xGeoCountry)?.toUpperCase() || null;
+    }
+
+    return null;
+}
 
 /**
  * This is the actual context you'll use in your router. It will be used to
@@ -66,9 +183,20 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
     // Get the session from the server using the unstable_getServerSession wrapper function
     const session = await getServerAuthSession({ req, res });
 
+    // Extract visitor info from headers (supports multiple proxy/CDN scenarios)
+    const rawIp = extractClientIp(req);
+    const visitorIp = anonymizeIp(rawIp);
+    const visitorCountry = extractCountry(req);
+    const visitorUserAgent = (req.headers['user-agent'] as string) || null;
+    const visitorReferer = (req.headers['referer'] as string) || null;
+
     return createInnerTRPCContext({
         res,
         session,
+        visitorIp,
+        visitorCountry,
+        visitorUserAgent,
+        visitorReferer,
     });
 };
 

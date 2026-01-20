@@ -590,4 +590,406 @@ export const restaurantRouter = createTRPCRouter({
 
         return transactionRes.pop() as Restaurant & { image: Image | null };
     }),
+
+    /** Track a page view for a restaurant (public) */
+    trackPageView: publicProcedure
+        .input(z.object({
+            restaurantId: z.string(),
+            path: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            // Create page view record with visitor info from context
+            await ctx.prisma.pageView.create({
+                data: {
+                    restaurantId: input.restaurantId,
+                    path: input.path,
+                    ip: ctx.visitorIp,
+                    country: ctx.visitorCountry,
+                    userAgent: ctx.visitorUserAgent,
+                    referer: ctx.visitorReferer,
+                },
+            });
+            return { success: true };
+        }),
+
+    /** Get page view analytics for a restaurant (owner only) */
+    getAnalytics: protectedProcedure
+        .input(z.object({
+            restaurantId: z.string(),
+            startDate: z.date().optional(),
+            endDate: z.date().optional(),
+        }))
+        .query(async ({ ctx, input }) => {
+            // Verify user owns this restaurant
+            await ctx.prisma.restaurant.findUniqueOrThrow({
+                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            });
+
+            // Build date filter
+            const dateFilter: { createdAt?: { gte?: Date; lte?: Date } } = {};
+            if (input.startDate || input.endDate) {
+                dateFilter.createdAt = {};
+                if (input.startDate) dateFilter.createdAt.gte = input.startDate;
+                if (input.endDate) dateFilter.createdAt.lte = input.endDate;
+            }
+
+            // Get total views
+            const totalViews = await ctx.prisma.pageView.count({
+                where: {
+                    restaurantId: input.restaurantId,
+                    ...dateFilter,
+                },
+            });
+
+            // Get unique visitors (by IP)
+            const uniqueVisitors = await ctx.prisma.pageView.groupBy({
+                by: ['ip'],
+                where: {
+                    restaurantId: input.restaurantId,
+                    ip: { not: null },
+                    ...dateFilter,
+                },
+            });
+
+            // Get views by country
+            const viewsByCountry = await ctx.prisma.pageView.groupBy({
+                by: ['country'],
+                _count: { country: true },
+                where: {
+                    restaurantId: input.restaurantId,
+                    country: { not: null },
+                    ...dateFilter,
+                },
+                orderBy: { _count: { country: 'desc' } },
+                take: 10,
+            });
+
+            // Get views by day (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            const recentViews = await ctx.prisma.pageView.findMany({
+                where: {
+                    restaurantId: input.restaurantId,
+                    createdAt: { gte: thirtyDaysAgo },
+                },
+                select: { createdAt: true },
+                orderBy: { createdAt: 'asc' },
+            });
+
+            // Group views by day
+            const viewsByDay: Record<string, number> = {};
+            recentViews.forEach((view) => {
+                const day = view.createdAt.toISOString().split('T')[0];
+                viewsByDay[day] = (viewsByDay[day] || 0) + 1;
+            });
+
+            return {
+                totalViews,
+                uniqueVisitors: uniqueVisitors.length,
+                viewsByCountry: viewsByCountry.map((v) => ({
+                    country: v.country,
+                    count: v._count.country,
+                })),
+                viewsByDay: Object.entries(viewsByDay).map(([date, count]) => ({
+                    date,
+                    count,
+                })),
+            };
+        }),
+
+    /**
+     * Cleanup old page views and aggregate into daily stats
+     * This should be called periodically (e.g., daily via cron or manually)
+     * - Aggregates detailed page views older than retentionDays into DailyStats
+     * - Deletes the detailed records after aggregation
+     * - Protected: only authenticated users can trigger for their restaurants
+     */
+    cleanupPageViews: protectedProcedure
+        .input(z.object({
+            restaurantId: z.string(),
+            retentionDays: z.number().int().min(1).max(365).default(30), // Keep detailed data for N days
+        }))
+        .mutation(async ({ ctx, input }) => {
+            // Verify user owns this restaurant
+            await ctx.prisma.restaurant.findUniqueOrThrow({
+                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            });
+
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - input.retentionDays);
+            cutoffDate.setHours(0, 0, 0, 0); // Start of day
+
+            // Get all page views older than cutoff, grouped by day
+            const oldViews = await ctx.prisma.pageView.findMany({
+                where: {
+                    restaurantId: input.restaurantId,
+                    createdAt: { lt: cutoffDate },
+                },
+                select: {
+                    id: true,
+                    ip: true,
+                    country: true,
+                    createdAt: true,
+                },
+            });
+
+            if (oldViews.length === 0) {
+                return { aggregated: 0, deleted: 0, message: 'No old records to cleanup' };
+            }
+
+            // Group by day and aggregate
+            const dailyAggregates: Record<string, {
+                totalViews: number;
+                uniqueIps: Set<string>;
+                countryCounts: Record<string, number>;
+            }> = {};
+
+            oldViews.forEach((view) => {
+                const dateKey = view.createdAt.toISOString().split('T')[0]; // YYYY-MM-DD
+
+                if (!dailyAggregates[dateKey]) {
+                    dailyAggregates[dateKey] = {
+                        totalViews: 0,
+                        uniqueIps: new Set(),
+                        countryCounts: {},
+                    };
+                }
+
+                dailyAggregates[dateKey].totalViews++;
+
+                if (view.ip) {
+                    dailyAggregates[dateKey].uniqueIps.add(view.ip);
+                }
+
+                if (view.country) {
+                    dailyAggregates[dateKey].countryCounts[view.country] =
+                        (dailyAggregates[dateKey].countryCounts[view.country] || 0) + 1;
+                }
+            });
+
+            // Upsert daily stats (merge with existing if any)
+            const upsertPromises = Object.entries(dailyAggregates).map(async ([dateStr, stats]) => {
+                const date = new Date(dateStr);
+
+                // Check if we already have stats for this day
+                const existing = await ctx.prisma.dailyStats.findUnique({
+                    where: {
+                        restaurantId_date: {
+                            restaurantId: input.restaurantId,
+                            date,
+                        },
+                    },
+                });
+
+                if (existing) {
+                    // Merge with existing stats
+                    const existingCountryStats = (existing.countryStats as Record<string, number>) || {};
+                    const mergedCountryStats = { ...existingCountryStats };
+
+                    Object.entries(stats.countryCounts).forEach(([country, count]) => {
+                        mergedCountryStats[country] = (mergedCountryStats[country] || 0) + count;
+                    });
+
+                    return ctx.prisma.dailyStats.update({
+                        where: { id: existing.id },
+                        data: {
+                            totalViews: existing.totalViews + stats.totalViews,
+                            // For unique visitors, we can't perfectly merge, so we take max as approximation
+                            uniqueVisitors: Math.max(existing.uniqueVisitors, stats.uniqueIps.size),
+                            countryStats: mergedCountryStats,
+                        },
+                    });
+                } else {
+                    // Create new daily stats
+                    return ctx.prisma.dailyStats.create({
+                        data: {
+                            restaurantId: input.restaurantId,
+                            date,
+                            totalViews: stats.totalViews,
+                            uniqueVisitors: stats.uniqueIps.size,
+                            countryStats: stats.countryCounts,
+                        },
+                    });
+                }
+            });
+
+            await Promise.all(upsertPromises);
+
+            // Delete the old detailed records
+            const deleteResult = await ctx.prisma.pageView.deleteMany({
+                where: {
+                    restaurantId: input.restaurantId,
+                    createdAt: { lt: cutoffDate },
+                },
+            });
+
+            return {
+                aggregated: Object.keys(dailyAggregates).length,
+                deleted: deleteResult.count,
+                message: `Aggregated ${Object.keys(dailyAggregates).length} days, deleted ${deleteResult.count} detailed records`,
+            };
+        }),
+
+    /**
+     * Get aggregated daily stats for a restaurant (historical data)
+     * This includes data from both recent PageViews and older DailyStats
+     */
+    getDailyStats: protectedProcedure
+        .input(z.object({
+            restaurantId: z.string(),
+            startDate: z.date().optional(),
+            endDate: z.date().optional(),
+        }))
+        .query(async ({ ctx, input }) => {
+            // Verify user owns this restaurant
+            await ctx.prisma.restaurant.findUniqueOrThrow({
+                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            });
+
+            // Default to last 90 days
+            const endDate = input.endDate || new Date();
+            const startDate = input.startDate || new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+            // Get aggregated stats from DailyStats table
+            const dailyStats = await ctx.prisma.dailyStats.findMany({
+                where: {
+                    restaurantId: input.restaurantId,
+                    date: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                },
+                orderBy: { date: 'asc' },
+            });
+
+            // Get recent detailed views (not yet aggregated) and group by day
+            const recentViews = await ctx.prisma.pageView.findMany({
+                where: {
+                    restaurantId: input.restaurantId,
+                    createdAt: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                },
+                select: {
+                    ip: true,
+                    country: true,
+                    createdAt: true,
+                },
+            });
+
+            // Group recent views by day
+            const recentByDay: Record<string, {
+                totalViews: number;
+                uniqueIps: Set<string>;
+                countryCounts: Record<string, number>;
+            }> = {};
+
+            recentViews.forEach((view) => {
+                const dateKey = view.createdAt.toISOString().split('T')[0];
+
+                if (!recentByDay[dateKey]) {
+                    recentByDay[dateKey] = {
+                        totalViews: 0,
+                        uniqueIps: new Set(),
+                        countryCounts: {},
+                    };
+                }
+
+                recentByDay[dateKey].totalViews++;
+                if (view.ip) recentByDay[dateKey].uniqueIps.add(view.ip);
+                if (view.country) {
+                    recentByDay[dateKey].countryCounts[view.country] =
+                        (recentByDay[dateKey].countryCounts[view.country] || 0) + 1;
+                }
+            });
+
+            // Merge both sources
+            const allDays: Record<string, {
+                date: string;
+                totalViews: number;
+                uniqueVisitors: number;
+                countryStats: Record<string, number>;
+            }> = {};
+
+            // Add aggregated stats
+            dailyStats.forEach((stat) => {
+                const dateKey = stat.date.toISOString().split('T')[0];
+                allDays[dateKey] = {
+                    date: dateKey,
+                    totalViews: stat.totalViews,
+                    uniqueVisitors: stat.uniqueVisitors,
+                    countryStats: (stat.countryStats as Record<string, number>) || {},
+                };
+            });
+
+            // Add/merge recent stats
+            Object.entries(recentByDay).forEach(([dateKey, stats]) => {
+                if (allDays[dateKey]) {
+                    // Merge with existing aggregated data
+                    allDays[dateKey].totalViews += stats.totalViews;
+                    allDays[dateKey].uniqueVisitors = Math.max(
+                        allDays[dateKey].uniqueVisitors,
+                        stats.uniqueIps.size
+                    );
+                    Object.entries(stats.countryCounts).forEach(([country, count]) => {
+                        allDays[dateKey].countryStats[country] =
+                            (allDays[dateKey].countryStats[country] || 0) + count;
+                    });
+                } else {
+                    allDays[dateKey] = {
+                        date: dateKey,
+                        totalViews: stats.totalViews,
+                        uniqueVisitors: stats.uniqueIps.size,
+                        countryStats: stats.countryCounts,
+                    };
+                }
+            });
+
+            // Sort by date and return
+            return Object.values(allDays).sort((a, b) => a.date.localeCompare(b.date));
+        }),
+
+    /**
+     * Get storage stats for page views (helps decide when to cleanup)
+     */
+    getPageViewStats: protectedProcedure
+        .input(z.object({
+            restaurantId: z.string(),
+        }))
+        .query(async ({ ctx, input }) => {
+            // Verify user owns this restaurant
+            await ctx.prisma.restaurant.findUniqueOrThrow({
+                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            });
+
+            const [totalDetailedRecords, oldestRecord, newestRecord, aggregatedDays] = await Promise.all([
+                ctx.prisma.pageView.count({
+                    where: { restaurantId: input.restaurantId },
+                }),
+                ctx.prisma.pageView.findFirst({
+                    where: { restaurantId: input.restaurantId },
+                    orderBy: { createdAt: 'asc' },
+                    select: { createdAt: true },
+                }),
+                ctx.prisma.pageView.findFirst({
+                    where: { restaurantId: input.restaurantId },
+                    orderBy: { createdAt: 'desc' },
+                    select: { createdAt: true },
+                }),
+                ctx.prisma.dailyStats.count({
+                    where: { restaurantId: input.restaurantId },
+                }),
+            ]);
+
+            return {
+                totalDetailedRecords,
+                oldestRecord: oldestRecord?.createdAt || null,
+                newestRecord: newestRecord?.createdAt || null,
+                aggregatedDays,
+                // Rough estimate: ~200 bytes per detailed record
+                estimatedStorageBytes: totalDetailedRecords * 200,
+            };
+        }),
 });

@@ -40,11 +40,13 @@ const languageMessages: Record<string, AbstractIntlMessages> = {
 /** Inner component that uses translations */
 const RestaurantMenuContent: React.FC<{ restaurantId: string; language: string }> = ({ restaurantId, language }) => {
     const t = useTranslations("menu");
+    const router = useRouter();
     const { data: session, status: sessionStatus } = useSession();
 
     // Loading timeout for older browsers (Hisense TV)
     const [loadingTimeout, setLoadingTimeout] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
+    const [hasTracked, setHasTracked] = useState(false);
 
     // Use shorter stale time for authenticated users so they see internal menus
     const isAuthenticated = sessionStatus === "authenticated" && !!session?.user;
@@ -60,6 +62,27 @@ const RestaurantMenuContent: React.FC<{ restaurantId: string; language: string }
             staleTime: isAuthenticated ? 0 : 30000,
         }
     );
+
+    // Track page view mutation
+    const trackPageView = (api.restaurant as any).trackPageView.useMutation();
+
+    // Track page view once when restaurant data is loaded and page is ready
+    useEffect(() => {
+        // Only track if:
+        // 1. Restaurant data is loaded (confirms valid restaurant)
+        // 2. Haven't tracked this session yet
+        // 3. Have a valid restaurant ID
+        // 4. Router is ready (ensures we have the correct path)
+        if (restaurant && !hasTracked && restaurantId && router.isReady) {
+            // Use the actual path from router (captures direct access, query params, etc.)
+            const actualPath = router.asPath;
+            trackPageView.mutate({
+                restaurantId,
+                path: actualPath,
+            });
+            setHasTracked(true);
+        }
+    }, [restaurant, hasTracked, restaurantId, router.isReady, router.asPath, trackPageView]);
 
     // Refetch when session changes to authenticated
     useEffect(() => {
