@@ -365,25 +365,43 @@ export const ReservationForm: FC<Props> = ({
                     size="sm"
                     styles={(theme) => ({
                         stepLabel: {
-                            fontSize: '0.75rem',
+                            fontSize: '0.65rem',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
+                            order: 2,
                         },
                         stepDescription: {
                             display: 'none',
                         },
                         step: {
-                            padding: '4px',
+                            padding: '2px 4px',
                             minWidth: 'auto',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        },
+                        stepWrapper: {
+                            flexDirection: 'column',
+                            alignItems: 'center',
                         },
                         stepBody: {
-                            marginLeft: '6px',
+                            marginLeft: 0,
+                            marginRight: 0,
+                            marginTop: '4px',
+                            order: 2,
+                        },
+                        stepIcon: {
+                            order: 1,
                         },
                         separator: {
-                            marginLeft: '4px',
-                            marginRight: '4px',
-                            minWidth: '20px',
+                            marginLeft: '2px',
+                            marginRight: '2px',
+                            minWidth: '12px',
+                            alignSelf: 'center',
+                            marginTop: 0,
                         },
                         steps: {
                             flexWrap: 'nowrap',
+                            alignItems: 'flex-start',
                         },
                     })}
                 >

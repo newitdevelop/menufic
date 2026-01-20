@@ -259,7 +259,7 @@ export const restaurantRouter = createTRPCRouter({
                       isActive: true,
                   };
 
-            const restaurant = await ctx.prisma.restaurant.findFirstOrThrow({
+            const restaurantData = await ctx.prisma.restaurant.findFirstOrThrow({
                 include: {
                     banners: true,
                     image: true,
@@ -284,6 +284,60 @@ export const restaurantRouter = createTRPCRouter({
                 },
                 where: { id: input.id },
             });
+
+            // Import schedule service and filter menus by schedule
+            const { isActiveBySchedule } = await import("src/server/services/schedule.service");
+
+            // Filter menus based on their schedule settings
+            // Owners see all menus regardless of schedule (for testing/preview)
+            const now = new Date();
+            console.log(`[getDetails] Filtering menus at ${now.toISOString()}, isOwner=${isOwner}`);
+            const filteredMenus = isOwner
+                ? restaurantData.menus
+                : restaurantData.menus.filter((menu) => {
+                      const scheduleConfig = {
+                          scheduleType: menu.scheduleType as any,
+                          dailyStartTime: menu.dailyStartTime,
+                          dailyEndTime: menu.dailyEndTime,
+                          weeklyDays: menu.weeklyDays,
+                          monthlyDays: menu.monthlyDays,
+                          monthlyWeekday: menu.monthlyWeekday,
+                          monthlyWeekdayOrdinal: menu.monthlyWeekdayOrdinal,
+                          yearlyStartDate: menu.yearlyStartDate,
+                          yearlyEndDate: menu.yearlyEndDate,
+                          periodStartDate: menu.periodStartDate,
+                          periodEndDate: menu.periodEndDate,
+                      };
+                      // Enable debug logging for non-ALWAYS schedules
+                      const debug = menu.scheduleType !== 'ALWAYS';
+                      const isActive = isActiveBySchedule(scheduleConfig, now, debug);
+                      console.log(`[getDetails] Menu "${menu.name}" (${menu.scheduleType}): isActive=${isActive}`);
+                      return isActive;
+                  });
+
+            // Also filter banners by schedule
+            const filteredBanners = restaurantData.banners.filter((banner) => {
+                const scheduleConfig = {
+                    scheduleType: banner.scheduleType as any,
+                    dailyStartTime: banner.dailyStartTime,
+                    dailyEndTime: banner.dailyEndTime,
+                    weeklyDays: banner.weeklyDays,
+                    monthlyDays: banner.monthlyDays,
+                    monthlyWeekday: banner.monthlyWeekday,
+                    monthlyWeekdayOrdinal: banner.monthlyWeekdayOrdinal,
+                    yearlyStartDate: banner.yearlyStartDate,
+                    yearlyEndDate: banner.yearlyEndDate,
+                    periodStartDate: banner.periodStartDate,
+                    periodEndDate: banner.periodEndDate,
+                };
+                return isActiveBySchedule(scheduleConfig, now);
+            });
+
+            const restaurant = {
+                ...restaurantData,
+                menus: filteredMenus,
+                banners: filteredBanners,
+            };
 
             // Import translation services
             const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, getImageDisclaimer, getUITranslation, getAllergenTranslation, getReservationTranslations } = await import(
