@@ -238,6 +238,8 @@
             "summaryTitle": "Reservation Summary:",
             "summaryService": "Service:",
             "summaryServices": "Services:",
+            "serviceSelectedSingular": "service selected",
+            "serviceSelectedPlural": "services selected",
             "person": "person",
             "people": "people",
             "backButton": "Back",

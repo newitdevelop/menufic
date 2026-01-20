@@ -94,6 +94,8 @@
             "summaryTitle": "Riepilogo della Prenotazione:",
             "summaryService": "Servizio:",
             "summaryServices": "Servizi:",
+            "serviceSelectedSingular": "servizio selezionato",
+            "serviceSelectedPlural": "servizi selezionati",
             "person": "persona",
             "people": "persone",
             "backButton": "Indietro",

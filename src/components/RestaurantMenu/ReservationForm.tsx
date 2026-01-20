@@ -44,6 +44,8 @@ interface ReservationTranslations {
     summaryTitle: string;
     summaryService?: string;
     summaryServices?: string;
+    serviceSelectedSingular?: string;
+    serviceSelectedPlural?: string;
     person: string;
     people: string;
     backButton: string;
@@ -117,6 +119,8 @@ const DEFAULT_TRANSLATIONS: ReservationTranslations = {
     summaryTitle: "Reservation Summary:",
     summaryService: "Service:",
     summaryServices: "Services:",
+    serviceSelectedSingular: "service selected",
+    serviceSelectedPlural: "services selected",
     person: "person",
     people: "people",
     backButton: "Back",
@@ -485,7 +489,9 @@ export const ReservationForm: FC<Props> = ({
                                 </div>
                                 {values.selectedServices.length > 0 && (
                                     <Text size="xs" color="dimmed">
-                                        {values.selectedServices.length} service{values.selectedServices.length > 1 ? "s" : ""} selected
+                                        {values.selectedServices.length} {values.selectedServices.length > 1
+                                            ? (t.serviceSelectedPlural || "services selected")
+                                            : (t.serviceSelectedSingular || "service selected")}
                                     </Text>
                                 )}
                             </Stack>

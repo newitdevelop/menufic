@@ -94,6 +94,8 @@
             "summaryTitle": "Resumo da Reserva:",
             "summaryService": "Serviço:",
             "summaryServices": "Serviços:",
+            "serviceSelectedSingular": "serviço selecionado",
+            "serviceSelectedPlural": "serviços selecionados",
             "person": "pessoa",
             "people": "pessoas",
             "backButton": "Voltar",

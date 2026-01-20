@@ -94,6 +94,8 @@
             "summaryTitle": "Récapitulatif de la Réservation :",
             "summaryService": "Service :",
             "summaryServices": "Services :",
+            "serviceSelectedSingular": "service sélectionné",
+            "serviceSelectedPlural": "services sélectionnés",
             "person": "personne",
             "people": "personnes",
             "backButton": "Retour",
