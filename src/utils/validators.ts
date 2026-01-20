@@ -52,6 +52,12 @@ export const menuTypeEnum = z.enum(["INTERNAL", "EXTERNAL"]);
 export const contactPreferenceEnum = z.enum(["PHONE", "WHATSAPP", "EMAIL"]);
 export const menuScheduleType = z.enum(["ALWAYS", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "PERIOD"]);
 
+// Monthly weekday rule for multiple selections (e.g., "First Tuesday AND Third Tuesday")
+export const monthlyWeekdayRule = z.object({
+    weekday: z.number().int().min(0).max(6),  // 0=Sunday, 6=Saturday
+    ordinal: z.number().int().min(-1).max(4), // 1=first, 2=second, 3=third, 4=fourth, -1=last
+});
+
 export const reservationSubmissionInput = z.object({
     menuId: z.string(),
     serviceNames: z.array(z.string()).optional(), // For service bookings (array of selected service names)
@@ -115,8 +121,9 @@ export const menuInput = z.object({
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
     // Monthly weekday schedule: e.g., "first Monday of month"
-    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
-    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday (legacy)
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last (legacy)
+    monthlyWeekdayRules: z.array(monthlyWeekdayRule).nullable().optional(), // New: multiple weekday/ordinal combinations
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
@@ -227,8 +234,9 @@ export const bannerInput = z.object({
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
     // Monthly weekday schedule: e.g., "first Monday of month"
-    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
-    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday (legacy)
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last (legacy)
+    monthlyWeekdayRules: z.array(monthlyWeekdayRule).nullable().optional(), // New: multiple weekday/ordinal combinations
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
@@ -259,8 +267,9 @@ export const bannerUpdateInput = z.object({
     weeklyDays: z.array(z.number().int().min(0).max(6)).default([]),
     monthlyDays: z.array(z.number().int().min(1).max(31)).default([]),
     // Monthly weekday schedule: e.g., "first Monday of month"
-    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday
-    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last
+    monthlyWeekday: z.number().int().min(0).max(6).nullable().optional(), // 0=Sunday, 6=Saturday (legacy)
+    monthlyWeekdayOrdinal: z.number().int().min(-1).max(4).nullable().optional(), // 1=first, 2=second, 3=third, 4=fourth, -1=last (legacy)
+    monthlyWeekdayRules: z.array(monthlyWeekdayRule).nullable().optional(), // New: multiple weekday/ordinal combinations
     yearlyStartDate: z.string().nullable().optional(), // MM-DD format
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),

@@ -45,6 +45,7 @@ export const restaurantRouter = createTRPCRouter({
                 monthlyDays: input.monthlyDays,
                 monthlyWeekday: input.monthlyWeekday ?? null,
                 monthlyWeekdayOrdinal: input.monthlyWeekdayOrdinal ?? null,
+                monthlyWeekdayRules: input.monthlyWeekdayRules ?? null,
                 yearlyStartDate: input.yearlyStartDate || null,
                 yearlyEndDate: input.yearlyEndDate || null,
                 periodStartDate: input.periodStartDate || null,
@@ -77,6 +78,7 @@ export const restaurantRouter = createTRPCRouter({
             monthlyDays: input.monthlyDays,
             monthlyWeekday: input.monthlyWeekday ?? null,
             monthlyWeekdayOrdinal: input.monthlyWeekdayOrdinal ?? null,
+            monthlyWeekdayRules: input.monthlyWeekdayRules ?? null,
             yearlyStartDate: input.yearlyStartDate || null,
             yearlyEndDate: input.yearlyEndDate || null,
             periodStartDate: input.periodStartDate || null,
@@ -289,31 +291,44 @@ export const restaurantRouter = createTRPCRouter({
             const { isActiveBySchedule } = await import("src/server/services/schedule.service");
 
             // Filter menus based on their schedule settings
-            // Owners see all menus regardless of schedule (for testing/preview)
+            // Schedule filtering applies to ALL users (including owners)
+            // The menuFilter already handles visibility (INTERNAL vs EXTERNAL)
             const now = new Date();
-            console.log(`[getDetails] Filtering menus at ${now.toISOString()}, isOwner=${isOwner}`);
-            const filteredMenus = isOwner
-                ? restaurantData.menus
-                : restaurantData.menus.filter((menu) => {
-                      const scheduleConfig = {
-                          scheduleType: menu.scheduleType as any,
-                          dailyStartTime: menu.dailyStartTime,
-                          dailyEndTime: menu.dailyEndTime,
-                          weeklyDays: menu.weeklyDays,
-                          monthlyDays: menu.monthlyDays,
-                          monthlyWeekday: menu.monthlyWeekday,
-                          monthlyWeekdayOrdinal: menu.monthlyWeekdayOrdinal,
-                          yearlyStartDate: menu.yearlyStartDate,
-                          yearlyEndDate: menu.yearlyEndDate,
-                          periodStartDate: menu.periodStartDate,
-                          periodEndDate: menu.periodEndDate,
-                      };
-                      // Enable debug logging for non-ALWAYS schedules
-                      const debug = menu.scheduleType !== 'ALWAYS';
-                      const isActive = isActiveBySchedule(scheduleConfig, now, debug);
-                      console.log(`[getDetails] Menu "${menu.name}" (${menu.scheduleType}): isActive=${isActive}`);
-                      return isActive;
-                  });
+            console.log(`[getDetails] Filtering menus at ${now.toISOString()}, isOwner=${isOwner}, userId=${userId || 'none'}`);
+            console.log(`[getDetails] Total menus before filter: ${restaurantData.menus.length}`);
+
+            const filteredMenus = restaurantData.menus.filter((menu) => {
+                const scheduleConfig = {
+                    scheduleType: menu.scheduleType as any,
+                    dailyStartTime: menu.dailyStartTime,
+                    dailyEndTime: menu.dailyEndTime,
+                    weeklyDays: menu.weeklyDays,
+                    monthlyDays: menu.monthlyDays,
+                    monthlyWeekday: menu.monthlyWeekday,
+                    monthlyWeekdayOrdinal: menu.monthlyWeekdayOrdinal,
+                    monthlyWeekdayRules: menu.monthlyWeekdayRules as any,
+                    yearlyStartDate: menu.yearlyStartDate,
+                    yearlyEndDate: menu.yearlyEndDate,
+                    periodStartDate: menu.periodStartDate,
+                    periodEndDate: menu.periodEndDate,
+                };
+                // Log schedule config for MONTHLY menus
+                if (menu.scheduleType === 'MONTHLY') {
+                    console.log(`[getDetails] Menu "${menu.name}" MONTHLY config:`, {
+                        monthlyWeekday: menu.monthlyWeekday,
+                        monthlyWeekdayOrdinal: menu.monthlyWeekdayOrdinal,
+                        monthlyWeekdayRules: menu.monthlyWeekdayRules,
+                        monthlyDays: menu.monthlyDays,
+                    });
+                }
+                // Enable debug logging for non-ALWAYS schedules
+                const debug = menu.scheduleType !== 'ALWAYS';
+                const isActive = isActiveBySchedule(scheduleConfig, now, debug);
+                console.log(`[getDetails] Menu "${menu.name}" (${menu.scheduleType}): isActive=${isActive}`);
+                return isActive;
+            });
+
+            console.log(`[getDetails] Total menus after filter: ${filteredMenus.length}`);
 
             // Also filter banners by schedule
             const filteredBanners = restaurantData.banners.filter((banner) => {
@@ -325,6 +340,7 @@ export const restaurantRouter = createTRPCRouter({
                     monthlyDays: banner.monthlyDays,
                     monthlyWeekday: banner.monthlyWeekday,
                     monthlyWeekdayOrdinal: banner.monthlyWeekdayOrdinal,
+                    monthlyWeekdayRules: banner.monthlyWeekdayRules as any,
                     yearlyStartDate: banner.yearlyStartDate,
                     yearlyEndDate: banner.yearlyEndDate,
                     periodStartDate: banner.periodStartDate,

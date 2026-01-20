@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 
-import { Button, Checkbox, Chip, Group, MultiSelect, Select, Stack, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Chip, Group, MultiSelect, Select, Stack, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { IconPlus, IconTrash } from "@tabler/icons";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { useTranslations } from "next-intl";
@@ -67,6 +68,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
             monthlyDays: [] as number[],
             monthlyWeekday: null as number | null,
             monthlyWeekdayOrdinal: null as number | null,
+            monthlyWeekdayRules: [] as { weekday: number; ordinal: number }[],
             yearlyStartDate: null as string | null,
             yearlyEndDate: null as string | null,
             periodStartDate: null as Date | null,
@@ -95,6 +97,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     monthlyDays: banner.monthlyDays || [],
                     monthlyWeekday: (banner as any).monthlyWeekday ?? null,
                     monthlyWeekdayOrdinal: (banner as any).monthlyWeekdayOrdinal ?? null,
+                    monthlyWeekdayRules: (banner as any).monthlyWeekdayRules || [],
                     yearlyStartDate: banner.yearlyStartDate,
                     yearlyEndDate: banner.yearlyEndDate,
                     periodStartDate: banner.periodStartDate ? new Date(banner.periodStartDate) : null,
@@ -118,6 +121,7 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     monthlyDays: [] as number[],
                     monthlyWeekday: null as number | null,
                     monthlyWeekdayOrdinal: null as number | null,
+                    monthlyWeekdayRules: [] as { weekday: number; ordinal: number }[],
                     yearlyStartDate: null as string | null,
                     yearlyEndDate: null as string | null,
                     periodStartDate: null as Date | null,
@@ -260,17 +264,17 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                     { value: "weekday", label: "Specific weekday (e.g., first Monday)" },
                                 ]}
                                 disabled={isCreating || isUpdating}
-                                value={getInputProps("monthlyWeekday").value !== null && getInputProps("monthlyWeekday").value !== undefined ? "weekday" : "days"}
+                                value={(getInputProps("monthlyWeekdayRules").value && getInputProps("monthlyWeekdayRules").value.length > 0) || (getInputProps("monthlyWeekday").value !== null && getInputProps("monthlyWeekday").value !== undefined) ? "weekday" : "days"}
                                 onChange={(value) => {
                                     if (value === "weekday") {
-                                        setValues({ monthlyDays: [], monthlyWeekday: 1, monthlyWeekdayOrdinal: 1 });
+                                        setValues({ monthlyDays: [], monthlyWeekday: null, monthlyWeekdayOrdinal: null, monthlyWeekdayRules: [{ weekday: 1, ordinal: 1 }] });
                                     } else {
-                                        setValues({ monthlyWeekday: null, monthlyWeekdayOrdinal: null });
+                                        setValues({ monthlyWeekday: null, monthlyWeekdayOrdinal: null, monthlyWeekdayRules: [] });
                                     }
                                 }}
                             />
 
-                            {(getInputProps("monthlyWeekday").value === null || getInputProps("monthlyWeekday").value === undefined) && (
+                            {(!getInputProps("monthlyWeekdayRules").value || getInputProps("monthlyWeekdayRules").value.length === 0) && getInputProps("monthlyWeekday").value === null && (
                                 <MultiSelect
                                     label="Days of Month"
                                     description="Select which days of the month to display banner"
@@ -288,43 +292,81 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 />
                             )}
 
-                            {getInputProps("monthlyWeekday").value !== null && getInputProps("monthlyWeekday").value !== undefined && (
-                                <Group grow>
-                                    <Select
-                                        label="Which occurrence"
-                                        description="Select which occurrence in the month"
-                                        data={[
-                                            { value: "1", label: "First" },
-                                            { value: "2", label: "Second" },
-                                            { value: "3", label: "Third" },
-                                            { value: "4", label: "Fourth" },
-                                            { value: "-1", label: "Last" },
-                                        ]}
-                                        disabled={isCreating || isUpdating}
-                                        value={String(getInputProps("monthlyWeekdayOrdinal").value ?? 1)}
-                                        onChange={(value) => {
-                                            setValues({ monthlyWeekdayOrdinal: value ? parseInt(value) : 1 });
+                            {((getInputProps("monthlyWeekdayRules").value && getInputProps("monthlyWeekdayRules").value.length > 0) || getInputProps("monthlyWeekday").value !== null) && (
+                                <Stack spacing="xs">
+                                    <Text size="sm" weight={500}>Weekday Rules</Text>
+                                    <Text size="xs" color="dimmed">Add multiple rules to display on different weekdays (e.g., "First and Third Tuesday")</Text>
+
+                                    {(getInputProps("monthlyWeekdayRules").value || []).map((rule: { weekday: number; ordinal: number }, index: number) => (
+                                        <Group key={index} grow align="flex-end">
+                                            <Select
+                                                label={index === 0 ? "Which occurrence" : undefined}
+                                                data={[
+                                                    { value: "1", label: "First" },
+                                                    { value: "2", label: "Second" },
+                                                    { value: "3", label: "Third" },
+                                                    { value: "4", label: "Fourth" },
+                                                    { value: "-1", label: "Last" },
+                                                ]}
+                                                disabled={isCreating || isUpdating}
+                                                value={String(rule.ordinal)}
+                                                onChange={(value) => {
+                                                    const newRules = [...(getInputProps("monthlyWeekdayRules").value || [])];
+                                                    newRules[index] = { ...newRules[index], ordinal: parseInt(value || "1") };
+                                                    setValues({ monthlyWeekdayRules: newRules });
+                                                }}
+                                            />
+                                            <Select
+                                                label={index === 0 ? "Day of week" : undefined}
+                                                data={[
+                                                    { value: "0", label: "Sunday" },
+                                                    { value: "1", label: "Monday" },
+                                                    { value: "2", label: "Tuesday" },
+                                                    { value: "3", label: "Wednesday" },
+                                                    { value: "4", label: "Thursday" },
+                                                    { value: "5", label: "Friday" },
+                                                    { value: "6", label: "Saturday" },
+                                                ]}
+                                                disabled={isCreating || isUpdating}
+                                                value={String(rule.weekday)}
+                                                onChange={(value) => {
+                                                    const newRules = [...(getInputProps("monthlyWeekdayRules").value || [])];
+                                                    newRules[index] = { ...newRules[index], weekday: parseInt(value || "1") };
+                                                    setValues({ monthlyWeekdayRules: newRules });
+                                                }}
+                                            />
+                                            <ActionIcon
+                                                color="red"
+                                                variant="subtle"
+                                                onClick={() => {
+                                                    const newRules = (getInputProps("monthlyWeekdayRules").value || []).filter((_: any, i: number) => i !== index);
+                                                    setValues({ monthlyWeekdayRules: newRules.length > 0 ? newRules : [{ weekday: 1, ordinal: 1 }] });
+                                                }}
+                                                disabled={isCreating || isUpdating || (getInputProps("monthlyWeekdayRules").value || []).length <= 1}
+                                                mb={4}
+                                            >
+                                                <IconTrash size={18} />
+                                            </ActionIcon>
+                                        </Group>
+                                    ))}
+
+                                    <Button
+                                        variant="subtle"
+                                        leftIcon={<IconPlus size={16} />}
+                                        onClick={() => {
+                                            setValues({
+                                                monthlyWeekdayRules: [
+                                                    ...(getInputProps("monthlyWeekdayRules").value || []),
+                                                    { weekday: 1, ordinal: 1 }
+                                                ]
+                                            });
                                         }}
-                                    />
-                                    <Select
-                                        label="Day of week"
-                                        description="Select which day of the week"
-                                        data={[
-                                            { value: "0", label: "Sunday" },
-                                            { value: "1", label: "Monday" },
-                                            { value: "2", label: "Tuesday" },
-                                            { value: "3", label: "Wednesday" },
-                                            { value: "4", label: "Thursday" },
-                                            { value: "5", label: "Friday" },
-                                            { value: "6", label: "Saturday" },
-                                        ]}
                                         disabled={isCreating || isUpdating}
-                                        value={String(getInputProps("monthlyWeekday").value ?? 1)}
-                                        onChange={(value) => {
-                                            setValues({ monthlyWeekday: value ? parseInt(value) : 1 });
-                                        }}
-                                    />
-                                </Group>
+                                        size="xs"
+                                    >
+                                        Add Another Rule
+                                    </Button>
+                                </Stack>
                             )}
                         </Stack>
                     )}

@@ -119,6 +119,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             monthlyDays: (menuItem as any)?.monthlyDays || [],
             monthlyWeekday: (menuItem as any)?.monthlyWeekday ?? null,
             monthlyWeekdayOrdinal: (menuItem as any)?.monthlyWeekdayOrdinal ?? null,
+            monthlyWeekdayRules: (menuItem as any)?.monthlyWeekdayRules || [],
             yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
             yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
             // Map legacy startDate/endDate to period fields if isTemporary was set
@@ -162,6 +163,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 monthlyDays: (menuItem as any)?.monthlyDays || [],
                 monthlyWeekday: (menuItem as any)?.monthlyWeekday ?? null,
                 monthlyWeekdayOrdinal: (menuItem as any)?.monthlyWeekdayOrdinal ?? null,
+                monthlyWeekdayRules: (menuItem as any)?.monthlyWeekdayRules || [],
                 yearlyStartDate: (menuItem as any)?.yearlyStartDate || null,
                 yearlyEndDate: (menuItem as any)?.yearlyEndDate || null,
                 // Map legacy startDate/endDate to period fields if isTemporary was set
@@ -519,20 +521,23 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     { value: "weekday", label: "Specific weekday (e.g., first Monday)" },
                                 ]}
                                 disabled={loading}
-                                value={values.monthlyWeekday !== null && values.monthlyWeekday !== undefined ? "weekday" : "days"}
+                                value={(values.monthlyWeekdayRules && values.monthlyWeekdayRules.length > 0) || (values.monthlyWeekday !== null && values.monthlyWeekday !== undefined) ? "weekday" : "days"}
                                 onChange={(value) => {
                                     if (value === "weekday") {
                                         setFieldValue("monthlyDays", []);
-                                        setFieldValue("monthlyWeekday", 1); // Default to Monday
-                                        setFieldValue("monthlyWeekdayOrdinal", 1); // Default to first
+                                        setFieldValue("monthlyWeekday", null);
+                                        setFieldValue("monthlyWeekdayOrdinal", null);
+                                        // Initialize with one default rule
+                                        setFieldValue("monthlyWeekdayRules", [{ weekday: 1, ordinal: 1 }]);
                                     } else {
                                         setFieldValue("monthlyWeekday", null);
                                         setFieldValue("monthlyWeekdayOrdinal", null);
+                                        setFieldValue("monthlyWeekdayRules", []);
                                     }
                                 }}
                             />
 
-                            {(values.monthlyWeekday === null || values.monthlyWeekday === undefined) && (
+                            {(!values.monthlyWeekdayRules || values.monthlyWeekdayRules.length === 0) && values.monthlyWeekday === null && (
                                 <MultiSelect
                                     label="Days of Month"
                                     description="Select which days of the month to display menu"
@@ -550,43 +555,79 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                 />
                             )}
 
-                            {values.monthlyWeekday !== null && values.monthlyWeekday !== undefined && (
-                                <Group grow>
-                                    <Select
-                                        label="Which occurrence"
-                                        description="Select which occurrence in the month"
-                                        data={[
-                                            { value: "1", label: "First" },
-                                            { value: "2", label: "Second" },
-                                            { value: "3", label: "Third" },
-                                            { value: "4", label: "Fourth" },
-                                            { value: "-1", label: "Last" },
-                                        ]}
-                                        disabled={loading}
-                                        value={String(values.monthlyWeekdayOrdinal ?? 1)}
-                                        onChange={(value) => {
-                                            setFieldValue("monthlyWeekdayOrdinal", value ? parseInt(value) : 1);
+                            {((values.monthlyWeekdayRules && values.monthlyWeekdayRules.length > 0) || values.monthlyWeekday !== null) && (
+                                <Stack spacing="xs">
+                                    <Text size="sm" weight={500}>Weekday Rules</Text>
+                                    <Text size="xs" color="dimmed">Add multiple rules to display on different weekdays (e.g., "First and Third Tuesday")</Text>
+
+                                    {(values.monthlyWeekdayRules || []).map((rule: { weekday: number; ordinal: number }, index: number) => (
+                                        <Group key={index} grow align="flex-end">
+                                            <Select
+                                                label={index === 0 ? "Which occurrence" : undefined}
+                                                data={[
+                                                    { value: "1", label: "First" },
+                                                    { value: "2", label: "Second" },
+                                                    { value: "3", label: "Third" },
+                                                    { value: "4", label: "Fourth" },
+                                                    { value: "-1", label: "Last" },
+                                                ]}
+                                                disabled={loading}
+                                                value={String(rule.ordinal)}
+                                                onChange={(value) => {
+                                                    const newRules = [...(values.monthlyWeekdayRules || [])];
+                                                    newRules[index] = { ...newRules[index], ordinal: parseInt(value || "1") };
+                                                    setFieldValue("monthlyWeekdayRules", newRules);
+                                                }}
+                                            />
+                                            <Select
+                                                label={index === 0 ? "Day of week" : undefined}
+                                                data={[
+                                                    { value: "0", label: "Sunday" },
+                                                    { value: "1", label: "Monday" },
+                                                    { value: "2", label: "Tuesday" },
+                                                    { value: "3", label: "Wednesday" },
+                                                    { value: "4", label: "Thursday" },
+                                                    { value: "5", label: "Friday" },
+                                                    { value: "6", label: "Saturday" },
+                                                ]}
+                                                disabled={loading}
+                                                value={String(rule.weekday)}
+                                                onChange={(value) => {
+                                                    const newRules = [...(values.monthlyWeekdayRules || [])];
+                                                    newRules[index] = { ...newRules[index], weekday: parseInt(value || "1") };
+                                                    setFieldValue("monthlyWeekdayRules", newRules);
+                                                }}
+                                            />
+                                            <ActionIcon
+                                                color="red"
+                                                variant="subtle"
+                                                onClick={() => {
+                                                    const newRules = (values.monthlyWeekdayRules || []).filter((_: any, i: number) => i !== index);
+                                                    setFieldValue("monthlyWeekdayRules", newRules.length > 0 ? newRules : [{ weekday: 1, ordinal: 1 }]);
+                                                }}
+                                                disabled={loading || (values.monthlyWeekdayRules || []).length <= 1}
+                                                mb={4}
+                                            >
+                                                <IconTrash size={18} />
+                                            </ActionIcon>
+                                        </Group>
+                                    ))}
+
+                                    <Button
+                                        variant="subtle"
+                                        leftIcon={<IconPlus size={16} />}
+                                        onClick={() => {
+                                            setFieldValue("monthlyWeekdayRules", [
+                                                ...(values.monthlyWeekdayRules || []),
+                                                { weekday: 1, ordinal: 1 }
+                                            ]);
                                         }}
-                                    />
-                                    <Select
-                                        label="Day of week"
-                                        description="Select which day of the week"
-                                        data={[
-                                            { value: "0", label: "Sunday" },
-                                            { value: "1", label: "Monday" },
-                                            { value: "2", label: "Tuesday" },
-                                            { value: "3", label: "Wednesday" },
-                                            { value: "4", label: "Thursday" },
-                                            { value: "5", label: "Friday" },
-                                            { value: "6", label: "Saturday" },
-                                        ]}
                                         disabled={loading}
-                                        value={String(values.monthlyWeekday ?? 1)}
-                                        onChange={(value) => {
-                                            setFieldValue("monthlyWeekday", value ? parseInt(value) : 1);
-                                        }}
-                                    />
-                                </Group>
+                                        size="xs"
+                                    >
+                                        Add Another Rule
+                                    </Button>
+                                </Stack>
                             )}
                         </Stack>
                     )}

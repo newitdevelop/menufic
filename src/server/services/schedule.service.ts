@@ -3,14 +3,20 @@
  * Utility functions for checking if menus/banners should be displayed based on their schedule settings
  */
 
+export interface MonthlyWeekdayRule {
+    weekday: number;  // 0=Sunday, 6=Saturday
+    ordinal: number;  // 1=first, 2=second, 3=third, 4=fourth, -1=last
+}
+
 export interface ScheduleConfig {
     scheduleType: 'ALWAYS' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'PERIOD';
     dailyStartTime?: string | null;
     dailyEndTime?: string | null;
     weeklyDays?: number[];
     monthlyDays?: number[];
-    monthlyWeekday?: number | null;
-    monthlyWeekdayOrdinal?: number | null;
+    monthlyWeekday?: number | null;           // Legacy: single weekday
+    monthlyWeekdayOrdinal?: number | null;    // Legacy: single ordinal
+    monthlyWeekdayRules?: MonthlyWeekdayRule[] | null;  // New: multiple weekday/ordinal combinations
     yearlyStartDate?: string | null;
     yearlyEndDate?: string | null;
     periodStartDate?: Date | null;
@@ -103,16 +109,56 @@ function matchesMonthlyDaysSchedule(now: Date, monthlyDays?: number[]): boolean 
 }
 
 /**
- * Check if today matches the monthly weekday schedule (e.g., "third Monday")
+ * Check if today matches a single weekday rule (e.g., "third Monday")
  * @param now - Current date
- * @param monthlyWeekday - Day of week (0=Sunday, 6=Saturday)
- * @param monthlyWeekdayOrdinal - Which occurrence (1=first, 2=second, 3=third, 4=fourth, -1=last)
+ * @param weekday - Day of week (0=Sunday, 6=Saturday)
+ * @param ordinal - Which occurrence (1=first, 2=second, 3=third, 4=fourth, -1=last)
+ */
+function matchesSingleWeekdayRule(
+    now: Date,
+    weekday: number,
+    ordinal: number
+): boolean {
+    const currentDayOfWeek = now.getDay();
+
+    // First check: is today the correct day of the week?
+    if (currentDayOfWeek !== weekday) {
+        return false;
+    }
+
+    // Check if it's the specified ordinal occurrence
+    if (ordinal === -1) {
+        // Check for "last" occurrence
+        return isLastWeekdayOfMonth(now);
+    }
+
+    // Check for specific ordinal (1st, 2nd, 3rd, 4th)
+    const currentOrdinal = getWeekdayOrdinalInMonth(now);
+    return currentOrdinal === ordinal;
+}
+
+/**
+ * Check if today matches the monthly weekday schedule (e.g., "third Monday")
+ * Supports legacy single values or new array of rules
+ * @param now - Current date
+ * @param monthlyWeekday - Legacy: Day of week (0=Sunday, 6=Saturday)
+ * @param monthlyWeekdayOrdinal - Legacy: Which occurrence (1=first, 2=second, 3=third, 4=fourth, -1=last)
+ * @param monthlyWeekdayRules - New: Array of {weekday, ordinal} rules
  */
 function matchesMonthlyWeekdaySchedule(
     now: Date,
     monthlyWeekday?: number | null,
-    monthlyWeekdayOrdinal?: number | null
+    monthlyWeekdayOrdinal?: number | null,
+    monthlyWeekdayRules?: MonthlyWeekdayRule[] | null
 ): boolean {
+    // New format: check if any rule matches (OR logic)
+    if (monthlyWeekdayRules && monthlyWeekdayRules.length > 0) {
+        return monthlyWeekdayRules.some(rule =>
+            matchesSingleWeekdayRule(now, rule.weekday, rule.ordinal)
+        );
+    }
+
+    // Legacy format: single weekday/ordinal
     // If no weekday specified, check monthly days instead
     if (monthlyWeekday === null || monthlyWeekday === undefined) {
         return true;
@@ -246,14 +292,20 @@ export function isActiveBySchedule(config: ScheduleConfig, now: Date = new Date(
 
         case 'MONTHLY':
             // Monthly can be either specific days OR weekday ordinals
-            // If monthlyWeekday is set, use weekday logic (e.g., "third Monday")
-            // Otherwise, use monthlyDays (e.g., "1st and 15th of each month")
-            if (config.monthlyWeekday !== null && config.monthlyWeekday !== undefined) {
+            // Priority: monthlyWeekdayRules (new) > monthlyWeekday (legacy) > monthlyDays
+            const hasWeekdayRules = config.monthlyWeekdayRules && config.monthlyWeekdayRules.length > 0;
+            const hasLegacyWeekday = config.monthlyWeekday !== null && config.monthlyWeekday !== undefined;
+
+            if (hasWeekdayRules || hasLegacyWeekday) {
                 const ordinal = getWeekdayOrdinalInMonth(now);
                 const isLast = isLastWeekdayOfMonth(now);
-                log(`MONTHLY weekday check: weekday=${config.monthlyWeekday}, ordinal=${config.monthlyWeekdayOrdinal}`);
+                if (hasWeekdayRules) {
+                    log(`MONTHLY weekday rules check: ${JSON.stringify(config.monthlyWeekdayRules)}`);
+                } else {
+                    log(`MONTHLY weekday check: weekday=${config.monthlyWeekday}, ordinal=${config.monthlyWeekdayOrdinal}`);
+                }
                 log(`Current: dayOfWeek=${now.getDay()}, ordinalInMonth=${ordinal}, isLast=${isLast}`);
-                if (!matchesMonthlyWeekdaySchedule(now, config.monthlyWeekday, config.monthlyWeekdayOrdinal)) {
+                if (!matchesMonthlyWeekdaySchedule(now, config.monthlyWeekday, config.monthlyWeekdayOrdinal, config.monthlyWeekdayRules)) {
                     log('MONTHLY weekday -> false');
                     return false;
                 }
@@ -292,15 +344,22 @@ export function isActiveBySchedule(config: ScheduleConfig, now: Date = new Date(
  * Debug helper to explain why a schedule matches or doesn't match
  */
 export function getScheduleDebugInfo(config: ScheduleConfig, now: Date = new Date()): string {
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const ordinalNames: Record<number, string> = { 1: 'First', 2: 'Second', 3: 'Third', 4: 'Fourth', '-1': 'Last' };
     const lines: string[] = [];
     lines.push(`Schedule Type: ${config.scheduleType}`);
     lines.push(`Current Date: ${now.toISOString()}`);
-    lines.push(`Day of Week: ${now.getDay()} (${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][now.getDay()]})`);
+    lines.push(`Day of Week: ${now.getDay()} (${dayNames[now.getDay()]})`);
     lines.push(`Day of Month: ${now.getDate()}`);
     lines.push(`Weekday Ordinal: ${getWeekdayOrdinalInMonth(now)} (is last: ${isLastWeekdayOfMonth(now)})`);
 
-    if (config.monthlyWeekday !== null && config.monthlyWeekday !== undefined) {
-        lines.push(`Config monthlyWeekday: ${config.monthlyWeekday} (${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][config.monthlyWeekday]})`);
+    if (config.monthlyWeekdayRules && config.monthlyWeekdayRules.length > 0) {
+        const rulesStr = config.monthlyWeekdayRules.map(r =>
+            `${ordinalNames[r.ordinal] || r.ordinal} ${dayNames[r.weekday]}`
+        ).join(', ');
+        lines.push(`Config monthlyWeekdayRules: ${rulesStr}`);
+    } else if (config.monthlyWeekday !== null && config.monthlyWeekday !== undefined) {
+        lines.push(`Config monthlyWeekday: ${config.monthlyWeekday} (${dayNames[config.monthlyWeekday]})`);
         lines.push(`Config monthlyWeekdayOrdinal: ${config.monthlyWeekdayOrdinal}`);
     }
 
