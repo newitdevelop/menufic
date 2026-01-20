@@ -40,9 +40,10 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy source files
 COPY . .
 
-# Generate Prisma client and build
+# Update browserslist database and generate Prisma client and build
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx prisma generate && \
+RUN npx browserslist@latest --update-db && \
+    npx prisma generate && \
     NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 # ===== PRODUCTION STAGE =====
