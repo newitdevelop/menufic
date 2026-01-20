@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { Prisma } from "@prisma/client";
 
 import { prisma } from "src/server/db";
 
@@ -125,7 +126,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         date,
                         totalViews: data.views,
                         uniqueVisitors: data.uniqueIps.size,
-                        countryStats: Object.keys(data.countries).length > 0 ? data.countries : null,
+                        countryStats: Object.keys(data.countries).length > 0
+                            ? data.countries
+                            : Prisma.JsonNull,
                     },
                     update: {
                         totalViews: { increment: data.views },
