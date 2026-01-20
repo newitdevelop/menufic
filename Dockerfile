@@ -42,7 +42,7 @@ COPY . .
 
 # Update browserslist database and generate Prisma client and build
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx browserslist@latest --update-db && \
+RUN npx update-browserslist-db@latest --legacy-peer-deps || true && \
     npx prisma generate && \
     NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
