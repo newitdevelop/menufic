@@ -284,20 +284,20 @@ export async function getImageDisclaimer(isAiGenerated: boolean, targetLang: str
     if (!targetLang || targetLang.toUpperCase() === "PT") {
         // Return Portuguese (source language) disclaimers
         return isAiGenerated
-            ? "Imagem gerada por IA - o prato real pode variar"
+            ? "Imagem gerada por IA - a apresentação real pode variar"
             : "A apresentação real pode variar";
     }
 
     // Use different field names for AI vs regular disclaimers
     const field = isAiGenerated ? "aiImageDisclaimer" : "imageDisclaimer";
     const sourceText = isAiGenerated
-        ? "Imagem gerada por IA - o prato real pode variar"
+        ? "Imagem gerada por IA - a apresentação real pode variar"
         : "A apresentação real pode variar";
 
     console.log(`[Translation] Getting disclaimer translation - field: ${field}, targetLang: ${targetLang}, sourceText: "${sourceText}"`);
 
-    // Use a static entity ID for UI translations
-    const cached = await getOrCreateTranslation("menu", "ui-disclaimers", field, sourceText, targetLang, "PT");
+    // Use a static entity ID for UI translations (v2 to invalidate old "plate may vary" cache)
+    const cached = await getOrCreateTranslation("menu", "ui-disclaimers-v2", field, sourceText, targetLang, "PT");
 
     console.log(`[Translation] Disclaimer result: "${cached}"`);
 
