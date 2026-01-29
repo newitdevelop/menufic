@@ -23,7 +23,6 @@ export function isSmartTV(): boolean {
         "pov_tv",
         "netcast",
         "nettv",
-        "tv",
         "webos", // LG WebOS
         "web0s",
         "tizen", // Samsung Tizen
@@ -34,7 +33,6 @@ export function isSmartTV(): boolean {
         "maple", // Old Samsung
         "viera", // Panasonic
         "aquos", // Sharp
-        "philips",
         "roku",
         "chromecast",
         "playstation",
@@ -43,15 +41,7 @@ export function isSmartTV(): boolean {
     ];
 
     // Check if any TV pattern exists in user agent
-    const isTVUserAgent = tvPatterns.some((pattern) => userAgent.includes(pattern));
-
-    // Additional checks for screen resolution (typical TV resolutions)
-    const isLargeScreen = window.screen.width >= 1920 || window.screen.height >= 1080;
-
-    // Check if browser is in TV mode (some browsers report this)
-    const isTVMode = (navigator as any).userAgentData?.mobile === false && isLargeScreen;
-
-    return isTVUserAgent || isTVMode;
+    return tvPatterns.some((pattern) => userAgent.includes(pattern));
 }
 
 /**
