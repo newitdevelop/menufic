@@ -144,7 +144,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categor
                                 <Text align="center" size="sm" color="dimmed">
                                     {(menuItem as any).bomName || t("noBomName")}
                                 </Text>
-                            ) : (
+                            ) : menuItem.price ? (
                                 <>
                                     <Text align="center" color="red" opacity={0.8}>
                                         {menuItem.currency || "€"}{displayPrice}
@@ -153,7 +153,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categor
                                         ({menuItem.vatRate || 23}% VAT incl.)
                                     </Text>
                                 </>
-                            )}
+                            ) : null}
                         </Grid.Col>
                         <Grid.Col lg={5} sm={9} span={12}>
                             <Text color={menuItem.description ? theme.colors.dark[6] : theme.colors.dark[3]}>
