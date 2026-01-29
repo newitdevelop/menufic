@@ -23,12 +23,14 @@ interface Props {
     categoryItem: Category & { items: MenuItem[] };
     /** Id of the menu to which the categories belong to */
     menuId: string;
+    /** Type of menu (INTERNAL or EXTERNAL) */
+    menuType?: "INTERNAL" | "EXTERNAL";
     /** Id of the restaurant */
     restaurantId: string;
 }
 
 /** Individual category component with an option to edit or delete */
-export const CategoryElement: FC<Props> = ({ categoryItem, menuId, restaurantId }) => {
+export const CategoryElement: FC<Props> = ({ categoryItem, menuId, menuType, restaurantId }) => {
     const trpcCtx = api.useContext();
     const { classes, cx, theme } = useStyles();
     const [deleteCategoryModalOpen, setDeleteCategoryModalOpen] = useState(false);
@@ -88,7 +90,7 @@ export const CategoryElement: FC<Props> = ({ categoryItem, menuId, restaurantId 
                             </Flex>
                         </Accordion.Control>
                         <Accordion.Panel bg={theme.colors.dark[0]}>
-                            <MenuItems categoryId={categoryItem.id} menuId={menuId} menuItems={categoryItem?.items} />
+                            <MenuItems categoryId={categoryItem.id} menuId={menuId} menuType={menuType} menuItems={categoryItem?.items} />
                         </Accordion.Panel>
                     </Accordion.Item>
                 )}

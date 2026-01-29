@@ -20,12 +20,14 @@ import { CategoryForm } from "../../Forms/CategoryForm";
 interface Props {
     /** Id of the menu to which the categories belong to */
     menuId: string;
+    /** Type of menu (INTERNAL or EXTERNAL) */
+    menuType?: "INTERNAL" | "EXTERNAL";
     /** Id of the restaurant */
     restaurantId: string;
 }
 
 /** Draggable list of categories items with add, edit and delete options */
-export const Categories: FC<Props> = ({ menuId, restaurantId }) => {
+export const Categories: FC<Props> = ({ menuId, menuType, restaurantId }) => {
     const trpcCtx = api.useContext();
     const { classes } = useStyles();
     const [categoryFormOpen, setCategoryFormOpen] = useState(false);
@@ -116,7 +118,7 @@ export const Categories: FC<Props> = ({ menuId, restaurantId }) => {
                                     }}
                                 >
                                     {categories.map((item: any) => (
-                                        <CategoryElement key={item.id} categoryItem={item} menuId={menuId} restaurantId={restaurantId} />
+                                        <CategoryElement key={item.id} categoryItem={item} menuId={menuId} menuType={menuType} restaurantId={restaurantId} />
                                     ))}
                                     {provided.placeholder}
                                 </Box>

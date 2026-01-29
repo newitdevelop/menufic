@@ -21,12 +21,14 @@ interface Props {
     categoryId: string;
     /** Id of the menu to which the items belong to */
     menuId: string;
+    /** Type of menu (INTERNAL or EXTERNAL) */
+    menuType?: "INTERNAL" | "EXTERNAL";
     /** List of exiting menu items of the category */
     menuItems: MenuItem[];
 }
 
 /** Draggable list of menu items with add, edit and delete options */
-export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
+export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId, menuType }) => {
     const trpcCtx = api.useContext();
     const [menuItemFormOpen, setMenuItemFormOpen] = useState(false);
     const [itemsParent, enableAutoAnimate] = useAutoAnimate<HTMLElement>();
@@ -89,6 +91,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
                                     key={item.id}
                                     categoryId={categoryId}
                                     menuId={menuId}
+                                    menuType={menuType}
                                     menuItem={item}
                                 />
                             ))}
@@ -116,6 +119,7 @@ export const MenuItems: FC<Props> = ({ categoryId, menuItems, menuId }) => {
             <MenuItemForm
                 categoryId={categoryId}
                 menuId={menuId}
+                menuType={menuType}
                 onClose={() => setMenuItemFormOpen(false)}
                 opened={menuItemFormOpen}
             />

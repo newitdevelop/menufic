@@ -176,11 +176,12 @@ export const menuItemInputBase = z.object({
     imagePath: z.string().optional(),
     isAiGeneratedImage: z.boolean().default(false),
     name: z.string().trim().min(1, "Name is required").max(50, "Name cannot be longer than 50 characters"),
-    price: z.string().trim().min(1, "Price is required").max(12, "Price cannot be longer than 12 characters"),
+    price: z.string().trim().max(12, "Price cannot be longer than 12 characters").default(""),
     vatIncluded: z.boolean().default(true),
     vatRate: z.union([z.literal(6), z.literal(13), z.literal(23)]).default(23),
     isEdible: z.boolean().default(false),
     allergens: z.array(z.enum(allergenCodes)).default([]),
+    bomName: z.string().trim().max(100, "BOM Name cannot be longer than 100 characters").optional().default(""),
 });
 
 export const menuItemInput = menuItemInputBase.refine(
@@ -196,6 +197,26 @@ export const menuItemInput = menuItemInputBase.refine(
         path: ["allergens"],
     }
 );
+
+/** Validator for external menu items - requires price */
+export const menuItemInputExternal = menuItemInputBase.superRefine((data, ctx) => {
+    if (data.price.length === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Price is required", path: ["price"] });
+    }
+    if (data.isEdible && data.allergens.length === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Allergen selection is required for edible products", path: ["allergens"] });
+    }
+});
+
+/** Validator for internal menu items - requires bomName, no price needed */
+export const menuItemInputInternal = menuItemInputBase.superRefine((data, ctx) => {
+    if ((data.bomName?.trim().length ?? 0) === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "BOM Name is required for internal menu items", path: ["bomName"] });
+    }
+    if (data.isEdible && data.allergens.length === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Allergen selection is required for edible products", path: ["allergens"] });
+    }
+});
 export const restaurantInput = z.object({
     contactNo: z.union([
         z

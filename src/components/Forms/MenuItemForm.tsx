@@ -11,7 +11,7 @@ import type { Image, MenuItem } from "@prisma/client";
 
 import { api } from "src/utils/api";
 import { showErrorToast, showSuccessToast, toBase64 } from "src/utils/helpers";
-import { allergenCodes, menuItemInput } from "src/utils/validators";
+import { allergenCodes, menuItemInputExternal, menuItemInputInternal } from "src/utils/validators";
 
 import { ImageUpload } from "../ImageUpload";
 import { Modal } from "../Modal";
@@ -21,15 +21,19 @@ interface Props extends ModalProps {
     categoryId: string;
     /** Id of the menu that the item belongs to */
     menuId: string;
+    /** Type of menu (INTERNAL or EXTERNAL) */
+    menuType?: "INTERNAL" | "EXTERNAL";
     /** Menu item to be edited */
     menuItem?: MenuItem & { image?: Image };
 }
 
 /** Form to be used when allowing users to add or edit menu items of restaurant menus categories */
-export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, categoryId, ...rest }) => {
+export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, menuItem, categoryId, ...rest }) => {
     const trpcCtx = api.useContext();
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
+
+    const isInternal = menuType === "INTERNAL";
 
     // Form hook - must be declared before mutations that use setValues
     const { getInputProps, onSubmit, setValues, isDirty, resetDirty, values } = useForm<{
@@ -44,6 +48,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
         vatRate: 6 | 13 | 23;
         isEdible: boolean;
         allergens: (typeof allergenCodes)[number][];
+        bomName: string;
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
@@ -57,8 +62,9 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
             vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
             isEdible: (menuItem as any)?.isEdible ?? false,
             allergens: (menuItem as any)?.allergens || [],
+            bomName: (menuItem as any)?.bomName || "",
         },
-        validate: zodResolver(menuItemInput),
+        validate: zodResolver(isInternal ? menuItemInputInternal : menuItemInputExternal),
     });
 
     // Check if AI allergen detection is available
@@ -178,6 +184,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                 vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
                 isEdible: (menuItem as any)?.isEdible ?? false,
                 allergens: (menuItem as any)?.allergens || [],
+                bomName: (menuItem as any)?.bomName || "",
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -216,44 +223,57 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                         {...getInputProps("name")}
                         autoFocus
                     />
-                    <Group align="flex-end" grow>
+                    {isInternal ? (
                         <TextInput
                             disabled={loading}
-                            label={t("inputPriceLabel")}
-                            placeholder={t("inputPricePlaceholder")}
+                            label={t("inputBomNameLabel")}
+                            placeholder={t("inputBomNamePlaceholder")}
+                            description={t("inputBomNameDescription")}
                             withAsterisk
-                            {...getInputProps("price")}
+                            {...getInputProps("bomName")}
                         />
-                        <SegmentedControl
-                            data={[
-                                { label: "€", value: "€" },
-                                { label: "$", value: "$" },
-                            ]}
-                            disabled={loading}
-                            {...getInputProps("currency")}
-                        />
-                    </Group>
-                    <Group align="flex-start" grow>
-                        <Select
-                            data={[
-                                { label: "6%", value: "6" },
-                                { label: "13%", value: "13" },
-                                { label: "23%", value: "23" },
-                            ]}
-                            disabled={loading}
-                            label="VAT Rate"
-                            value={String(values.vatRate)}
-                            withAsterisk
-                            onChange={(value) => setValues({ vatRate: Number(value) as 6 | 13 | 23 })}
-                        />
-                        <Checkbox
-                            checked={values.vatIncluded}
-                            disabled={loading}
-                            label="VAT included in price"
-                            mt="xl"
-                            onChange={(event) => setValues({ vatIncluded: event.currentTarget.checked })}
-                        />
-                    </Group>
+                    ) : (
+                        <>
+                            <Group align="flex-end" grow>
+                                <TextInput
+                                    disabled={loading}
+                                    label={t("inputPriceLabel")}
+                                    placeholder={t("inputPricePlaceholder")}
+                                    withAsterisk
+                                    {...getInputProps("price")}
+                                />
+                                <SegmentedControl
+                                    data={[
+                                        { label: "€", value: "€" },
+                                        { label: "$", value: "$" },
+                                    ]}
+                                    disabled={loading}
+                                    {...getInputProps("currency")}
+                                />
+                            </Group>
+                            <Group align="flex-start" grow>
+                                <Select
+                                    data={[
+                                        { label: "6%", value: "6" },
+                                        { label: "13%", value: "13" },
+                                        { label: "23%", value: "23" },
+                                    ]}
+                                    disabled={loading}
+                                    label="VAT Rate"
+                                    value={String(values.vatRate)}
+                                    withAsterisk
+                                    onChange={(value) => setValues({ vatRate: Number(value) as 6 | 13 | 23 })}
+                                />
+                                <Checkbox
+                                    checked={values.vatIncluded}
+                                    disabled={loading}
+                                    label="VAT included in price"
+                                    mt="xl"
+                                    onChange={(event) => setValues({ vatIncluded: event.currentTarget.checked })}
+                                />
+                            </Group>
+                        </>
+                    )}
                     <Textarea
                         disabled={loading}
                         label={t("inputDescriptionLabel")}
@@ -285,7 +305,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                                 withAsterisk
                                 {...getInputProps("allergens")}
                             />
-                            {isAIAvailable && values.name && values.description && (
+                            {isAIAvailable && values.name && (
                                 <Button
                                     compact
                                     disabled={loading || isDetectingAllergens}
@@ -300,7 +320,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuItem, cat
                                         }
                                         detectAllergensAI({
                                             name: values.name,
-                                            description: values.description,
+                                            description: values.description || values.name,
                                         });
                                     }}
                                     variant="light"

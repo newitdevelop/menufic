@@ -56,12 +56,14 @@ interface Props {
     categoryId: string;
     /** Id of the menu to which the item belongs to  */
     menuId: string;
+    /** Type of menu (INTERNAL or EXTERNAL) */
+    menuType?: "INTERNAL" | "EXTERNAL";
     /** Item which will be represented by the component */
     menuItem: MenuItem & { image?: Image };
 }
 
 /** Individual menu item component with an option to edit or delete */
-export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => {
+export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categoryId }) => {
     const trpcCtx = api.useContext();
     const { classes, cx, theme } = useStyles();
     const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
@@ -138,12 +140,20 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
                             </Text>
                         </Grid.Col>
                         <Grid.Col md={2} sm={3} span={3}>
-                            <Text align="center" color="red" opacity={0.8}>
-                                {menuItem.currency || "€"}{displayPrice}
-                            </Text>
-                            <Text align="center" size="xs" opacity={0.6}>
-                                ({menuItem.vatRate || 23}% VAT incl.)
-                            </Text>
+                            {menuType === "INTERNAL" ? (
+                                <Text align="center" size="sm" color="dimmed">
+                                    {(menuItem as any).bomName || t("noBomName")}
+                                </Text>
+                            ) : (
+                                <>
+                                    <Text align="center" color="red" opacity={0.8}>
+                                        {menuItem.currency || "€"}{displayPrice}
+                                    </Text>
+                                    <Text align="center" size="xs" opacity={0.6}>
+                                        ({menuItem.vatRate || 23}% VAT incl.)
+                                    </Text>
+                                </>
+                            )}
                         </Grid.Col>
                         <Grid.Col lg={5} sm={9} span={12}>
                             <Text color={menuItem.description ? theme.colors.dark[6] : theme.colors.dark[3]}>
@@ -198,6 +208,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, categoryId }) => 
             <MenuItemForm
                 categoryId={categoryId}
                 menuId={menuId}
+                menuType={menuType}
                 menuItem={menuItem}
                 onClose={() => setMenuItemFormOpen(false)}
                 opened={menuItemFormOpen}
