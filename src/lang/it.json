@@ -53,6 +53,10 @@
     "menu": {
         "noMenusForVenue": "Non ci sono menu disponibili per questo locale. Riprova più tardi",
         "noItemsForMenu": "Non ci sono elementi di menu per il menu scelto. Riprova più tardi.",
+        "searchPlaceholder": "Cerca nel menu...",
+        "searchNoResults": "Nessun elemento trovato per la tua ricerca.",
+        "allergenFilterLabel": "Filtra per allergeni",
+        "allergenFilterPlaceholder": "Seleziona allergeni da escludere...",
         "noDetailsAvailable": "I dettagli di questo locale non sono al momento disponibili. Ci scusiamo per l'inconveniente. Per favore riprova più tardi",
         "loading": "Caricamento menu...",
         "loadingTooLong": "Il caricamento sta richiedendo più tempo del previsto. Per favore verifica la tua connessione internet e riprova.",

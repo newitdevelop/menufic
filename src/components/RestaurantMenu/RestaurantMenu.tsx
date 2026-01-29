@@ -10,15 +10,20 @@ import {
     Button,
     createStyles,
     Flex,
+    Group,
     MediaQuery,
+    MultiSelect,
     SimpleGrid,
     Stack,
     Tabs,
     Text,
+    TextInput,
+    Tooltip,
     useMantineColorScheme,
     useMantineTheme,
 } from "@mantine/core";
-import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSun } from "@tabler/icons";
+import { useDebouncedValue } from "@mantine/hooks";
+import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSearch, IconSun, IconX } from "@tabler/icons";
 import Autoplay from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 
@@ -28,6 +33,7 @@ import { Black, White } from "src/styles/theme";
 import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
 import { getInitialMenuSelection, isSmartTV } from "src/utils/detectSmartTV";
 import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
+import { allergenCodes, allergenSymbols } from "src/utils/validators";
 
 import { MenuItemCard } from "./MenuItemCard";
 import { PackCard } from "./PackCard";
@@ -207,6 +213,9 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         [sortedMenus, menuIdFromQuery]
     );
     const [selectedMenu, setSelectedMenu] = useState<string | null | undefined>(initialMenu);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearch] = useDebouncedValue(searchQuery, 200);
+    const [excludedAllergens, setExcludedAllergens] = useState<string[]>([]);
     const t = useTranslations("menu");
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
@@ -285,6 +294,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     // Handle menu tab change - clear categoryId and packId from URL when switching menus
     const handleMenuChange = (menuId: string | null) => {
         setSelectedMenu(menuId);
+        setSearchQuery("");
+        setExcludedAllergens([]);
 
         // If URL has categoryId or packId, clear them when switching menus
         // (they belong to a different menu and would cause empty display)
@@ -348,6 +359,70 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         () => sortedMenus?.find((item) => item.id === selectedMenu),
         [selectedMenu, sortedMenus]
     );
+
+    // Search and allergen filtering
+    const normalizeSearch = (text: string) =>
+        text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const itemPassesAllergenFilter = (item: any): boolean => {
+        if (excludedAllergens.length === 0) return true;
+        if (!(item as any)?.isEdible) return true;
+        const itemAllergens: string[] = (item as any)?.allergens || [];
+        if (itemAllergens.includes("none") && itemAllergens.length === 1) return true;
+        return !excludedAllergens.some((allergen) => itemAllergens.includes(allergen));
+    };
+
+    const { filteredCategories, filteredPacks, hasSearchResults } = useMemo(() => {
+        const query = normalizeSearch(debouncedSearch.trim());
+        const hasQuery = !!query;
+        const hasAllergenFilter = excludedAllergens.length > 0;
+
+        if (!hasQuery && !hasAllergenFilter) {
+            return {
+                filteredCategories: menuDetails?.categories || [],
+                filteredPacks: (menuDetails as any)?.packs || [],
+                hasSearchResults: true,
+            };
+        }
+
+        const filteredCats = (menuDetails?.categories || [])
+            .map((category) => ({
+                ...category,
+                items: category.items.filter((item) => {
+                    // Allergen filter
+                    if (!itemPassesAllergenFilter(item)) return false;
+                    // Search filter
+                    if (!hasQuery) return true;
+                    const nameMatch = normalizeSearch(item.name).includes(query);
+                    const descMatch = item.description
+                        ? normalizeSearch(item.description).includes(query)
+                        : false;
+                    return nameMatch || descMatch;
+                }),
+            }))
+            .filter((category) => category.items.length > 0);
+
+        const filteredPacksList = ((menuDetails as any)?.packs || []).filter((pack: any) => {
+            if (hasQuery) {
+                if (normalizeSearch(pack.name).includes(query)) return true;
+                if (pack.description && normalizeSearch(pack.description).includes(query)) return true;
+                return pack.sections?.some((section: any) => {
+                    if (section.title && normalizeSearch(section.title).includes(query)) return true;
+                    return section.items?.some((item: any) => {
+                        const itemName = typeof item === "string" ? item : item?.name || "";
+                        return normalizeSearch(itemName).includes(query);
+                    });
+                });
+            }
+            return true;
+        });
+
+        return {
+            filteredCategories: filteredCats,
+            filteredPacks: filteredPacksList,
+            hasSearchResults: filteredCats.length > 0 || filteredPacksList.length > 0,
+        };
+    }, [debouncedSearch, excludedAllergens, menuDetails]);
 
     // Clear categoryId from URL if it doesn't belong to the current menu
     useEffect(() => {
@@ -598,6 +673,66 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     ))}
                 </Tabs.List>
             </Tabs>
+            {menuDetails && (() => {
+                const hasEdibleItems = menuDetails.categories?.some((cat) =>
+                    cat.items?.some((item: any) => item.isEdible)
+                );
+                const allergenOptions = allergenCodes
+                    .filter((code) => code !== "none")
+                    .map((code) => ({
+                        value: code,
+                        label: `${allergenSymbols[code]} ${uiTranslations?.allergens?.[code] || code}`,
+                    }));
+
+                return (
+                    <Box className="no-print" my="sm">
+                        <Flex
+                            gap="sm"
+                            direction={{ base: "column", sm: "row" }}
+                            align={{ base: "stretch", sm: "flex-end" }}
+                        >
+                            <TextInput
+                                icon={<IconSearch size={18} />}
+                                placeholder={t("searchPlaceholder")}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                                rightSection={
+                                    searchQuery ? (
+                                        <ActionIcon onClick={() => setSearchQuery("")} variant="transparent" aria-label="Clear search">
+                                            <IconX size={16} />
+                                        </ActionIcon>
+                                    ) : null
+                                }
+                                sx={(theme) => ({
+                                    flex: 1,
+                                    maxWidth: 400,
+                                    [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                                })}
+                            />
+                            {hasEdibleItems && (
+                                <MultiSelect
+                                    data={allergenOptions}
+                                    value={excludedAllergens}
+                                    onChange={setExcludedAllergens}
+                                    placeholder={t("allergenFilterPlaceholder")}
+                                    label={t("allergenFilterLabel")}
+                                    clearable
+                                    searchable
+                                    nothingFound=""
+                                    sx={(theme) => ({
+                                        flex: 1,
+                                        maxWidth: 400,
+                                        [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                                    })}
+                                    styles={{
+                                        label: { fontSize: '0.75rem', fontWeight: 500 },
+                                    }}
+                                />
+                            )}
+                        </Flex>
+                    </Box>
+                );
+            })()}
             {menuDetails && (
                 <Stack spacing="xs" mb="lg" className="no-print">
                     {/* New Reservation System - Standardized Button Style */}
@@ -719,10 +854,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 )}
 
                 {/* Hide packs when printing a specific category */}
-                {!categoryIdFromQuery && (menuDetails as any)?.packs
+                {!categoryIdFromQuery && filteredPacks
                     ?.filter((pack: any) => {
-                        // Filter by pack ID if provided in query params (for printing)
-                        if (packIdFromQuery) {
+                        // Filter by pack ID if provided in query params (for printing), but not when searching
+                        if (!debouncedSearch.trim() && packIdFromQuery) {
                             return pack.id === packIdFromQuery;
                         }
                         return true;
@@ -738,10 +873,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     </Box>
                 ))}
                 {/* Hide categories when printing a specific pack */}
-                {!packIdFromQuery && menuDetails?.categories
+                {!packIdFromQuery && filteredCategories
                     ?.filter((category) => {
-                        // Filter by category ID if provided in query params
-                        if (categoryIdFromQuery) {
+                        // Filter by category ID if provided in query params, but not when searching
+                        if (!debouncedSearch.trim() && categoryIdFromQuery) {
                             return category.id === categoryIdFromQuery && category?.items.length;
                         }
                         return category?.items.length;
@@ -768,10 +903,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             </SimpleGrid>
                         </Box>
                     ))}
+                {(debouncedSearch.trim() || excludedAllergens.length > 0) && !hasSearchResults && (
+                    <Empty height={300} text={t("searchNoResults")} />
+                )}
                 {sortedMenus?.length === 0 && !haveMenuItems && (
                     <Empty height={400} text={t("noMenusForVenue")} />
                 )}
-                {!!sortedMenus?.length && !haveMenuItems && !havePacks && <Empty height={400} text={t("noItemsForMenu")} />}
+                {!!sortedMenus?.length && !haveMenuItems && !havePacks && !debouncedSearch.trim() && excludedAllergens.length === 0 && <Empty height={400} text={t("noItemsForMenu")} />}
             </Box>
         </Box>
     );

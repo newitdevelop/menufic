@@ -53,6 +53,10 @@
     "menu": {
         "noMenusForVenue": "Il n'y a pas de menus disponibles pour cet établissement. Réessayez plus tard",
         "noItemsForMenu": "Il n'y a pas d'éléments de menu pour le menu choisi. Réessayez plus tard.",
+        "searchPlaceholder": "Rechercher dans le menu...",
+        "searchNoResults": "Aucun élément ne correspond à votre recherche.",
+        "allergenFilterLabel": "Filtrer par allergènes",
+        "allergenFilterPlaceholder": "Sélectionnez les allergènes à exclure...",
         "noDetailsAvailable": "Les détails de cet établissement ne sont pas disponibles pour le moment. Nous nous excusons pour la gêne occasionnée. Veuillez réessayer plus tard",
         "loading": "Chargement du menu...",
         "loadingTooLong": "Le chargement prend plus de temps que prévu. Veuillez vérifier votre connexion internet et réessayer.",

@@ -365,14 +365,12 @@ export const ReservationForm: FC<Props> = ({
                 <Stepper
                     active={activeStep}
                     onStepClick={setActiveStep}
-                    breakpoint="xs"
                     size="sm"
                     styles={(theme) => ({
                         stepLabel: {
                             fontSize: '0.65rem',
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
-                            order: 2,
                         },
                         stepDescription: {
                             display: 'none',
@@ -383,25 +381,16 @@ export const ReservationForm: FC<Props> = ({
                             flexDirection: 'column',
                             alignItems: 'center',
                         },
-                        stepWrapper: {
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        },
                         stepBody: {
                             marginLeft: 0,
                             marginRight: 0,
                             marginTop: '4px',
-                            order: 2,
-                        },
-                        stepIcon: {
-                            order: 1,
                         },
                         separator: {
                             marginLeft: '2px',
                             marginRight: '2px',
                             minWidth: '12px',
                             alignSelf: 'center',
-                            marginTop: 0,
                         },
                         steps: {
                             flexWrap: 'nowrap',

@@ -53,6 +53,10 @@
     "menu": {
         "noMenusForVenue": "Não existem menus disponíveis para este local. Tente novamente mais tarde",
         "noItemsForMenu": "Não existem itens de menu para o menu escolhido. Tente novamente mais tarde.",
+        "searchPlaceholder": "Pesquisar itens do menu...",
+        "searchNoResults": "Nenhum item encontrado para a sua pesquisa.",
+        "allergenFilterLabel": "Filtrar por alergénios",
+        "allergenFilterPlaceholder": "Selecione alergénios a excluir...",
         "noDetailsAvailable": "Os detalhes deste local não estão disponíveis de momento. Pedimos desculpa pelo incómodo. Por favor tente novamente mais tarde",
         "loading": "A carregar menu...",
         "loadingTooLong": "O carregamento está a demorar mais do que o esperado. Por favor verifique a sua ligação à internet e tente novamente.",
