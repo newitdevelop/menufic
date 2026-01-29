@@ -676,127 +676,101 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 <Flex
                     className="no-print"
                     mb="lg"
-                    gap="sm"
+                    gap="xs"
                     direction={{ base: "column", md: "row" }}
                     align={{ base: "stretch", md: "center" }}
-                    justify="space-between"
                     wrap="wrap"
                 >
-                    {/* Reservation button — left side */}
-                    <Box>
-                        {(menuDetails as any).reservationType === "EXTERNAL" && (menuDetails as any).reservationUrl && (
-                            <Button
-                                component="a"
-                                href={(menuDetails as any).reservationUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                leftIcon={<IconCalendar size={16} />}
-                                variant="filled"
-                                color="primary"
-                                sx={(theme) => ({
-                                    [theme.fn.smallerThan("md")]: { width: '100%' },
-                                })}
-                            >
-                                {t("reservations")}
-                            </Button>
-                        )}
-                        {(menuDetails as any).reservationType === "FORM" && (
-                            <Button
-                                leftIcon={<IconCalendar size={16} />}
-                                variant="filled"
-                                color="primary"
-                                onClick={() => setReservationModalOpened(true)}
-                                sx={(theme) => ({
-                                    [theme.fn.smallerThan("md")]: { width: '100%' },
-                                })}
-                            >
-                                {t("reservations")}
-                            </Button>
-                        )}
-                        {!(menuDetails as any).reservationType && (menuDetails as any).reservations && (
-                            <Button
-                                component="a"
-                                href={(menuDetails as any).reservations}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                leftIcon={<IconCalendar size={16} />}
-                                variant="filled"
-                                color="primary"
-                                sx={(theme) => ({
-                                    [theme.fn.smallerThan("md")]: { width: '100%' },
-                                })}
-                            >
-                                {t("reservations")}
-                            </Button>
-                        )}
-                    </Box>
-
-                    {/* Contact info chips — right side on desktop */}
-                    <Group spacing="xs">
-                        {!isSmartTV() && menuDetails.telephone && (
-                            <Button
-                                component="a"
-                                href={`tel:${menuDetails.telephone.replace(/\s/g, "")}`}
-                                leftIcon={<IconPhone size={14} />}
-                                variant="outline"
-                                color="gray"
-                                radius="xl"
-                                size="xs"
-                                sx={(theme) => ({
-                                    color: theme.colors.dark[6],
-                                    borderColor: theme.colors.gray[4],
-                                    '&:hover': {
-                                        backgroundColor: theme.colors.gray[1],
-                                    },
-                                    [theme.fn.smallerThan("md")]: { flex: 1 },
-                                })}
-                            >
-                                <Text size="xs" translate="no">{menuDetails.telephone}</Text>
-                            </Button>
-                        )}
-                        {!isSmartTV() && menuDetails.email && (
-                            <Button
-                                component="a"
-                                href={`mailto:${menuDetails.email}`}
-                                leftIcon={<IconMail size={14} />}
-                                variant="outline"
-                                color="gray"
-                                radius="xl"
-                                size="xs"
-                                sx={(theme) => ({
-                                    color: theme.colors.dark[6],
-                                    borderColor: theme.colors.gray[4],
-                                    '&:hover': {
-                                        backgroundColor: theme.colors.gray[1],
-                                    },
-                                    [theme.fn.smallerThan("md")]: { flex: 1 },
-                                })}
-                            >
-                                <Text size="xs" translate="no">{menuDetails.email}</Text>
-                            </Button>
-                        )}
-                        {menuDetails.message && (
-                            <Button
-                                component="span"
-                                leftIcon={<IconMessage size={14} />}
-                                variant="outline"
-                                color="gray"
-                                radius="xl"
-                                size="xs"
-                                sx={(theme) => ({
-                                    color: theme.colors.dark[6],
-                                    borderColor: theme.colors.gray[4],
-                                    cursor: 'default',
-                                    '&:hover': {
-                                        backgroundColor: theme.colors.gray[0],
-                                    },
-                                    [theme.fn.smallerThan("md")]: { flex: 1 },
-                                })}
-                            >
-                                <Text size="xs" translate="yes">{menuDetails.message}</Text>
-                            </Button>
-                        )}
-                    </Group>
+                    {(menuDetails as any).reservationType === "EXTERNAL" && (menuDetails as any).reservationUrl && (
+                        <Button
+                            component="a"
+                            href={(menuDetails as any).reservationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            leftIcon={<IconCalendar size={16} />}
+                            variant="filled"
+                            color="primary"
+                        >
+                            {t("reservations")}
+                        </Button>
+                    )}
+                    {(menuDetails as any).reservationType === "FORM" && (
+                        <Button
+                            leftIcon={<IconCalendar size={16} />}
+                            variant="filled"
+                            color="primary"
+                            onClick={() => setReservationModalOpened(true)}
+                        >
+                            {t("reservations")}
+                        </Button>
+                    )}
+                    {!(menuDetails as any).reservationType && (menuDetails as any).reservations && (
+                        <Button
+                            component="a"
+                            href={(menuDetails as any).reservations}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            leftIcon={<IconCalendar size={16} />}
+                            variant="filled"
+                            color="primary"
+                        >
+                            {t("reservations")}
+                        </Button>
+                    )}
+                    {!isSmartTV() && menuDetails.telephone && (
+                        <Button
+                            component="a"
+                            href={`tel:${menuDetails.telephone.replace(/\s/g, "")}`}
+                            leftIcon={<IconPhone size={14} />}
+                            variant="outline"
+                            color="gray"
+                            radius="xl"
+                            size="xs"
+                            sx={(theme) => ({
+                                color: theme.colors.dark[6],
+                                borderColor: theme.colors.gray[4],
+                                '&:hover': { backgroundColor: theme.colors.gray[1] },
+                            })}
+                        >
+                            <Text size="xs" translate="no">{menuDetails.telephone}</Text>
+                        </Button>
+                    )}
+                    {!isSmartTV() && menuDetails.email && (
+                        <Button
+                            component="a"
+                            href={`mailto:${menuDetails.email}`}
+                            leftIcon={<IconMail size={14} />}
+                            variant="outline"
+                            color="gray"
+                            radius="xl"
+                            size="xs"
+                            sx={(theme) => ({
+                                color: theme.colors.dark[6],
+                                borderColor: theme.colors.gray[4],
+                                '&:hover': { backgroundColor: theme.colors.gray[1] },
+                            })}
+                        >
+                            <Text size="xs" translate="no">{menuDetails.email}</Text>
+                        </Button>
+                    )}
+                    {menuDetails.message && (
+                        <Button
+                            component="span"
+                            leftIcon={<IconMessage size={14} />}
+                            variant="outline"
+                            color="gray"
+                            radius="xl"
+                            size="xs"
+                            sx={(theme) => ({
+                                color: theme.colors.dark[6],
+                                borderColor: theme.colors.gray[4],
+                                cursor: 'default',
+                                '&:hover': { backgroundColor: theme.colors.gray[0] },
+                            })}
+                        >
+                            <Text size="xs" translate="yes">{menuDetails.message}</Text>
+                        </Button>
+                    )}
                 </Flex>
             )}
             {menuDetails && (() => {
@@ -835,7 +809,6 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 </Text>
                             </Group>
                             <TextInput
-                                icon={<IconSearch size={18} />}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.currentTarget.value)}
                                 rightSection={
