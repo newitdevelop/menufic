@@ -18,7 +18,6 @@ import {
     Tabs,
     Text,
     TextInput,
-    Tooltip,
     useMantineColorScheme,
     useMantineTheme,
 } from "@mantine/core";
@@ -673,66 +672,6 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     ))}
                 </Tabs.List>
             </Tabs>
-            {menuDetails && (() => {
-                const hasEdibleItems = menuDetails.categories?.some((cat) =>
-                    cat.items?.some((item: any) => item.isEdible)
-                );
-                const allergenOptions = allergenCodes
-                    .filter((code) => code !== "none")
-                    .map((code) => ({
-                        value: code,
-                        label: `${allergenSymbols[code]} ${uiTranslations?.allergens?.[code] || code}`,
-                    }));
-
-                return (
-                    <Box className="no-print" my="sm">
-                        <Flex
-                            gap="sm"
-                            direction={{ base: "column", sm: "row" }}
-                            align={{ base: "stretch", sm: "flex-end" }}
-                        >
-                            <TextInput
-                                icon={<IconSearch size={18} />}
-                                placeholder={t("searchPlaceholder")}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.currentTarget.value)}
-                                rightSection={
-                                    searchQuery ? (
-                                        <ActionIcon onClick={() => setSearchQuery("")} variant="transparent" aria-label="Clear search">
-                                            <IconX size={16} />
-                                        </ActionIcon>
-                                    ) : null
-                                }
-                                sx={(theme) => ({
-                                    flex: 1,
-                                    maxWidth: 400,
-                                    [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
-                                })}
-                            />
-                            {hasEdibleItems && (
-                                <MultiSelect
-                                    data={allergenOptions}
-                                    value={excludedAllergens}
-                                    onChange={setExcludedAllergens}
-                                    placeholder={t("allergenFilterPlaceholder")}
-                                    label={t("allergenFilterLabel")}
-                                    clearable
-                                    searchable
-                                    nothingFound=""
-                                    sx={(theme) => ({
-                                        flex: 1,
-                                        maxWidth: 400,
-                                        [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
-                                    })}
-                                    styles={{
-                                        label: { fontSize: '0.75rem', fontWeight: 500 },
-                                    }}
-                                />
-                            )}
-                        </Flex>
-                    </Box>
-                );
-            })()}
             {menuDetails && (
                 <Stack spacing="xs" mb="lg" className="no-print">
                     {/* New Reservation System - Standardized Button Style */}
@@ -795,6 +734,73 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     )}
                 </Stack>
             )}
+            {menuDetails && (() => {
+                const hasEdibleItems = menuDetails.categories?.some((cat) =>
+                    cat.items?.some((item: any) => item.isEdible)
+                );
+                const allergenOptions = allergenCodes
+                    .filter((code) => code !== "none")
+                    .map((code) => ({
+                        value: code,
+                        label: `${allergenSymbols[code]} ${uiTranslations?.allergens?.[code] || code}`,
+                    }));
+
+                return (
+                    <Stack className="no-print" my="md" spacing="xs">
+                        <TextInput
+                            icon={<IconSearch size={18} />}
+                            placeholder={t("searchPlaceholder")}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                            rightSection={
+                                searchQuery ? (
+                                    <ActionIcon onClick={() => setSearchQuery("")} variant="transparent" aria-label="Clear search">
+                                        <IconX size={16} />
+                                    </ActionIcon>
+                                ) : null
+                            }
+                            sx={(theme) => ({
+                                maxWidth: 500,
+                                [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                            })}
+                        />
+                        {hasEdibleItems && (
+                            <Box
+                                sx={(theme) => ({
+                                    maxWidth: 500,
+                                    padding: theme.spacing.sm,
+                                    borderRadius: theme.radius.sm,
+                                    border: `1px solid ${excludedAllergens.length > 0 ? theme.colors.orange[3] : theme.colors.gray[3]}`,
+                                    backgroundColor: excludedAllergens.length > 0 ? theme.fn.rgba(theme.colors.orange[0], 0.5) : theme.colors.gray[0],
+                                    [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                                })}
+                            >
+                                <Group spacing={6} mb={6}>
+                                    <Text size="xs" color="orange.7">&#9888;</Text>
+                                    <Text size="xs" weight={600} color="dark">
+                                        {t("allergenFilterLabel")}
+                                    </Text>
+                                </Group>
+                                <MultiSelect
+                                    data={allergenOptions}
+                                    value={excludedAllergens}
+                                    onChange={setExcludedAllergens}
+                                    placeholder={t("allergenFilterPlaceholder")}
+                                    clearable
+                                    searchable
+                                    nothingFound=""
+                                    size="sm"
+                                    styles={(theme) => ({
+                                        input: {
+                                            backgroundColor: 'white',
+                                        },
+                                    })}
+                                />
+                            </Box>
+                        )}
+                    </Stack>
+                );
+            })()}
 
             {/* Reservation Form Modal */}
             {menuDetails && (menuDetails as any).reservationType === "FORM" && (() => {

@@ -36,6 +36,13 @@ export const useSmartTVNavigation = ({
         }
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            // Don't intercept keys when user is typing in an input field
+            const target = event.target as HTMLElement;
+            const isTyping = target.tagName === 'INPUT' ||
+                            target.tagName === 'TEXTAREA' ||
+                            target.isContentEditable;
+            if (isTyping) return;
+
             // Get all menu item cards
             const menuItemCards = document.querySelectorAll<HTMLElement>('[data-testid="menu-item-card"]');
 
