@@ -673,7 +673,14 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Tabs.List>
             </Tabs>
             {menuDetails && (
-                <Stack spacing="xs" mb="lg" className="no-print">
+                <Flex
+                    className="no-print"
+                    mb="lg"
+                    gap={{ base: "xs", md: "lg" }}
+                    direction={{ base: "column", md: "row" }}
+                    align={{ base: "flex-start", md: "center" }}
+                    wrap="wrap"
+                >
                     {/* New Reservation System - Standardized Button Style */}
                     {(menuDetails as any).reservationType === "EXTERNAL" && (menuDetails as any).reservationUrl && (
                         <Button
@@ -684,7 +691,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             leftIcon={<IconCalendar size={16} />}
                             variant="filled"
                             color="primary"
-                            sx={{ width: 'fit-content' }}
+                            sx={(theme) => ({
+                                width: 'fit-content',
+                                [theme.fn.smallerThan("md")]: { width: '100%' },
+                            })}
                         >
                             {t("reservations")}
                         </Button>
@@ -695,7 +705,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             variant="filled"
                             color="primary"
                             onClick={() => setReservationModalOpened(true)}
-                            sx={{ width: 'fit-content' }}
+                            sx={(theme) => ({
+                                width: 'fit-content',
+                                [theme.fn.smallerThan("md")]: { width: '100%' },
+                            })}
                         >
                             {t("reservations")}
                         </Button>
@@ -732,7 +745,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             <Text size="sm" translate="yes">{menuDetails.message}</Text>
                         </Flex>
                     )}
-                </Stack>
+                </Flex>
             )}
             {menuDetails && (() => {
                 const hasEdibleItems = menuDetails.categories?.some((cat) =>
@@ -753,24 +766,41 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         direction={{ base: "column", md: "row" }}
                         align={{ base: "stretch", md: "flex-end" }}
                     >
-                        <TextInput
-                            icon={<IconSearch size={18} />}
-                            placeholder={t("searchPlaceholder")}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.currentTarget.value)}
-                            rightSection={
-                                searchQuery ? (
-                                    <ActionIcon onClick={() => setSearchQuery("")} variant="transparent" aria-label="Clear search">
-                                        <IconX size={16} />
-                                    </ActionIcon>
-                                ) : null
-                            }
+                        <Box
                             sx={(theme) => ({
                                 flex: 1,
-                                maxWidth: hasEdibleItems ? undefined : 500,
+                                padding: theme.spacing.sm,
+                                borderRadius: theme.radius.sm,
+                                border: `1px solid ${searchQuery ? theme.colors.blue[3] : theme.colors.gray[3]}`,
+                                backgroundColor: searchQuery ? theme.fn.rgba(theme.colors.blue[0], 0.5) : theme.colors.gray[0],
                                 [theme.fn.smallerThan("md")]: { maxWidth: "100%" },
                             })}
-                        />
+                        >
+                            <Group spacing={6} mb={6}>
+                                <IconSearch size={14} />
+                                <Text size="xs" weight={600} color="dark">
+                                    {t("searchPlaceholder")}
+                                </Text>
+                            </Group>
+                            <TextInput
+                                icon={<IconSearch size={18} />}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                                rightSection={
+                                    searchQuery ? (
+                                        <ActionIcon onClick={() => setSearchQuery("")} variant="transparent" aria-label="Clear search">
+                                            <IconX size={16} />
+                                        </ActionIcon>
+                                    ) : null
+                                }
+                                size="sm"
+                                styles={() => ({
+                                    input: {
+                                        backgroundColor: 'white',
+                                    },
+                                })}
+                            />
+                        </Box>
                         {hasEdibleItems && (
                             <Box
                                 sx={(theme) => ({
