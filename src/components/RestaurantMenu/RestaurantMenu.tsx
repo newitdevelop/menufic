@@ -746,7 +746,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     }));
 
                 return (
-                    <Stack className="no-print" my="md" spacing="xs">
+                    <Flex
+                        className="no-print"
+                        my="md"
+                        gap="sm"
+                        direction={{ base: "column", md: "row" }}
+                        align={{ base: "stretch", md: "flex-end" }}
+                    >
                         <TextInput
                             icon={<IconSearch size={18} />}
                             placeholder={t("searchPlaceholder")}
@@ -760,19 +766,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 ) : null
                             }
                             sx={(theme) => ({
-                                maxWidth: 500,
-                                [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                                flex: 1,
+                                maxWidth: hasEdibleItems ? undefined : 500,
+                                [theme.fn.smallerThan("md")]: { maxWidth: "100%" },
                             })}
                         />
                         {hasEdibleItems && (
                             <Box
                                 sx={(theme) => ({
-                                    maxWidth: 500,
+                                    flex: 1,
                                     padding: theme.spacing.sm,
                                     borderRadius: theme.radius.sm,
                                     border: `1px solid ${excludedAllergens.length > 0 ? theme.colors.orange[3] : theme.colors.gray[3]}`,
                                     backgroundColor: excludedAllergens.length > 0 ? theme.fn.rgba(theme.colors.orange[0], 0.5) : theme.colors.gray[0],
-                                    [theme.fn.smallerThan("sm")]: { maxWidth: "100%" },
+                                    [theme.fn.smallerThan("md")]: { maxWidth: "100%" },
                                 })}
                             >
                                 <Group spacing={6} mb={6}>
@@ -790,7 +797,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                     searchable
                                     nothingFound=""
                                     size="sm"
-                                    styles={(theme) => ({
+                                    styles={() => ({
                                         input: {
                                             backgroundColor: 'white',
                                         },
@@ -798,7 +805,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                 />
                             </Box>
                         )}
-                    </Stack>
+                    </Flex>
                 );
             })()}
 
