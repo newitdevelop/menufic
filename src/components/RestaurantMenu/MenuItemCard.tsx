@@ -152,12 +152,14 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                     >
                         {item.name}
                     </Text>
-                    <Text
-                        color="red"
-                        size="sm"
-                    >
-                        {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
-                    </Text>
+                    {item.price ? (
+                        <Text
+                            color="red"
+                            size="sm"
+                        >
+                            {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
+                        </Text>
+                    ) : null}
                     <Text
                         className={cx(classes.cardText, classes.cardItemDesc)}
                         opacity={0.7}

@@ -107,9 +107,11 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                         )}
                     </>
                 )}
-                <Text color="red" mt="sm" size="lg">
-                    {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% {uiTranslations.vatIncluded})
-                </Text>
+                {menuItem?.price ? (
+                    <Text color="red" mt="sm" size="lg">
+                        {menuItem?.currency || "€"}{displayPrice} ({menuItem?.vatRate || 23}% {uiTranslations.vatIncluded})
+                    </Text>
+                ) : null}
                 <Text color={theme.black} opacity={0.6} translate="yes">
                     {menuItem?.description}
                 </Text>
