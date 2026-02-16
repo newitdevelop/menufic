@@ -41,7 +41,7 @@ export const menuItemRouter = createTRPCRouter({
             vatRate: input.vatRate ?? 23,
             isEdible: input.isEdible ?? false,
             allergens: input.allergens || [],
-            bomName: input.bomName?.trim() || null,
+            bomId: input.bomId && input.bomId > 0 ? input.bomId : null,
         };
 
         if (input.imageBase64) {
@@ -101,7 +101,7 @@ export const menuItemRouter = createTRPCRouter({
             vatRate: input.vatRate ?? 23,
             isEdible: input.isEdible ?? false,
             allergens: input.allergens || [],
-            bomName: input.bomName?.trim() || null,
+            bomId: input.bomId && input.bomId > 0 ? input.bomId : null,
         };
 
         const promiseList: any[] = [];

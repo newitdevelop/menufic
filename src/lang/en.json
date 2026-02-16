@@ -387,10 +387,10 @@
                 "aiImageGenerationError": "Failed to generate image with AI",
                 "aiImageGenerationSuccess": "Image generated successfully",
                 "aiImageConfirmOverride": "This will replace your current image with an AI-generated image. Continue?",
-                "inputBomNameLabel": "BOM Name",
-                "inputBomNamePlaceholder": "Enter BOM identifier",
-                "inputBomNameDescription": "Bill of Materials name (required for internal menu items)",
-                "noBomName": "No BOM Name"
+                "inputBomIdLabel": "BOM ID",
+                "inputBomIdPlaceholder": "Enter BOM ID number",
+                "inputBomIdDescription": "check Odoo of {venueName}",
+                "noBomId": "No BOM ID"
             },
             "pack": {
                 "fetchError": "Failed to retrieve packs",

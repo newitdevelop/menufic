@@ -60,10 +60,12 @@ interface Props {
     menuType?: "INTERNAL" | "EXTERNAL";
     /** Item which will be represented by the component */
     menuItem: MenuItem & { image?: Image };
+    /** Name of the venue */
+    venueName?: string;
 }
 
 /** Individual menu item component with an option to edit or delete */
-export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categoryId }) => {
+export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categoryId, venueName }) => {
     const trpcCtx = api.useContext();
     const { classes, cx, theme } = useStyles();
     const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
@@ -142,7 +144,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categor
                         <Grid.Col md={2} sm={3} span={3}>
                             {menuType === "INTERNAL" ? (
                                 <Text align="center" size="sm" color="dimmed">
-                                    {(menuItem as any).bomName || t("noBomName")}
+                                    {(menuItem as any).bomId ? `BOM #${(menuItem as any).bomId}` : t("noBomId")}
                                 </Text>
                             ) : menuItem.price ? (
                                 <>
@@ -209,6 +211,7 @@ export const MenuItemElement: FC<Props> = ({ menuItem, menuId, menuType, categor
                 categoryId={categoryId}
                 menuId={menuId}
                 menuType={menuType}
+                venueName={venueName}
                 menuItem={menuItem}
                 onClose={() => setMenuItemFormOpen(false)}
                 opened={menuItemFormOpen}

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect } from "react";
 
-import { Button, Checkbox, Group, MultiSelect, SegmentedControl, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Group, MultiSelect, NumberInput, SegmentedControl, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import imageCompression from "browser-image-compression";
 import { useTranslations } from "next-intl";
@@ -23,12 +23,14 @@ interface Props extends ModalProps {
     menuId: string;
     /** Type of menu (INTERNAL or EXTERNAL) */
     menuType?: "INTERNAL" | "EXTERNAL";
+    /** Name of the venue */
+    venueName?: string;
     /** Menu item to be edited */
     menuItem?: MenuItem & { image?: Image };
 }
 
 /** Form to be used when allowing users to add or edit menu items of restaurant menus categories */
-export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, menuItem, categoryId, ...rest }) => {
+export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, venueName, menuItem, categoryId, ...rest }) => {
     const trpcCtx = api.useContext();
     const t = useTranslations("dashboard.editMenu.menuItem");
     const tCommon = useTranslations("common");
@@ -48,7 +50,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, men
         vatRate: 6 | 13 | 23;
         isEdible: boolean;
         allergens: (typeof allergenCodes)[number][];
-        bomName: string;
+        bomId: number;
     }>({
         initialValues: {
             currency: (menuItem?.currency as "€" | "$") || "€",
@@ -62,7 +64,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, men
             vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
             isEdible: (menuItem as any)?.isEdible ?? false,
             allergens: (menuItem as any)?.allergens || [],
-            bomName: (menuItem as any)?.bomName || "",
+            bomId: (menuItem as any)?.bomId || 0,
         },
         validate: zodResolver(isInternal ? menuItemInputInternal : menuItemInputExternal),
     });
@@ -184,7 +186,7 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, men
                 vatRate: (menuItem?.vatRate as 6 | 13 | 23) || 23,
                 isEdible: (menuItem as any)?.isEdible ?? false,
                 allergens: (menuItem as any)?.allergens || [],
-                bomName: (menuItem as any)?.bomName || "",
+                bomId: (menuItem as any)?.bomId || 0,
             };
             setValues(newValues);
             resetDirty(newValues);
@@ -224,13 +226,15 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, men
                         autoFocus
                     />
                     {isInternal ? (
-                        <TextInput
+                        <NumberInput
                             disabled={loading}
-                            label={t("inputBomNameLabel")}
-                            placeholder={t("inputBomNamePlaceholder")}
-                            description={t("inputBomNameDescription")}
+                            label={t("inputBomIdLabel")}
+                            placeholder={t("inputBomIdPlaceholder")}
+                            description={t("inputBomIdDescription", { venueName: venueName || "" })}
                             withAsterisk
-                            {...getInputProps("bomName")}
+                            min={1}
+                            hideControls={false}
+                            {...getInputProps("bomId")}
                         />
                     ) : (
                         <>

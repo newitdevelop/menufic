@@ -181,7 +181,7 @@ export const menuItemInputBase = z.object({
     vatRate: z.union([z.literal(6), z.literal(13), z.literal(23)]).default(23),
     isEdible: z.boolean().default(false),
     allergens: z.array(z.enum(allergenCodes)).default([]),
-    bomName: z.string().trim().max(100, "BOM Name cannot be longer than 100 characters").optional().default(""),
+    bomId: z.union([z.number().int().positive("BOM ID must be a positive number"), z.nan(), z.literal(0)]).optional().default(0),
 });
 
 export const menuItemInput = menuItemInputBase.refine(
@@ -208,10 +208,10 @@ export const menuItemInputExternal = menuItemInputBase.superRefine((data, ctx) =
     }
 });
 
-/** Validator for internal menu items - requires bomName, no price needed */
+/** Validator for internal menu items - requires bomId, no price needed */
 export const menuItemInputInternal = menuItemInputBase.superRefine((data, ctx) => {
-    if ((data.bomName?.trim().length ?? 0) === 0) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "BOM Name is required for internal menu items", path: ["bomName"] });
+    if (!data.bomId || data.bomId <= 0 || isNaN(data.bomId)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "BOM ID is required for internal menu items", path: ["bomId"] });
     }
     if (data.isEdible && data.allergens.length === 0) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Allergen selection is required for edible products", path: ["allergens"] });

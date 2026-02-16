@@ -24,10 +24,12 @@ interface Props {
     menuType?: "INTERNAL" | "EXTERNAL";
     /** Id of the restaurant */
     restaurantId: string;
+    /** Name of the venue */
+    venueName?: string;
 }
 
 /** Draggable list of categories items with add, edit and delete options */
-export const Categories: FC<Props> = ({ menuId, menuType, restaurantId }) => {
+export const Categories: FC<Props> = ({ menuId, menuType, restaurantId, venueName }) => {
     const trpcCtx = api.useContext();
     const { classes } = useStyles();
     const [categoryFormOpen, setCategoryFormOpen] = useState(false);
@@ -118,7 +120,7 @@ export const Categories: FC<Props> = ({ menuId, menuType, restaurantId }) => {
                                     }}
                                 >
                                     {categories.map((item: any) => (
-                                        <CategoryElement key={item.id} categoryItem={item} menuId={menuId} menuType={menuType} restaurantId={restaurantId} />
+                                        <CategoryElement key={item.id} categoryItem={item} menuId={menuId} menuType={menuType} restaurantId={restaurantId} venueName={venueName} />
                                     ))}
                                     {provided.placeholder}
                                 </Box>

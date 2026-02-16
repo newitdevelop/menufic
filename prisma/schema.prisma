@@ -129,7 +129,7 @@ model MenuItem {
     vatIncluded    Boolean   @default(true) // Whether VAT is included in the price
     isEdible       Boolean   @default(false) // Whether this is an edible product
     allergens      String[]  @default([]) // List of allergen codes (portuguese law requires 14 allergens)
-    bomName        String?   // BOM (Bill of Materials) name - required for internal menu items
+    bomId          Int?      // BOM (Bill of Materials) ID from Odoo - required for internal menu items
     position       Int
     category       Category? @relation("MenuItemsOfCategory", fields: [categoryId], references: [id])
     categoryId     String?
