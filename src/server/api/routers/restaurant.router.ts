@@ -13,7 +13,7 @@ export const restaurantRouter = createTRPCRouter({
     addBanner: protectedProcedure.input(bannerInput).mutation(async ({ ctx, input }) => {
         const restaurant = await ctx.prisma.restaurant.findUniqueOrThrow({
             select: { banners: true },
-            where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            where: { id: input.restaurantId },
         });
 
         // Check if the maximum banner count of the restaurant has been reached
@@ -50,7 +50,7 @@ export const restaurantRouter = createTRPCRouter({
                 yearlyEndDate: input.yearlyEndDate || null,
                 periodStartDate: input.periodStartDate || null,
                 periodEndDate: input.periodEndDate || null,
-                restaurantBanner: { connect: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } } },
+                restaurantBanner: { connect: { id: input.restaurantId } },
             },
         });
     }),
@@ -60,7 +60,7 @@ export const restaurantRouter = createTRPCRouter({
         // Verify the banner belongs to the user's restaurant
         const restaurant = await ctx.prisma.restaurant.findUniqueOrThrow({
             include: { banners: true },
-            where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            where: { id: input.restaurantId },
         });
 
         const banner = restaurant.banners.find((b) => b.id === input.id);
@@ -150,7 +150,7 @@ export const restaurantRouter = createTRPCRouter({
     delete: protectedProcedure.input(id).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.restaurant.findUniqueOrThrow({
             include: { banners: true, menus: { include: { categories: { include: { items: true } } } } },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const transactions: PrismaPromise<unknown>[] = [];
@@ -182,7 +182,7 @@ export const restaurantRouter = createTRPCRouter({
         transactions.push(ctx.prisma.image.deleteMany({ where: { id: { in: imagePaths } } }));
 
         transactions.push(
-            ctx.prisma.restaurant.delete({ where: { id_userId: { id: input.id, userId: ctx.session.user.id } } })
+            ctx.prisma.restaurant.delete({ where: { id: input.id } })
         );
 
         await Promise.all([imageKit.bulkDeleteFiles(imagePaths), ctx.prisma.$transaction(transactions)]);
@@ -194,7 +194,7 @@ export const restaurantRouter = createTRPCRouter({
     deleteBanner: protectedProcedure.input(restaurantId.extend({ id: z.string() })).mutation(async ({ ctx, input }) => {
         const restaurant = await ctx.prisma.restaurant.findUniqueOrThrow({
             include: { banners: true },
-            where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+            where: { id: input.restaurantId },
         });
         if (restaurant.banners.find((item) => item.id === input.id)) {
             const [, deletedImage] = await Promise.all([
@@ -209,13 +209,13 @@ export const restaurantRouter = createTRPCRouter({
     /** Get basic info of a restaurant */
     get: protectedProcedure.input(id).query(({ ctx, input }) =>
         ctx.prisma.restaurant.findUniqueOrThrow({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         })
     ),
 
-    /** Get all the restaurants belonging to a user */
+    /** Get all the restaurants (visible to all authenticated users) */
     getAll: protectedProcedure.query(({ ctx }) =>
-        ctx.prisma.restaurant.findMany({ include: { image: true }, where: { userId: ctx.session.user.id } })
+        ctx.prisma.restaurant.findMany({ include: { image: true }, orderBy: { createdAt: "desc" } })
     ),
 
     /** Get all the restaurants that have been published by all users */
@@ -227,7 +227,7 @@ export const restaurantRouter = createTRPCRouter({
     getBanners: protectedProcedure.input(id).query(async ({ ctx, input }) => {
         const restaurant = await ctx.prisma.restaurant.findUniqueOrThrow({
             select: { banners: true },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
         return restaurant.banners;
     }),
@@ -238,16 +238,8 @@ export const restaurantRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Check if user is logged in and owns this restaurant
             const userId = ctx.session?.user?.id;
-            let isOwner = false;
-
-            if (userId) {
-                // Check if this user owns the restaurant
-                const ownership = await ctx.prisma.restaurant.findUnique({
-                    where: { id_userId: { id: input.id, userId } },
-                    select: { id: true },
-                });
-                isOwner = !!ownership;
-            }
+            // Any authenticated user is treated as an owner (shared access)
+            const isOwner = !!userId;
 
             // Build menu filter based on ownership status
             // - External menus: show if active (public)
@@ -530,7 +522,7 @@ export const restaurantRouter = createTRPCRouter({
     setPublished: protectedProcedure.input(id.extend({ isPublished: z.boolean() })).mutation(async ({ ctx, input }) => {
         const restaurant = await ctx.prisma.restaurant.update({
             data: { isPublished: input.isPublished },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
         /** Revalidate the published menu page */
         await ctx.res?.revalidate(`/venue/${input.id}/menu`);
@@ -540,7 +532,7 @@ export const restaurantRouter = createTRPCRouter({
     /** Update the restaurant details */
     update: protectedProcedure.input(restaurantInput.merge(id)).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.restaurant.findUniqueOrThrow({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const updateData: Partial<Restaurant> = {
@@ -578,7 +570,7 @@ export const restaurantRouter = createTRPCRouter({
             ctx.prisma.restaurant.update({
                 data: updateData,
                 include: { image: true },
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                where: { id: input.id },
             })
         );
 
@@ -622,7 +614,7 @@ export const restaurantRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Verify user owns this restaurant
             await ctx.prisma.restaurant.findUniqueOrThrow({
-                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+                where: { id: input.restaurantId },
             });
 
             // Build date filter
@@ -713,7 +705,7 @@ export const restaurantRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             // Verify user owns this restaurant
             await ctx.prisma.restaurant.findUniqueOrThrow({
-                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+                where: { id: input.restaurantId },
             });
 
             const cutoffDate = new Date();
@@ -844,7 +836,7 @@ export const restaurantRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Verify user owns this restaurant
             await ctx.prisma.restaurant.findUniqueOrThrow({
-                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+                where: { id: input.restaurantId },
             });
 
             // Default to last 90 days
@@ -961,7 +953,7 @@ export const restaurantRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             // Verify user owns this restaurant
             await ctx.prisma.restaurant.findUniqueOrThrow({
-                where: { id_userId: { id: input.restaurantId, userId: ctx.session.user.id } },
+                where: { id: input.restaurantId },
             });
 
             const [totalDetailedRecords, oldestRecord, newestRecord, aggregatedDays] = await Promise.all([

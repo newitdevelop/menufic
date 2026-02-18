@@ -43,7 +43,7 @@ export const categoryRouter = createTRPCRouter({
     delete: protectedProcedure.input(id).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.category.findUniqueOrThrow({
             include: { items: true },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
         const promiseList: any[] = [];
         const transactions: PrismaPromise<unknown>[] = [];
@@ -58,7 +58,7 @@ export const categoryRouter = createTRPCRouter({
         transactions.push(ctx.prisma.menuItem.deleteMany({ where: { categoryId: input.id } }));
 
         transactions.push(
-            ctx.prisma.category.delete({ where: { id_userId: { id: input.id, userId: ctx.session.user.id } } })
+            ctx.prisma.category.delete({ where: { id: input.id } })
         );
 
         if (imagePaths.length > 0) {
@@ -85,7 +85,7 @@ export const categoryRouter = createTRPCRouter({
         // Get current category to check if name changed
         const currentCategory = await ctx.prisma.category.findUniqueOrThrow({
             include: { menu: { include: { restaurant: true } } },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const nameChanged = input.name !== currentCategory.name;
@@ -93,7 +93,7 @@ export const categoryRouter = createTRPCRouter({
         const [updatedCategory] = await Promise.all([
             ctx.prisma.category.update({
                 data: { name: input.name },
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                where: { id: input.id },
             }),
             // Invalidate translations if name changed
             nameChanged ? invalidateTranslations("category", input.id) : Promise.resolve(),
@@ -118,7 +118,7 @@ export const categoryRouter = createTRPCRouter({
                     ctx.prisma.category.update({
                         data: { position: item.newPosition },
                         include: { items: { include: { image: true } } },
-                        where: { id_userId: { id: item.id, userId: ctx.session.user.id } },
+                        where: { id: item.id },
                     })
                 )
             )

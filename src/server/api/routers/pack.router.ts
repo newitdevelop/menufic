@@ -84,7 +84,7 @@ export const packRouter = createTRPCRouter({
 
             // Fetch the complete pack with sections
             const packWithSections = await tx.pack.findUnique({
-                where: { id_userId: { id: createdPack.id, userId: ctx.session.user.id } },
+                where: { id: createdPack.id },
                 include: {
                     sections: {
                         orderBy: { position: "asc" },
@@ -112,7 +112,7 @@ export const packRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             // Get existing pack to check ownership and get old image
             const existingPack = await ctx.prisma.pack.findUnique({
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                where: { id: input.id },
                 include: {
                     image: true,
                     sections: true,
@@ -168,7 +168,7 @@ export const packRouter = createTRPCRouter({
 
                 // Update pack (without sections in the same operation)
                 const updatedPack = await tx.pack.update({
-                    where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                    where: { id: input.id },
                     data: {
                         name: input.name,
                         description: input.description,
@@ -207,7 +207,7 @@ export const packRouter = createTRPCRouter({
 
                 // Fetch the complete pack with sections
                 const packWithSections = await tx.pack.findUnique({
-                    where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                    where: { id: input.id },
                     include: {
                         sections: {
                             orderBy: { position: "asc" },
@@ -235,7 +235,7 @@ export const packRouter = createTRPCRouter({
     /** Delete a pack */
     delete: protectedProcedure.input(id).mutation(async ({ ctx, input }) => {
         const pack = await ctx.prisma.pack.findUnique({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
             include: { image: true },
         });
 
@@ -256,7 +256,7 @@ export const packRouter = createTRPCRouter({
 
         // Delete pack (sections will be cascade deleted)
         await ctx.prisma.pack.delete({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         // Invalidate translations
@@ -287,7 +287,7 @@ export const packRouter = createTRPCRouter({
     /** Get a single pack by ID */
     getById: protectedProcedure.input(id).query(async ({ ctx, input }) => {
         const pack = await ctx.prisma.pack.findUnique({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
             include: {
                 sections: {
                     orderBy: { position: "asc" },
@@ -319,7 +319,7 @@ export const packRouter = createTRPCRouter({
             await ctx.prisma.$transaction(
                 input.packIds.map((packId, index) =>
                     ctx.prisma.pack.update({
-                        where: { id_userId: { id: packId, userId: ctx.session.user.id } },
+                        where: { id: packId },
                         data: { position: index },
                     })
                 )

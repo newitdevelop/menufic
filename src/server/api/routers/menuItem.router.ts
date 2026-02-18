@@ -30,7 +30,7 @@ export const menuItemRouter = createTRPCRouter({
         }
 
         const createData: Prisma.MenuItemCreateInput = {
-            category: { connect: { id_userId: { id: input.categoryId, userId: ctx.session.user.id } } },
+            category: { connect: { id: input.categoryId } },
             currency: input.currency || "€",
             description: input.description,
             name: input.name,
@@ -68,11 +68,11 @@ export const menuItemRouter = createTRPCRouter({
     /** Delete the menu item from a menu category */
     delete: protectedProcedure.input(id).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.menuItem.findUniqueOrThrow({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const transactions: (Prisma.Prisma__MenuItemClient<MenuItem> | Prisma.Prisma__ImageClient<Image>)[] = [
-            ctx.prisma.menuItem.delete({ where: { id_userId: { id: input.id, userId: ctx.session.user.id } } }),
+            ctx.prisma.menuItem.delete({ where: { id: input.id } }),
         ];
 
         const promiseList: any[] = [];
@@ -89,7 +89,7 @@ export const menuItemRouter = createTRPCRouter({
     /** Update the details of a menu item */
     update: protectedProcedure.input(menuItemInputBase.merge(id)).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.menuItem.findUniqueOrThrow({
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const updateData: Partial<MenuItem> = {
@@ -138,7 +138,7 @@ export const menuItemRouter = createTRPCRouter({
             ctx.prisma.menuItem.update({
                 data: updateData,
                 include: { image: true },
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                where: { id: input.id },
             })
         );
 

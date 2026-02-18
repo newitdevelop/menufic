@@ -111,7 +111,7 @@ export const menuRouter = createTRPCRouter({
     delete: protectedProcedure.input(id).mutation(async ({ ctx, input }) => {
         const currentItem = await ctx.prisma.menu.findUniqueOrThrow({
             include: { categories: { include: { items: true } } },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         const imagePaths: string[] = [];
@@ -130,7 +130,7 @@ export const menuRouter = createTRPCRouter({
         transactions.push(ctx.prisma.category.deleteMany({ where: { menuId: input.id } }));
 
         transactions.push(
-            ctx.prisma.menu.delete({ where: { id_userId: { id: input.id, userId: ctx.session.user.id } } })
+            ctx.prisma.menu.delete({ where: { id: input.id } })
         );
 
         if (imagePaths.length > 0) {
@@ -156,7 +156,7 @@ export const menuRouter = createTRPCRouter({
         // Get current menu to check what changed
         const currentMenu = await ctx.prisma.menu.findUniqueOrThrow({
             include: { restaurant: true },
-            where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+            where: { id: input.id },
         });
 
         // Check if any translatable field changed OR isActive changed (affects public visibility)
@@ -240,7 +240,7 @@ export const menuRouter = createTRPCRouter({
                     reservationMaxPartySize: input.reservationMaxPartySize ?? null,
                     reservationSlotDuration: input.reservationSlotDuration ?? 30,
                 },
-                where: { id_userId: { id: input.id, userId: ctx.session.user.id } },
+                where: { id: input.id },
             }),
             // Invalidate translations if any translatable field changed
             shouldInvalidate ? invalidateTranslations("menu", input.id) : Promise.resolve(),
@@ -264,7 +264,7 @@ export const menuRouter = createTRPCRouter({
                 input.map((item) =>
                     ctx.prisma.menu.update({
                         data: { position: item.newPosition },
-                        where: { id_userId: { id: item.id, userId: ctx.session.user.id } },
+                        where: { id: item.id },
                     })
                 )
             )
