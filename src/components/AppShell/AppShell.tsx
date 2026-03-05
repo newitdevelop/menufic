@@ -28,7 +28,7 @@ export const CustomAppShell: FC<PropsWithChildren> = ({ children }) => {
             navbarOffsetBreakpoint="sm"
         >
             <Container pos="relative" py="md" size="xl">
-                {opened && <Overlay blur={5} color={theme.white} zIndex={2} />}
+                {opened && <Overlay blur={2} color={theme.black} opacity={0.3} zIndex={2} onClick={() => setOpened(false)} />}
                 {children}
             </Container>
         </AppShell>

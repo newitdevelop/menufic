@@ -103,7 +103,7 @@ export const CustomFooter: FC<Props> = ({ restaurant, copyrightOnly = false }) =
     ));
 
     return (
-        <Footer className={classes.footer} height={isMobile ? "auto" : 50}>
+        <Footer className={classes.footer} height={isMobile ? 140 : 50}>
             <Container className={classes.inner} size="xl">
                 <Link className={classes.copyRights} href={env.NEXT_PUBLIC_APP_URL}>
                     {t("footerCopyright", { appName: env.NEXT_PUBLIC_APP_NAME, year: currentYear })}
