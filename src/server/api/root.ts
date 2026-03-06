@@ -1,4 +1,5 @@
 import { categoryRouter } from "./routers/category.router";
+import { imageRouter } from "./routers/image.router";
 import { menuRouter } from "./routers/menu.router";
 import { menuItemRouter } from "./routers/menuItem.router";
 import { packRouter } from "./routers/pack.router";
@@ -14,6 +15,7 @@ import { createTRPCRouter } from "./trpc";
  */
 export const appRouter = createTRPCRouter({
     category: categoryRouter,
+    image: imageRouter,
     menu: menuRouter,
     menuItem: menuItemRouter,
     pack: packRouter,

@@ -99,6 +99,27 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, ven
         },
     });
 
+    // Enhance photo mutation
+    const { mutate: enhancePhoto, isLoading: isEnhancingPhoto } = api.image.enhancePhoto.useMutation({
+        onError: (err: unknown) => showErrorToast(t("enhancePhotoError"), err as { message: string }),
+        onSuccess: async (data: any) => {
+            try {
+                const response = await fetch(data.imageBase64);
+                const blob = await response.blob();
+                const compressedFile = await imageCompression(
+                    new File([blob], "enhanced.jpeg", { type: "image/jpeg" }),
+                    { initialQuality: 0.85, maxWidthOrHeight: 400, useWebWorker: true }
+                );
+                const compressedBase64 = await toBase64(compressedFile);
+                const blobUrl = URL.createObjectURL(compressedFile);
+                setValues({ imageBase64: compressedBase64 as string, imagePath: blobUrl, isAiGeneratedImage: false });
+                showSuccessToast(t("enhancePhotoSuccess"), t("enhancePhotoSuccess"));
+            } catch {
+                showErrorToast(t("enhancePhotoError"), { message: "Failed to process enhanced image" });
+            }
+        },
+    });
+
     // AI image generation mutation
     const { mutate: generateImageAI, isLoading: isGeneratingImage } = api.menuItem.generateImageAI.useMutation({
         onError: (err: unknown) => {
@@ -344,6 +365,17 @@ export const MenuItemForm: FC<Props> = ({ opened, onClose, menuId, menuType, ven
                             onImageDeleteClick={() => setValues({ imageBase64: "", imagePath: "", isAiGeneratedImage: false })}
                             width={400}
                         />
+                        {values.imageBase64 && (
+                            <Button
+                                compact
+                                disabled={loading || isEnhancingPhoto}
+                                loading={isEnhancingPhoto}
+                                onClick={() => enhancePhoto({ imageBase64: values.imageBase64 })}
+                                variant="light"
+                            >
+                                {t("enhancePhotoButton")}
+                            </Button>
+                        )}
                         {isImageAIAvailable && values.name && (
                             <Button
                                 compact

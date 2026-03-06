@@ -67,6 +67,21 @@ export const getColor = async (imageBase64: string) => {
     return fac.getColorFromArray4(data);
 };
 
+/** Enhance image quality: auto-rotate (EXIF), normalize exposure, boost saturation, sharpen */
+export const enhanceImage = async (imageBase64: string): Promise<string> => {
+    const uri = getImageUriFromBase64(imageBase64);
+
+    const enhancedBuffer = await sharp(Buffer.from(uri, "base64"))
+        .rotate()                                        // Auto-rotate based on EXIF orientation
+        .normalise()                                     // Auto-levels: stretch histogram for better exposure/contrast
+        .modulate({ brightness: 1.02, saturation: 1.2 }) // Slight brightness + color saturation boost
+        .sharpen({ sigma: 0.6 })                         // Subtle sharpening for crispness
+        .jpeg({ quality: 92 })
+        .toBuffer();
+
+    return `data:image/jpeg;base64,${enhancedBuffer.toString("base64")}`;
+};
+
 /** Generate hex color value from rgb values */
 export const rgba2hex = (rgb1: number, rgb2: number, rgb3: number) => {
     const hex =

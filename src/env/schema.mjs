@@ -28,6 +28,7 @@ export const serverSchema = z.object({
     ),
     NODE_ENV: z.enum(["development", "test", "production"]),
     OPENAI_API_KEY: z.string().optional(), // OpenAI API key for AI-powered allergen detection
+    PUBLIC_API_KEY: z.string().optional(), // API key for the public REST API (api.menu.neyahotels.com)
     SENTRY_AUTH_TOKEN: z.string().optional(),
     SENTRY_ORG: z.string().optional(),
     SENTRY_PROJECT: z.string().optional(),
