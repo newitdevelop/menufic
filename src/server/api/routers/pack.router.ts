@@ -12,7 +12,7 @@ export const packRouter = createTRPCRouter({
     create: protectedProcedure.input(packInput.merge(menuId)).mutation(async ({ ctx, input }) => {
         const lastPack = await ctx.prisma.pack.findFirst({
             orderBy: { position: "desc" },
-            where: { menuId: input.menuId, userId: ctx.session.user.id },
+            where: { menuId: input.menuId },
         });
 
         // Handle image upload if provided
@@ -163,7 +163,7 @@ export const packRouter = createTRPCRouter({
             const pack = await ctx.prisma.$transaction(async (tx) => {
                 // Delete existing sections first
                 await tx.packSection.deleteMany({
-                    where: { packId: input.id, userId: ctx.session.user.id },
+                    where: { packId: input.id },
                 });
 
                 // Update pack (without sections in the same operation)
@@ -270,7 +270,6 @@ export const packRouter = createTRPCRouter({
         const packs = await ctx.prisma.pack.findMany({
             where: {
                 menuId: input.menuId,
-                userId: ctx.session.user.id,
             },
             include: {
                 sections: {

@@ -16,7 +16,7 @@ export const categoryRouter = createTRPCRouter({
             ctx.prisma.category.count({ where: { menuId: input.menuId } }),
             ctx.prisma.category.findFirst({
                 orderBy: { position: "desc" },
-                where: { menuId: input.menuId, userId: ctx.session.user.id },
+                where: { menuId: input.menuId },
             }),
         ]);
 
@@ -76,7 +76,7 @@ export const categoryRouter = createTRPCRouter({
         ctx.prisma.category.findMany({
             include: { items: { include: { image: true }, orderBy: { position: "asc" } } },
             orderBy: { position: "asc" },
-            where: { menuId: input.menuId, userId: ctx.session.user.id },
+            where: { menuId: input.menuId },
         })
     ),
 

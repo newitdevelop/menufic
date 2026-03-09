@@ -16,7 +16,7 @@ export const menuRouter = createTRPCRouter({
             ctx.prisma.menu.count({ where: { restaurantId: input.restaurantId } }),
             ctx.prisma.menu.findFirst({
                 orderBy: { position: "desc" },
-                where: { restaurantId: input.restaurantId, userId: ctx.session.user.id },
+                where: { restaurantId: input.restaurantId },
             }),
         ]);
 
@@ -147,7 +147,7 @@ export const menuRouter = createTRPCRouter({
     getAll: protectedProcedure.input(restaurantId).query(({ ctx, input }) =>
         ctx.prisma.menu.findMany({
             orderBy: { position: "asc" },
-            where: { restaurantId: input.restaurantId, userId: ctx.session.user.id },
+            where: { restaurantId: input.restaurantId },
         })
     ),
 
