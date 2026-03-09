@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { prisma } from "src/server/db";
 import { requireApiKey, toImageUrl } from "src/server/api/rest/auth";
+import { formatMenuSchedule } from "src/server/api/rest/schedule";
 
 /**
  * GET /api/v1/venues/:id/menus/:menuId
@@ -60,6 +61,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             venueName: menu.restaurant?.name ?? null,
             createdAt: menu.createdAt,
             updatedAt: menu.updatedAt,
+            ...formatMenuSchedule(menu),
             categories: menu.categories.map((cat) => ({
                 id: cat.id,
                 name: cat.name,
