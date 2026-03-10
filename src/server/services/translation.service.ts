@@ -25,36 +25,31 @@ function isTranslationValid(originalText: string, translatedText: string, target
         return true;
     }
 
-    // Check if translation is identical to source (likely failed translation)
-    // For short texts (allergen names), still check if they're identical
-    if (translatedText === originalText) {
-        // For texts over 10 chars, always flag identical as invalid
-        if (originalText.length > 10) {
-            console.warn(`[Translation] INVALID: Translation is identical to source for target language ${targetLang}`);
-            return false;
-        }
-        // For short texts, check for Portuguese-specific patterns that indicate untranslated text
-        // Common Portuguese words that should be translated
-        const portugueseWords = /^(ovos|leite|peixe|soja|aipo|mostarda|tremoço|nenhum|cereais|crustáceos|amendoins|moluscos)$/i;
-        if (portugueseWords.test(translatedText.trim())) {
-            console.warn(`[Translation] INVALID: Short text "${translatedText}" appears to be untranslated Portuguese for target ${targetLang}`);
-            return false;
-        }
-    }
-
-    // Check if translation contains Portuguese-specific characters when it shouldn't
-    // This catches cases where DeepL returned the original Portuguese text
-    const portuguesePattern = /[ãõçáéíóúâêôà]/i;
-    if (targetLang.toUpperCase() !== "PT" && portuguesePattern.test(translatedText)) {
-        // Check for common Portuguese allergen phrases
+    // Only check for clearly wrong-language responses — Portuguese allergen phrases
+    // that should never appear in non-PT translations.
+    // NOTE: Do NOT flag identical translations as invalid. Dish names like "Naco de Porco"
+    // and "Alcatra" are proper nouns that legitimately keep the same text across languages.
+    // Flagging them caused an infinite DeepL retry loop on every page load.
+    if (targetLang.toUpperCase() !== "PT") {
         const portugueseAllergenPhrases = /(cereais que contêm|frutos de casca rija|sementes de sésamo|dióxido de enxofre)/i;
         if (portugueseAllergenPhrases.test(translatedText)) {
             console.warn(`[Translation] INVALID: Translation contains Portuguese allergen phrase for language ${targetLang}: "${translatedText}"`);
             return false;
         }
-        // Also flag if translation is identical to original with Portuguese chars
-        if (originalText === translatedText) {
-            console.warn(`[Translation] INVALID: Translation contains Portuguese characters for language ${targetLang}: "${translatedText}"`);
+        // Only flag if translation contains strictly-Portuguese chars (ã, õ) that are
+        // not used in French/Spanish/etc. AND is identical to the original.
+        const strictPortuguesePattern = /[ãõ]/;
+        if (strictPortuguesePattern.test(translatedText) && translatedText === originalText) {
+            console.warn(`[Translation] INVALID: Translation with Portuguese-only chars is identical to source for target ${targetLang}: "${translatedText}"`);
+            return false;
+        }
+    }
+
+    // For short allergen codes: check common Portuguese words that must be translated
+    if (translatedText === originalText && originalText.length <= 10) {
+        const portugueseAllergenWords = /^(ovos|leite|peixe|soja|aipo|mostarda|tremoço|nenhum|cereais|crustáceos|amendoins|moluscos)$/i;
+        if (portugueseAllergenWords.test(translatedText.trim())) {
+            console.warn(`[Translation] INVALID: Short allergen word "${translatedText}" appears untranslated for target ${targetLang}`);
             return false;
         }
     }
