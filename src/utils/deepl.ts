@@ -1,5 +1,27 @@
 import { env } from "src/env/server.mjs";
 
+// Rate limiter: serialize all DeepL requests to stay under the 5 req/sec free-tier limit.
+// Uses a promise chain so concurrent callers queue up automatically.
+let _lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL_MS = 300; // ~3 req/sec — safely below the 5/sec limit
+let _requestQueue: Promise<void> = Promise.resolve();
+
+async function rateLimitedFetch(url: string, options: RequestInit): Promise<Response> {
+    return new Promise<Response>((resolve, reject) => {
+        _requestQueue = _requestQueue
+            .then(async () => {
+                const elapsed = Date.now() - _lastRequestTime;
+                if (elapsed < MIN_REQUEST_INTERVAL_MS) {
+                    await new Promise(r => setTimeout(r, MIN_REQUEST_INTERVAL_MS - elapsed));
+                }
+                _lastRequestTime = Date.now();
+                const response = await fetch(url, options);
+                resolve(response);
+            })
+            .catch(reject);
+    });
+}
+
 /**
  * Translates text using DeepL API
  * @param text The text to translate
@@ -39,21 +61,30 @@ export async function translateWithDeepL(text: string, targetLang: string, sourc
             ? "https://api-free.deepl.com/v2/translate"
             : "https://api.deepl.com/v2/translate";
 
-        const response = await fetch(apiUrl, {
+        const fetchOptions: RequestInit = {
             body: JSON.stringify(requestBody),
             headers: {
                 "Authorization": `DeepL-Auth-Key ${env.DEEPL_API_KEY}`,
                 "Content-Type": "application/json",
             },
             method: "POST",
-        });
+        };
+
+        let response = await rateLimitedFetch(apiUrl, fetchOptions);
+
+        // Retry once on 429 after a short back-off
+        if (response.status === 429) {
+            console.warn("DeepL: 429 received, retrying after 2s back-off...");
+            await new Promise(r => setTimeout(r, 2000));
+            response = await rateLimitedFetch(apiUrl, fetchOptions);
+        }
 
         if (!response.ok) {
             const error = await response.text();
             console.error(`DeepL API error (HTTP ${response.status} ${response.statusText}):`, error || "(empty body)");
             if (response.status === 456) console.error("DeepL: Monthly character quota exceeded. Translations disabled until quota resets.");
             if (response.status === 403) console.error("DeepL: Invalid or missing API key (DEEPL_API_KEY).");
-            if (response.status === 429) console.error("DeepL: Too many requests — rate limit hit.");
+            if (response.status === 429) console.error("DeepL: Still rate-limited after retry. Backing off.");
             return text; // Return original text on error
         }
 
