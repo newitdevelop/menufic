@@ -34,7 +34,12 @@ export async function translateWithDeepL(text: string, targetLang: string, sourc
             requestBody.source_lang = normalizedSourceLang;
         }
 
-        const response = await fetch("https://api-free.deepl.com/v2/translate", {
+        // Free keys end with ":fx" → api-free.deepl.com; pro keys → api.deepl.com
+        const apiUrl = env.DEEPL_API_KEY.endsWith(":fx")
+            ? "https://api-free.deepl.com/v2/translate"
+            : "https://api.deepl.com/v2/translate";
+
+        const response = await fetch(apiUrl, {
             body: JSON.stringify(requestBody),
             headers: {
                 "Authorization": `DeepL-Auth-Key ${env.DEEPL_API_KEY}`,
@@ -45,7 +50,10 @@ export async function translateWithDeepL(text: string, targetLang: string, sourc
 
         if (!response.ok) {
             const error = await response.text();
-            console.error("DeepL API error:", error);
+            console.error(`DeepL API error (HTTP ${response.status} ${response.statusText}):`, error || "(empty body)");
+            if (response.status === 456) console.error("DeepL: Monthly character quota exceeded. Translations disabled until quota resets.");
+            if (response.status === 403) console.error("DeepL: Invalid or missing API key (DEEPL_API_KEY).");
+            if (response.status === 429) console.error("DeepL: Too many requests — rate limit hit.");
             return text; // Return original text on error
         }
 

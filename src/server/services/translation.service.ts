@@ -103,20 +103,29 @@ export async function getOrCreateTranslation(
         // NOTE: We do NOT apply this to "name" fields because dish names like
         // "Naco de Porco", "Alcatra", etc. are proper nouns that legitimately keep
         // the same text in all languages.
-        // Only retry if the cache entry is older than 5 minutes — prevents a
-        // DeepL-failure loop where we delete → call DeepL → same bad result → cache →
-        // delete again on the very next request.
+        // Detect stale Portuguese-identical translations that were cached during DeepL
+        // failures. These should never stay in Portuguese — retry DeepL after a delay.
+        //
+        // Applies to content that can NEVER legitimately be identical across languages:
+        //  - "description" fields (natural language sentences)
+        //  - "message" fields (menu messages)
+        //  - UI entity strings (entityId starts with "ui-"): VAT text, allergen names, disclaimers
+        //
+        // Does NOT apply to "name" fields of menu items/packs — some dish names like
+        // "Naco de Porco" are proper nouns that legitimately stay the same in all languages.
+        //
+        // 5-minute backoff prevents hammering DeepL when it is temporarily down.
         const RETRY_AFTER_MS = 5 * 60 * 1000;
         const cacheAgeMs = Date.now() - new Date(cached.updatedAt).getTime();
-        const isStaleDescriptionCache =
-            field === "description" &&
+        const isStaleTranslatableCache =
+            (field === "description" || field === "message" || entityId.startsWith("ui-")) &&
             sourceLang.toUpperCase() === "PT" &&
             lang !== "PT" &&
             cached.translated === originalText &&
             cacheAgeMs > RETRY_AFTER_MS;
 
         // Validate cached translation
-        const isValid = !isStaleDescriptionCache && isTranslationValid(originalText, cached.translated, lang, sourceLang);
+        const isValid = !isStaleTranslatableCache && isTranslationValid(originalText, cached.translated, lang, sourceLang);
 
         if (isValid) {
             console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
@@ -124,8 +133,8 @@ export async function getOrCreateTranslation(
         }
 
         // Invalid translation found - delete it and retranslate
-        if (isStaleDescriptionCache) {
-            console.warn(`[Translation] Stale PT description cache for ${lang}: "${originalText.substring(0, 50)}..." — deleting and retranslating`);
+        if (isStaleTranslatableCache) {
+            console.warn(`[Translation] Stale PT cache for ${lang} [${entityId}/${field}]: "${originalText.substring(0, 50)}..." — deleting and retranslating`);
         } else {
             console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
         }
