@@ -45,6 +45,20 @@ function isTranslationValid(originalText: string, translatedText: string, target
         }
     }
 
+    // For PT→non-PT: check common Portuguese food/menu words that should never appear
+    // unchanged in another language. This is a targeted list of generic category words —
+    // NOT proper dish names like "Naco de Porco" or "Alcatra", which legitimately keep
+    // the same name in English/French.
+    if (sourceLang.toUpperCase() === "PT" && targetLang.toUpperCase() !== "PT" && translatedText === originalText) {
+        // Matches common PT food words optionally followed by "de/com/do/da/..." + anything.
+        // E.g.: "Fruta", "Salada de Frutas", "Sopa do Dia", "Bolo de Chocolate"
+        const ptCommonFoodWords = /^(fruta[s]?|salada[s]?|sopa[s]?|bolo[s]?|carne[s]?|legumes?|vegetal|vegetais|sobremesa[s]?|entrada[s]?|bebida[s]?|gelado[s]?|queijo[s]?|doce[s]?|prato[s]?|frango[s]?|aperitivo[s]?|charcutaria|couvert[s]?)(\s+(de|com|e|ao?|do?|da?|dos|das|no?|na?|para|em|com)\s+.+)?$/i;
+        if (ptCommonFoodWords.test(translatedText.trim())) {
+            console.warn(`[Translation] INVALID: Common Portuguese food word "${translatedText}" appears untranslated for target ${targetLang}`);
+            return false;
+        }
+    }
+
     // For short allergen codes: check common Portuguese words that must be translated
     if (translatedText === originalText && originalText.length <= 10) {
         const portugueseAllergenWords = /^(ovos|leite|peixe|soja|aipo|mostarda|tremoço|nenhum|cereais|crustáceos|amendoins|moluscos)$/i;
@@ -65,10 +79,7 @@ export async function getOrCreateTranslation(
     targetLang: string,
     sourceLang = "auto"
 ): Promise<string> {
-    // Normalize "EN" → "EN-GB": DeepL rejects bare "EN" as a target language.
-    // Using EN-GB also lets us bypass stale cache entries that were written when
-    // DeepL calls were failing (returning the original PT text unchanged).
-    const normalizedLang = targetLang.toUpperCase() === "EN" ? "EN-GB" : targetLang.toUpperCase();
+    const lang = targetLang.toUpperCase();
 
     // Check if translation exists in cache
     const cached = await prisma.translation.findUnique({
@@ -76,7 +87,7 @@ export async function getOrCreateTranslation(
             entityType_entityId_language_field: {
                 entityType,
                 entityId,
-                language: normalizedLang,
+                language: lang,
                 field,
             },
         },
@@ -84,15 +95,15 @@ export async function getOrCreateTranslation(
 
     if (cached) {
         // Validate cached translation
-        const isValid = isTranslationValid(originalText, cached.translated, normalizedLang, sourceLang);
+        const isValid = isTranslationValid(originalText, cached.translated, lang, sourceLang);
 
         if (isValid) {
-            console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${normalizedLang}: "${cached.translated}"`);
+            console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
             return cached.translated;
         }
 
         // Invalid translation found - delete it and retranslate
-        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${normalizedLang}: "${cached.translated}"`);
+        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
         console.log(`[Translation] Deleting invalid translation and retranslating...`);
 
         await prisma.translation.delete({
@@ -100,7 +111,7 @@ export async function getOrCreateTranslation(
                 entityType_entityId_language_field: {
                     entityType,
                     entityId,
-                    language: normalizedLang,
+                    language: lang,
                     field,
                 },
             },
@@ -109,15 +120,15 @@ export async function getOrCreateTranslation(
         });
     }
 
-    console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${normalizedLang} - calling DeepL with source: "${originalText}"`);
+    console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${lang} - calling DeepL with source: "${originalText}"`);
     // Translation not cached, call DeepL
-    const translated = await translateWithDeepL(originalText, normalizedLang, sourceLang);
+    const translated = await translateWithDeepL(originalText, lang, sourceLang);
     console.log(`[Translation] DeepL returned: "${translated}"`);
 
     // Validate new translation before caching
-    const isValid = isTranslationValid(originalText, translated, normalizedLang, sourceLang);
+    const isValid = isTranslationValid(originalText, translated, lang, sourceLang);
     if (!isValid) {
-        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${normalizedLang}.`);
+        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${lang}.`);
         console.log(`[Translation] Caching invalid translation to prevent repeated API calls. Will be auto-corrected when DeepL works.`);
 
         // Cache the invalid translation anyway to prevent repeated API calls
@@ -128,7 +139,7 @@ export async function getOrCreateTranslation(
                 data: {
                     entityType,
                     entityId,
-                    language: normalizedLang,
+                    language: lang,
                     field,
                     translated,
                 },
@@ -146,12 +157,12 @@ export async function getOrCreateTranslation(
             data: {
                 entityType,
                 entityId,
-                language: normalizedLang,
+                language: lang,
                 field,
                 translated,
             },
         });
-        console.log(`[Translation] Cached new translation for ${entityType}/${entityId}/${field}/${normalizedLang}`);
+        console.log(`[Translation] Cached new translation for ${entityType}/${entityId}/${field}/${lang}`);
     } catch (error) {
         // Ignore unique constraint violations (race condition)
         console.warn("Failed to cache translation:", error);
