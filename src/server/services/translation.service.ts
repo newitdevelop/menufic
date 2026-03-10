@@ -65,8 +65,10 @@ export async function getOrCreateTranslation(
     targetLang: string,
     sourceLang = "auto"
 ): Promise<string> {
-    // If source is auto-detect, we can't skip translation based on language match
-    // Let DeepL handle the detection
+    // Normalize "EN" → "EN-GB": DeepL rejects bare "EN" as a target language.
+    // Using EN-GB also lets us bypass stale cache entries that were written when
+    // DeepL calls were failing (returning the original PT text unchanged).
+    const normalizedLang = targetLang.toUpperCase() === "EN" ? "EN-GB" : targetLang.toUpperCase();
 
     // Check if translation exists in cache
     const cached = await prisma.translation.findUnique({
@@ -74,7 +76,7 @@ export async function getOrCreateTranslation(
             entityType_entityId_language_field: {
                 entityType,
                 entityId,
-                language: targetLang.toUpperCase(),
+                language: normalizedLang,
                 field,
             },
         },
@@ -82,15 +84,15 @@ export async function getOrCreateTranslation(
 
     if (cached) {
         // Validate cached translation
-        const isValid = isTranslationValid(originalText, cached.translated, targetLang, sourceLang);
+        const isValid = isTranslationValid(originalText, cached.translated, normalizedLang, sourceLang);
 
         if (isValid) {
-            console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
+            console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${normalizedLang}: "${cached.translated}"`);
             return cached.translated;
         }
 
         // Invalid translation found - delete it and retranslate
-        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${targetLang}: "${cached.translated}"`);
+        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${normalizedLang}: "${cached.translated}"`);
         console.log(`[Translation] Deleting invalid translation and retranslating...`);
 
         await prisma.translation.delete({
@@ -98,7 +100,7 @@ export async function getOrCreateTranslation(
                 entityType_entityId_language_field: {
                     entityType,
                     entityId,
-                    language: targetLang.toUpperCase(),
+                    language: normalizedLang,
                     field,
                 },
             },
@@ -107,15 +109,15 @@ export async function getOrCreateTranslation(
         });
     }
 
-    console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${targetLang} - calling DeepL with source: "${originalText}"`);
+    console.log(`[Translation] Cache MISS for ${entityType}/${entityId}/${field}/${normalizedLang} - calling DeepL with source: "${originalText}"`);
     // Translation not cached, call DeepL
-    const translated = await translateWithDeepL(originalText, targetLang, sourceLang);
+    const translated = await translateWithDeepL(originalText, normalizedLang, sourceLang);
     console.log(`[Translation] DeepL returned: "${translated}"`);
 
     // Validate new translation before caching
-    const isValid = isTranslationValid(originalText, translated, targetLang, sourceLang);
+    const isValid = isTranslationValid(originalText, translated, normalizedLang, sourceLang);
     if (!isValid) {
-        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${targetLang}.`);
+        console.error(`[Translation] ERROR: DeepL returned invalid translation for ${normalizedLang}.`);
         console.log(`[Translation] Caching invalid translation to prevent repeated API calls. Will be auto-corrected when DeepL works.`);
 
         // Cache the invalid translation anyway to prevent repeated API calls
@@ -126,7 +128,7 @@ export async function getOrCreateTranslation(
                 data: {
                     entityType,
                     entityId,
-                    language: targetLang.toUpperCase(),
+                    language: normalizedLang,
                     field,
                     translated,
                 },
@@ -144,12 +146,12 @@ export async function getOrCreateTranslation(
             data: {
                 entityType,
                 entityId,
-                language: targetLang.toUpperCase(),
+                language: normalizedLang,
                 field,
                 translated,
             },
         });
-        console.log(`[Translation] Cached new translation for ${entityType}/${entityId}/${field}/${targetLang}`);
+        console.log(`[Translation] Cached new translation for ${entityType}/${entityId}/${field}/${normalizedLang}`);
     } catch (error) {
         // Ignore unique constraint violations (race condition)
         console.warn("Failed to cache translation:", error);
