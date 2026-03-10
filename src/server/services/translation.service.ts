@@ -94,8 +94,23 @@ export async function getOrCreateTranslation(
     });
 
     if (cached) {
+        // Special pre-check for description fields from Portuguese source:
+        // A description that is identical to the original Portuguese text is always a
+        // failed translation — natural language descriptions can never legitimately be
+        // the same across languages. This handles stale cache entries written during
+        // the old DeepL "EN" target-language bug (bare "EN" was rejected by the API,
+        // so the original PT text was silently cached as the "translation").
+        // NOTE: We do NOT apply this to "name" fields because dish names like
+        // "Naco de Porco", "Alcatra", etc. are proper nouns that legitimately keep
+        // the same text in all languages.
+        const isStaleDescriptionCache =
+            field === "description" &&
+            sourceLang.toUpperCase() === "PT" &&
+            lang !== "PT" &&
+            cached.translated === originalText;
+
         // Validate cached translation
-        const isValid = isTranslationValid(originalText, cached.translated, lang, sourceLang);
+        const isValid = !isStaleDescriptionCache && isTranslationValid(originalText, cached.translated, lang, sourceLang);
 
         if (isValid) {
             console.log(`[Translation] Cache HIT for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
@@ -103,7 +118,11 @@ export async function getOrCreateTranslation(
         }
 
         // Invalid translation found - delete it and retranslate
-        console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
+        if (isStaleDescriptionCache) {
+            console.warn(`[Translation] Stale PT description cache for ${lang}: "${originalText.substring(0, 50)}..." — deleting and retranslating`);
+        } else {
+            console.warn(`[Translation] Cache HIT but INVALID for ${entityType}/${entityId}/${field}/${lang}: "${cached.translated}"`);
+        }
         console.log(`[Translation] Deleting invalid translation and retranslating...`);
 
         await prisma.translation.delete({
