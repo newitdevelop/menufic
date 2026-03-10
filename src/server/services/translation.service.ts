@@ -103,11 +103,17 @@ export async function getOrCreateTranslation(
         // NOTE: We do NOT apply this to "name" fields because dish names like
         // "Naco de Porco", "Alcatra", etc. are proper nouns that legitimately keep
         // the same text in all languages.
+        // Only retry if the cache entry is older than 5 minutes — prevents a
+        // DeepL-failure loop where we delete → call DeepL → same bad result → cache →
+        // delete again on the very next request.
+        const RETRY_AFTER_MS = 5 * 60 * 1000;
+        const cacheAgeMs = Date.now() - new Date(cached.updatedAt).getTime();
         const isStaleDescriptionCache =
             field === "description" &&
             sourceLang.toUpperCase() === "PT" &&
             lang !== "PT" &&
-            cached.translated === originalText;
+            cached.translated === originalText &&
+            cacheAgeMs > RETRY_AFTER_MS;
 
         // Validate cached translation
         const isValid = !isStaleDescriptionCache && isTranslationValid(originalText, cached.translated, lang, sourceLang);
