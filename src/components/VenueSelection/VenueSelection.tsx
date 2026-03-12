@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { type FC, useEffect } from "react";
 
 import { Badge, Box, Card, Center, Container, Grid, Group, Loader, Stack, Text, Title, useMantineColorScheme } from "@mantine/core";
 import { IconExternalLink, IconMapPin, IconPhone } from "@tabler/icons";
@@ -17,6 +17,57 @@ export const VenueSelection: FC = () => {
 
     // Get current language from URL
     const currentLang = router.query?.lang as string;
+
+    // Arrow key navigation between venue cards (TV remote / keyboard)
+    useEffect(() => {
+        let focusedIndex = -1;
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            const target = event.target as HTMLElement;
+            if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+
+            const cards = document.querySelectorAll<HTMLElement>('[data-testid="venue-card"]');
+            if (cards.length === 0) return;
+
+            switch (event.key) {
+                case "ArrowDown":
+                case "ArrowRight":
+                case "Down":
+                case "Right":
+                    event.preventDefault();
+                    event.stopPropagation();
+                    focusedIndex = Math.min(cards.length - 1, focusedIndex + 1);
+                    cards[focusedIndex]?.focus();
+                    cards[focusedIndex]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    break;
+                case "ArrowUp":
+                case "ArrowLeft":
+                case "Up":
+                case "Left":
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (focusedIndex <= 0) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                    } else {
+                        focusedIndex = focusedIndex - 1;
+                        cards[focusedIndex]?.focus();
+                        cards[focusedIndex]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                    break;
+                case "Enter":
+                    if (focusedIndex >= 0) {
+                        event.preventDefault();
+                        cards[focusedIndex]?.click();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown, { capture: true });
+        return () => window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    }, []);
 
     if (isLoading) {
         return (
@@ -85,6 +136,7 @@ export const VenueSelection: FC = () => {
                                     <Link
                                         href={venueUrl}
                                         style={{ textDecoration: "none" }}
+                                        data-testid="venue-card"
                                     >
                                         <Card
                                             radius="lg"

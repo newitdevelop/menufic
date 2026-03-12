@@ -29,6 +29,7 @@ import { useTranslations } from "next-intl";
 import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client";
 
 import { Black, White } from "src/styles/theme";
+import { LANGUAGES, getFlagUrl } from "src/constants/languages";
 import { useSmartTVNavigation } from "src/hooks/useSmartTVNavigation";
 import { getInitialMenuSelection, isSmartTV } from "src/utils/detectSmartTV";
 import { getFestiveEmoji } from "src/utils/getFestiveEmoji";
@@ -137,6 +138,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [reservationModalOpened, setReservationModalOpened] = useState(false);
+    const [isTV, setIsTV] = useState(false);
+    useEffect(() => { setIsTV(isSmartTV()); }, []);
 
     // Menu sorting: Show room menus first (on Smart TV), then package menus, then standard menus
     const sortedMenus = useMemo(() => {
@@ -576,29 +579,28 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             {colorScheme === "dark" ? <IconSun size={18} strokeWidth={2.5} /> : <IconMoonStars size={18} />}
                         </ActionIcon>
                     </Box>
-                    {/* Smart TV keyboard shortcuts hint - only show on large screens (1440px+) */}
-                    <Box
-                        sx={{
-                            display: "none",
-                            "@media (min-width: 90em)": { // 1440px and up (large TVs)
-                                display: "flex",
+                    {/* Smart TV keyboard shortcuts hint — only on actual TV devices */}
+                    {isTV && (
+                        <Box
+                            sx={{
                                 backgroundColor: "rgba(0, 0, 0, 0.8)",
                                 borderRadius: "4px",
                                 color: "white",
-                                padding: "0.75rem 1rem",
+                                display: "flex",
                                 flexDirection: "column",
+                                fontSize: "1rem",
                                 gap: 6,
-                                fontSize: "1rem", // Will scale with viewport
-                            },
-                        }}
-                    >
-                        <Text weight={600} sx={{ fontSize: "inherit" }}>
-                            📱 Control Shortcuts:
-                        </Text>
-                        <Text sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
-                            1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
-                        </Text>
-                    </Box>
+                                padding: "0.75rem 1rem",
+                            }}
+                        >
+                            <Text weight={600} sx={{ fontSize: "inherit" }}>
+                                📱 Control Shortcuts:
+                            </Text>
+                            <Text sx={{ fontSize: "inherit", lineHeight: 1.4 }}>
+                                1=PT · 2=EN · 3=ES · 4=FR · 5=DE · 6=IT
+                            </Text>
+                        </Box>
+                    )}
                 </Box>
             </Box>
 
@@ -979,6 +981,61 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 )}
                 {!!sortedMenus?.length && !haveMenuItems && !havePacks && !debouncedSearch.trim() && excludedAllergens.length === 0 && <Empty height={400} text={t("noItemsForMenu")} />}
             </Box>
+
+            {/* Fixed bottom language bar — TV only */}
+            {isTV && <Box
+                className="no-print"
+                sx={{
+                    alignItems: "center",
+                    backgroundColor: "rgba(0, 0, 0, 0.88)",
+                    bottom: 0,
+                    display: "flex",
+                    gap: 6,
+                    justifyContent: "center",
+                    left: 0,
+                    padding: "8px 16px",
+                    position: "fixed",
+                    right: 0,
+                    zIndex: 200,
+                }}
+            >
+                {LANGUAGES.map((lang) => (
+                    <Box
+                        component="button"
+                        key={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
+                        sx={(theme) => ({
+                            "&:focus": { outline: `2px solid ${theme.colors.blue[4]}`, outlineOffset: 2 },
+                            "&:hover": { backgroundColor: theme.colors.blue[6] },
+                            alignItems: "center",
+                            backgroundColor: language.toUpperCase() === lang.code
+                                ? theme.colors.blue[7]
+                                : "rgba(255,255,255,0.12)",
+                            border: "none",
+                            borderRadius: theme.radius.sm,
+                            color: "white",
+                            cursor: "pointer",
+                            display: "flex",
+                            fontSize: 13,
+                            fontWeight: 600,
+                            gap: 6,
+                            padding: "5px 12px",
+                            transition: "background 0.2s",
+                        })}
+                    >
+                        <Box
+                            alt={lang.label}
+                            component="img"
+                            {...getFlagUrl(lang.countryCode, "small")}
+                            sx={{ borderRadius: 2 }}
+                        />
+                        {lang.code}
+                        <Text sx={{ color: "rgba(255,255,255,0.55)", fontSize: 10 }}>
+                            {lang.shortcut}
+                        </Text>
+                    </Box>
+                ))}
+            </Box>}
         </Box>
     );
 };
