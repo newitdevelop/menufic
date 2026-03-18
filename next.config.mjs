@@ -40,11 +40,6 @@ const config = {
         // Emotion support for better CSS-in-JS performance on TVs
         emotion: true,
     },
-    // Experimental features for better TV compatibility
-    experimental: {
-        // Optimize for older browsers
-        legacyBrowsers: false,
-    },
     // Output standalone for better Docker performance
     output: process.env.NODE_ENV === "production" ? "standalone" : undefined,
     // Webpack optimizations for Smart TVs
