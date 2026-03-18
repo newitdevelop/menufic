@@ -1,5 +1,6 @@
+import type { EmblaCarouselType } from "embla-carousel-react";
 import type { FC } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Carousel } from "@mantine/carousel";
@@ -24,7 +25,6 @@ import {
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSearch, IconSpeakerphone, IconSun, IconX } from "@tabler/icons";
-import Autoplay from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 
 import type { Category, Image, Menu, MenuItem, Restaurant } from "@prisma/client";
@@ -53,13 +53,16 @@ const useStyles = createStyles((theme) => ({
     adBanner: {
         alignItems: "center",
         animation: `${adFadeIn} 0.4s ease-out`,
-        backgroundColor: theme.colorScheme === "dark" ? theme.fn.rgba(theme.colors.blue[9], 0.25) : theme.fn.rgba(theme.colors.blue[0], 0.7),
-        border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.blue[7] : theme.colors.blue[2]}`,
+        backgroundColor: theme.colorScheme === "dark"
+            ? theme.fn.rgba(theme.colors.primary[0], 0.12)
+            : theme.fn.rgba(theme.colors.primary[0], 0.6),
+        border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.primary[3] : theme.colors.primary[2]}`,
         borderRadius: theme.radius.md,
-        color: theme.colorScheme === "dark" ? theme.colors.blue[2] : theme.colors.blue[8],
+        color: theme.colorScheme === "dark" ? theme.colors.primary[8] : theme.colors.primary[7],
         display: "flex",
         gap: theme.spacing.sm,
         marginBottom: theme.spacing.md,
+        marginTop: theme.spacing.md,
         padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
         position: "relative",
         [theme.fn.smallerThan("sm")]: {
@@ -67,7 +70,7 @@ const useStyles = createStyles((theme) => ({
         },
     },
     adBannerIcon: {
-        color: theme.colorScheme === "dark" ? theme.colors.blue[4] : theme.colors.blue[5],
+        color: theme.colorScheme === "dark" ? theme.colors.primary[5] : theme.colors.primary[5],
         flexShrink: 0,
     },
     adBannerText: {
@@ -169,7 +172,8 @@ interface Props {
 export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { classes, theme } = useStyles();
     const mantineTheme = useMantineTheme();
-    const bannerCarousalRef = useRef(Autoplay({ delay: 10000 }));
+    const emblaApiRef = useRef<EmblaCarouselType | null>(null);
+    const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [reservationModalOpened, setReservationModalOpened] = useState(false);
@@ -255,6 +259,35 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const [excludedAllergens, setExcludedAllergens] = useState<string[]>([]);
     const [activeSlide, setActiveSlide] = useState(0);
     const t = useTranslations("menu");
+
+    // Per-slide autoplay: hotel image = 5s, each banner = 10s
+    const scheduleNextSlide = useCallback((slideIndex: number) => {
+        if (autoplayTimerRef.current) clearTimeout(autoplayTimerRef.current);
+        if (!emblaApiRef.current || images.length <= 1) return;
+        // Slide 0 is always the hotel image (5s); banner slides get 10s
+        const delay = slideIndex === 0 ? 5000 : 10000;
+        autoplayTimerRef.current = setTimeout(() => {
+            emblaApiRef.current?.scrollNext();
+        }, delay);
+    }, [images.length]);
+
+    const handleGetEmblaApi = useCallback((embla: EmblaCarouselType) => {
+        emblaApiRef.current = embla;
+        scheduleNextSlide(0);
+    }, [scheduleNextSlide]);
+
+    const handleSlideChange = useCallback((index: number) => {
+        setActiveSlide(index);
+        scheduleNextSlide(index);
+    }, [scheduleNextSlide]);
+
+    // Start autoplay once embla is ready and images are available
+    useEffect(() => {
+        if (emblaApiRef.current && images.length > 1) {
+            scheduleNextSlide(activeSlide);
+        }
+        return () => { if (autoplayTimerRef.current) clearTimeout(autoplayTimerRef.current); };
+    }, [images.length]);
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
     const uiTranslations = useMemo(() => {
@@ -545,13 +578,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 <Carousel
                     className={classes.headerImageBox}
                     data-testid="restaurant-banner"
+                    getEmblaApi={handleGetEmblaApi}
                     height="100%"
                     loop
                     mx="auto"
-                    onMouseEnter={bannerCarousalRef.current.stop}
-                    onMouseLeave={bannerCarousalRef.current.reset}
-                    onSlideChange={setActiveSlide}
-                    plugins={[bannerCarousalRef.current]}
+                    onMouseEnter={() => { if (autoplayTimerRef.current) clearTimeout(autoplayTimerRef.current); }}
+                    onMouseLeave={() => scheduleNextSlide(activeSlide)}
+                    onSlideChange={handleSlideChange}
                     slideGap="md"
                     styles={{ indicator: { background: White } }}
                     withControls={false}
