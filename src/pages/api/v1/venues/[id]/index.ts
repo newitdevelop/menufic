@@ -67,8 +67,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 guestMessage: (banner as any).guestMessage ?? null,
                 expiryDate: (banner as any).expiryDate ?? null,
                 ...formatMenuSchedule(banner as any),
-                createdAt: banner.createdAt,
-                updatedAt: banner.updatedAt,
             })),
             menus: venue.menus.map((menu) => ({
                 id: menu.id,
