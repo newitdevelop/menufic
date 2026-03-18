@@ -90,10 +90,12 @@ export const NavHeader: FC<Props> = ({
     const router = useRouter();
     const t = useTranslations();
 
-    const linkOptions = [
-        { icon: IconPizza, label: t("dashboard.venue.navTitle"), link: "/venue" },
-        { icon: IconEyeglass2, label: t("dashboard.explore.navTitle"), link: "/explore" },
-    ];
+    const linkOptions = showInternalLinks
+        ? [
+              { icon: IconPizza, label: t("dashboard.venue.navTitle"), link: "/venue" },
+              { icon: IconEyeglass2, label: t("dashboard.explore.navTitle"), link: "/explore" },
+          ]
+        : [];
 
     return (
         <Header className={classes.header} height={60}>
