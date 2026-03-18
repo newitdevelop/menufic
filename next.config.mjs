@@ -40,8 +40,6 @@ const config = {
         // Emotion support for better CSS-in-JS performance on TVs
         emotion: true,
     },
-    // Output standalone for better Docker performance
-    output: process.env.NODE_ENV === "production" ? "standalone" : undefined,
     // Webpack optimizations for Smart TVs
     webpack: (config, { isServer }) => {
         if (!isServer) {

@@ -297,18 +297,17 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
 };
 
 export async function getStaticProps(context: GetStaticPropsContext<{ restaurantId: string }>) {
-    const ssg = createProxySSGHelpers({
-        ctx: createInnerTRPCContext({ session: null }),
-        router: appRouter,
-        transformer: superjson,
-    });
     const restaurantId = context.params?.restaurantId as string;
     const messages = await loadTranslations("en");
     try {
+        const ssg = createProxySSGHelpers({
+            ctx: createInnerTRPCContext({ session: null }),
+            router: appRouter,
+            transformer: superjson,
+        });
         const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
         if (restaurant.isPublished) {
-            // Only return restaurants that are published
-            return { props: { messages, restaurantId, trpcState: ssg.dehydrate() }, revalidate: 1800 }; // revalidate in 30 mins
+            return { props: { messages, restaurantId, trpcState: ssg.dehydrate() }, revalidate: 1800 };
         }
         return { props: { messages, restaurantId }, revalidate: 60 };
     } catch {
