@@ -8,7 +8,7 @@ import { NextIntlProvider, useTranslations } from "next-intl";
 import { NextSeo } from "next-seo";
 import superjson from "superjson";
 
-import type { GetStaticPropsContext, NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import type { AbstractIntlMessages } from "next-intl";
 
 import { Empty } from "src/components/Empty";
@@ -296,7 +296,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
     );
 };
 
-export async function getStaticProps(context: GetStaticPropsContext<{ restaurantId: string }>) {
+export async function getServerSideProps(context: GetServerSidePropsContext<{ restaurantId: string }>) {
     const restaurantId = context.params?.restaurantId as string;
     const messages = await loadTranslations("en");
     try {
@@ -307,14 +307,12 @@ export async function getStaticProps(context: GetStaticPropsContext<{ restaurant
         });
         const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
         if (restaurant.isPublished) {
-            return { props: { messages, restaurantId, trpcState: ssg.dehydrate() }, revalidate: 1800 };
+            return { props: { messages, restaurantId, trpcState: ssg.dehydrate() } };
         }
-        return { props: { messages, restaurantId }, revalidate: 60 };
+        return { props: { messages, restaurantId } };
     } catch {
-        return { props: { messages, restaurantId }, revalidate: 1800 };
+        return { props: { messages, restaurantId } };
     }
 }
-
-export const getStaticPaths = async () => ({ fallback: "blocking", paths: [] });
 
 export default RestaurantMenuPage;

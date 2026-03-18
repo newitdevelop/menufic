@@ -179,8 +179,6 @@ const BannersPage: NextPage = () => {
     );
 };
 
-export const getStaticProps = async () => ({ props: { messages: await loadTranslations("en") } });
-
-export const getStaticPaths = async () => ({ fallback: "blocking", paths: [] });
+export const getServerSideProps = async () => ({ props: { messages: await loadTranslations("en") } });
 
 export default BannersPage;
