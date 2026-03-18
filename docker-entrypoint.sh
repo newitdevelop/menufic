@@ -91,16 +91,14 @@ fi
 echo "🔧 Generating Prisma Client..."
 npx prisma generate --schema=./prisma/schema.prisma
 
-# Ensure en.json exists in volume (required for app to work properly)
+# Always restore en.json from the build to keep translations in sync with code
 # This must happen BEFORE any translation generation
-if [ ! -f "src/lang/en.json" ]; then
-  echo "📋 English source file missing in volume - restoring from build..."
-  if [ -f "/tmp/en.json.backup" ]; then
-    cp /tmp/en.json.backup src/lang/en.json
-    echo "✅ English source file restored"
-  else
-    echo "❌ English source file not found - app may have translation errors"
-  fi
+echo "📋 Restoring English source file from build..."
+if [ -f "/tmp/en.json.backup" ]; then
+  cp /tmp/en.json.backup src/lang/en.json
+  echo "✅ English source file restored"
+else
+  echo "❌ English source file backup not found - app may have translation errors"
 fi
 
 # Optional: Generate translations if DeepL API key is available
