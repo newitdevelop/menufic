@@ -6,12 +6,13 @@ import { Carousel } from "@mantine/carousel";
 import { useRouter } from "next/router";
 import {
     ActionIcon,
-    Alert,
     Box,
     Button,
+    CloseButton,
     createStyles,
     Flex,
     Group,
+    keyframes,
     MediaQuery,
     MultiSelect,
     SimpleGrid,
@@ -23,7 +24,7 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSearch, IconSun, IconX } from "@tabler/icons";
+import { IconCalendar, IconMail, IconMapPin, IconMessage, IconMoonStars, IconPhone, IconSearch, IconSpeakerphone, IconSun, IconX } from "@tabler/icons";
 import Autoplay from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 
@@ -44,7 +45,40 @@ import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
 import { LanguageSelector } from "../LanguageSelector";
 
+const adGlow = keyframes({
+    "0%, 100%": { boxShadow: "0 0 8px rgba(245, 166, 35, 0.3)" },
+    "50%": { boxShadow: "0 0 18px rgba(245, 166, 35, 0.5)" },
+});
+
 const useStyles = createStyles((theme) => ({
+    adBanner: {
+        alignItems: "center",
+        animation: `${adGlow} 3s ease-in-out infinite`,
+        background: theme.fn.linearGradient(135, "#f5a623", "#f7c948", "#f5a623"),
+        borderRadius: theme.radius.md,
+        color: "#4a3000",
+        display: "flex",
+        gap: theme.spacing.sm,
+        marginBottom: theme.spacing.md,
+        padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
+        position: "relative",
+        [theme.fn.smallerThan("sm")]: {
+            padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+        },
+    },
+    adBannerIcon: {
+        color: "#7a5100",
+        flexShrink: 0,
+    },
+    adBannerText: {
+        flex: 1,
+        fontSize: theme.fontSizes.md,
+        fontWeight: 600,
+        lineHeight: 1.4,
+        [theme.fn.smallerThan("sm")]: {
+            fontSize: theme.fontSizes.sm,
+        },
+    },
     carousalOverlay: {
         backgroundImage: theme.fn.linearGradient(
             180,
@@ -135,7 +169,7 @@ interface Props {
 export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { classes, theme } = useStyles();
     const mantineTheme = useMantineTheme();
-    const bannerCarousalRef = useRef(Autoplay({ delay: 5000 }));
+    const bannerCarousalRef = useRef(Autoplay({ delay: 10000 }));
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [reservationModalOpened, setReservationModalOpened] = useState(false);
@@ -219,6 +253,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch] = useDebouncedValue(searchQuery, 200);
     const [excludedAllergens, setExcludedAllergens] = useState<string[]>([]);
+    const [dismissedBannerIds, setDismissedBannerIds] = useState<Set<string>>(new Set());
     const t = useTranslations("menu");
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
@@ -484,11 +519,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         return activeBanners;
     }, [restaurant]);
 
-    const guestNotification = useMemo(() => {
+    const guestNotifications = useMemo(() => {
         const now = new Date();
         const activeBanners = restaurant?.banners?.filter((b) => isBannerActive(b, now)) || [];
-        const notifyBanner = activeBanners.find((b: any) => b.notifyGuests && b.guestMessage);
-        return notifyBanner ? (notifyBanner as any).guestMessage as string : null;
+        return activeBanners
+            .filter((b: any) => b.notifyGuests && b.guestMessage)
+            .map((b: any) => ({ id: b.id, message: b.guestMessage as string }));
     }, [restaurant]);
 
     const haveMenuItems = menuDetails?.categories?.some((category) => category?.items?.length > 0);
@@ -661,11 +697,20 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Flex>
             )}
 
-            {guestNotification && (
-                <Alert color="teal" mb="md" radius="md" variant="light">
-                    {guestNotification}
-                </Alert>
-            )}
+            {guestNotifications
+                .filter((n) => !dismissedBannerIds.has(n.id))
+                .map((n) => (
+                    <Box key={n.id} className={classes.adBanner}>
+                        <IconSpeakerphone className={classes.adBannerIcon} size={24} />
+                        <Text className={classes.adBannerText}>{n.message}</Text>
+                        <CloseButton
+                            aria-label="Dismiss notification"
+                            onClick={() => setDismissedBannerIds((prev) => new Set(prev).add(n.id))}
+                            size="sm"
+                            sx={{ color: "#7a5100", opacity: 0.7, "&:hover": { opacity: 1 } }}
+                        />
+                    </Box>
+                ))}
 
             <Tabs my={40} onTabChange={handleMenuChange} value={selectedMenu}>
                 <Tabs.List className="no-print">

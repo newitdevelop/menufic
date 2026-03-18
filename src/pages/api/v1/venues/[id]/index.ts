@@ -25,6 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const venue = await prisma.restaurant.findFirst({
         include: {
+            banners: true,
             image: true,
             menus: {
                 include: {
@@ -59,6 +60,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             imageUrl: toImageUrl(venue.image?.path),
             createdAt: venue.createdAt,
             updatedAt: venue.updatedAt,
+            banners: venue.banners.map((banner) => ({
+                id: banner.id,
+                imageUrl: toImageUrl(banner.path),
+                notifyGuests: (banner as any).notifyGuests ?? false,
+                guestMessage: (banner as any).guestMessage ?? null,
+                expiryDate: (banner as any).expiryDate ?? null,
+                ...formatMenuSchedule(banner as any),
+                createdAt: banner.createdAt,
+                updatedAt: banner.updatedAt,
+            })),
             menus: venue.menus.map((menu) => ({
                 id: menu.id,
                 name: menu.name,

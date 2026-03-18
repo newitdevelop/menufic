@@ -298,6 +298,7 @@ const RestaurantMenuPage: NextPage<{ restaurantId?: string }> = ({ restaurantId:
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ restaurantId: string }>) {
     const restaurantId = context.params?.restaurantId as string;
+    const language = ((context.query?.lang as string) || "PT").toUpperCase();
     const messages = await loadTranslations("en");
     try {
         const ssg = createProxySSGHelpers({
@@ -305,7 +306,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ re
             router: appRouter,
             transformer: superjson,
         });
-        const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId });
+        const restaurant = await (ssg.restaurant as any).getDetails.fetch({ id: restaurantId, language });
         if (restaurant.isPublished) {
             return { props: { messages, restaurantId, trpcState: ssg.dehydrate() } };
         }

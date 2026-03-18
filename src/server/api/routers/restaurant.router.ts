@@ -354,7 +354,7 @@ export const restaurantRouter = createTRPCRouter({
             };
 
             // Import translation services
-            const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, getImageDisclaimer, getUITranslation, getAllergenTranslation, getReservationTranslations } = await import(
+            const { translateMenu, translateCategory, translateMenuItem, translatePack, translatePackSection, translateBannerMessage, getImageDisclaimer, getUITranslation, getAllergenTranslation, getReservationTranslations } = await import(
                 "src/server/services/translation.service"
             );
 
@@ -449,6 +449,14 @@ export const restaurantRouter = createTRPCRouter({
                 return { ...restaurant, menus: menusWithDisclaimers, uiTranslations };
             }
 
+            // Translate banner guestMessages
+            const translatedBanners = await Promise.all(
+                restaurant.banners.map(async (banner) => {
+                    const translatedMessage = await translateBannerMessage(banner as any, input.language!);
+                    return { ...banner, guestMessage: translatedMessage };
+                })
+            );
+
             // Translate all menus, categories, items, and packs
             const translatedMenus = await Promise.all(
                 restaurant.menus.map(async (menu) => {
@@ -519,6 +527,7 @@ export const restaurantRouter = createTRPCRouter({
 
             return {
                 ...restaurant,
+                banners: translatedBanners,
                 menus: translatedMenus,
                 uiTranslations,
             };

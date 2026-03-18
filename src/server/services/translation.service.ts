@@ -1,7 +1,7 @@
 import { prisma } from "src/server/db";
 import { translateWithDeepL } from "src/utils/deepl";
 
-type EntityType = "menuItem" | "category" | "menu" | "pack" | "packSection";
+type EntityType = "menuItem" | "category" | "menu" | "pack" | "packSection" | "banner";
 type TranslatableField = "name" | "description" | "availableTime" | "message" | "title" | "aiImageDisclaimer" | "imageDisclaimer" | string;
 
 /**
@@ -538,4 +538,19 @@ export async function translatePackSection(
         items,
         itemAllergens: translatedItemAllergens,
     };
+}
+
+/**
+ * Translate a banner's guestMessage to the target language
+ */
+export async function translateBannerMessage(
+    banner: { id: string; guestMessage?: string | null },
+    targetLang: string
+): Promise<string | null> {
+    if (!banner.guestMessage) return null;
+    if (!targetLang || targetLang.toUpperCase() === "PT") {
+        return banner.guestMessage;
+    }
+
+    return getOrCreateTranslation("banner", banner.id, "guestMessage", banner.guestMessage, targetLang, "PT");
 }
