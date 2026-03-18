@@ -6,6 +6,7 @@ import { Carousel } from "@mantine/carousel";
 import { useRouter } from "next/router";
 import {
     ActionIcon,
+    Alert,
     Box,
     Button,
     createStyles,
@@ -444,62 +445,50 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         }
     }, [categoryIdFromQuery, menuDetails, router]);
 
+    const isBannerActive = (banner: any, now: Date) => {
+        if (banner.expiryDate && new Date(banner.expiryDate) <= now) return false;
+        switch (banner.scheduleType) {
+            case "ALWAYS": return true;
+            case "DAILY": {
+                if (!banner.dailyStartTime || !banner.dailyEndTime) return true;
+                const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+                return currentTime >= banner.dailyStartTime && currentTime <= banner.dailyEndTime;
+            }
+            case "WEEKLY": {
+                if (!banner.weeklyDays || banner.weeklyDays.length === 0) return true;
+                return banner.weeklyDays.includes(now.getDay());
+            }
+            case "MONTHLY": {
+                if (!banner.monthlyDays || banner.monthlyDays.length === 0) return true;
+                return banner.monthlyDays.includes(now.getDate());
+            }
+            case "YEARLY": {
+                if (!banner.yearlyStartDate || !banner.yearlyEndDate) return true;
+                const currentMMDD = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+                return currentMMDD >= banner.yearlyStartDate && currentMMDD <= banner.yearlyEndDate;
+            }
+            case "PERIOD": {
+                if (!banner.periodStartDate || !banner.periodEndDate) return true;
+                return now >= new Date(banner.periodStartDate) && now <= new Date(banner.periodEndDate);
+            }
+            default: return true;
+        }
+    };
+
     const images: Image[] = useMemo(() => {
         const now = new Date();
-
-        const isBannerActive = (banner: any) => {
-            // Check final expiry date first
-            if (banner.expiryDate && new Date(banner.expiryDate) <= now) {
-                return false; // Banner has permanently expired
-            }
-
-            // Check schedule type
-            switch (banner.scheduleType) {
-                case "ALWAYS":
-                    return true;
-
-                case "DAILY": {
-                    if (!banner.dailyStartTime || !banner.dailyEndTime) return true;
-                    const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-                    return currentTime >= banner.dailyStartTime && currentTime <= banner.dailyEndTime;
-                }
-
-                case "WEEKLY": {
-                    if (!banner.weeklyDays || banner.weeklyDays.length === 0) return true;
-                    const currentDay = now.getDay(); // 0=Sunday, 1=Monday, etc.
-                    return banner.weeklyDays.includes(currentDay);
-                }
-
-                case "MONTHLY": {
-                    if (!banner.monthlyDays || banner.monthlyDays.length === 0) return true;
-                    const currentDate = now.getDate(); // 1-31
-                    return banner.monthlyDays.includes(currentDate);
-                }
-
-                case "YEARLY": {
-                    if (!banner.yearlyStartDate || !banner.yearlyEndDate) return true;
-                    const currentMMDD = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-                    return currentMMDD >= banner.yearlyStartDate && currentMMDD <= banner.yearlyEndDate;
-                }
-
-                case "PERIOD": {
-                    if (!banner.periodStartDate || !banner.periodEndDate) return true;
-                    const startDate = new Date(banner.periodStartDate);
-                    const endDate = new Date(banner.periodEndDate);
-                    return now >= startDate && now <= endDate;
-                }
-
-                default:
-                    return true;
-            }
-        };
-
-        const activeBanners = restaurant?.banners?.filter(isBannerActive) || [];
-
+        const activeBanners = restaurant?.banners?.filter((b) => isBannerActive(b, now)) || [];
         if (restaurant?.image) {
             return [restaurant?.image, ...activeBanners];
         }
         return activeBanners;
+    }, [restaurant]);
+
+    const guestNotification = useMemo(() => {
+        const now = new Date();
+        const activeBanners = restaurant?.banners?.filter((b) => isBannerActive(b, now)) || [];
+        const notifyBanner = activeBanners.find((b: any) => b.notifyGuests && b.guestMessage);
+        return notifyBanner ? (notifyBanner as any).guestMessage as string : null;
     }, [restaurant]);
 
     const haveMenuItems = menuDetails?.categories?.some((category) => category?.items?.length > 0);
@@ -629,6 +618,55 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     )}
                 </Stack>
             </MediaQuery>
+
+            {/* Leave a Review buttons — non-TV only, shown when configured */}
+            {!isTV && ((restaurant as any).googlePlaceId || (restaurant as any).tripadvisorUrl) && (
+                <Flex
+                    className="no-print"
+                    align="center"
+                    direction={{ base: "column", md: "row" }}
+                    gap="xs"
+                    mb="md"
+                    mt="xs"
+                    wrap="wrap"
+                >
+                    {(restaurant as any).googlePlaceId && (
+                        <Button
+                            color="blue"
+                            component="a"
+                            href={`https://search.google.com/local/writereview?placeid=${(restaurant as any).googlePlaceId}`}
+                            radius="xl"
+                            rel="noopener noreferrer"
+                            size="xs"
+                            target="_blank"
+                            variant="outline"
+                        >
+                            ⭐ {t("leaveGoogleReview")}
+                        </Button>
+                    )}
+                    {(restaurant as any).tripadvisorUrl && (
+                        <Button
+                            color="green"
+                            component="a"
+                            href={(restaurant as any).tripadvisorUrl}
+                            radius="xl"
+                            rel="noopener noreferrer"
+                            size="xs"
+                            target="_blank"
+                            variant="outline"
+                        >
+                            🦉 {t("leaveTripAdvisorReview")}
+                        </Button>
+                    )}
+                </Flex>
+            )}
+
+            {guestNotification && (
+                <Alert color="teal" mb="md" radius="md" variant="light">
+                    {guestNotification}
+                </Alert>
+            )}
+
             <Tabs my={40} onTabChange={handleMenuChange} value={selectedMenu}>
                 <Tabs.List className="no-print">
                     {sortedMenus?.map((menu) => (

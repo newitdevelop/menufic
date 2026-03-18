@@ -241,6 +241,18 @@ export const restaurantInput = z.object({
         .transform((val) => (val === "" ? undefined : val))
         .pipe(z.string().url("Invalid URL").optional())
         .optional(),
+    googlePlaceId: z
+        .string()
+        .trim()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().max(200, "Place ID cannot be longer than 200 characters").optional())
+        .optional(),
+    tripadvisorUrl: z
+        .string()
+        .trim()
+        .transform((val) => (val === "" ? undefined : val))
+        .pipe(z.string().url("Invalid TripAdvisor URL").optional())
+        .optional(),
 });
 export const bannerScheduleType = z.enum(["ALWAYS", "DAILY", "WEEKLY", "MONTHLY", "YEARLY", "PERIOD"]);
 
@@ -262,6 +274,9 @@ export const bannerInput = z.object({
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
     periodEndDate: z.date().nullable().optional(),
+    // Guest notification fields
+    notifyGuests: z.boolean().default(false),
+    guestMessage: z.string().trim().max(500, "Message cannot be longer than 500 characters").optional(),
 }).refine(
     (data) => {
         // For PERIOD schedule type, end date must be >= start date
@@ -295,6 +310,9 @@ export const bannerUpdateInput = z.object({
     yearlyEndDate: z.string().nullable().optional(),   // MM-DD format
     periodStartDate: z.date().nullable().optional(),
     periodEndDate: z.date().nullable().optional(),
+    // Guest notification fields
+    notifyGuests: z.boolean().default(false),
+    guestMessage: z.string().trim().max(500, "Message cannot be longer than 500 characters").optional(),
 }).refine(
     (data) => {
         // For PERIOD schedule type, end date must be >= start date

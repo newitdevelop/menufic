@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 
-import { ActionIcon, Button, Checkbox, Chip, Group, MultiSelect, Select, Stack, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Chip, Group, MultiSelect, Select, Stack, Switch, Text, Textarea, useMantineTheme } from "@mantine/core";
 import { IconPlus, IconTrash } from "@tabler/icons";
 import { DatePicker, TimeInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -73,6 +73,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
             yearlyEndDate: null as string | null,
             periodStartDate: null as Date | null,
             periodEndDate: null as Date | null,
+            notifyGuests: false as boolean,
+            guestMessage: "" as string,
         },
         validate: zodResolver(isEditMode ? bannerUpdateInput : bannerInput),
     });
@@ -102,6 +104,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     yearlyEndDate: banner.yearlyEndDate,
                     periodStartDate: banner.periodStartDate ? new Date(banner.periodStartDate) : null,
                     periodEndDate: banner.periodEndDate ? new Date(banner.periodEndDate) : null,
+                    notifyGuests: (banner as any).notifyGuests ?? false,
+                    guestMessage: (banner as any).guestMessage ?? "",
                 };
                 setValues(values);
                 resetDirty(values);
@@ -126,6 +130,8 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                     yearlyEndDate: null as string | null,
                     periodStartDate: null as Date | null,
                     periodEndDate: null as Date | null,
+                    notifyGuests: false as boolean,
+                    guestMessage: "" as string,
                 };
                 setValues(values);
                 resetDirty(values);
@@ -488,6 +494,26 @@ export const BannerForm: FC<Props> = ({ opened, onClose, restaurantId, banner, .
                                 {...getInputProps("expiryDate")}
                             />
                         </Stack>
+                    )}
+
+                    <Switch
+                        label="Notify In-House Guests"
+                        description="Show a notification message to guests viewing this venue's menu"
+                        disabled={isCreating || isUpdating}
+                        {...getInputProps("notifyGuests", { type: "checkbox" })}
+                        mt="md"
+                    />
+
+                    {getInputProps("notifyGuests").value && (
+                        <Textarea
+                            label="Guest Notification Message"
+                            placeholder="e.g. Welcome! Tonight's special is Bacalhau à Brás. Enjoy your stay!"
+                            description="This message will be shown as a notification banner to guests browsing the menu"
+                            disabled={isCreating || isUpdating}
+                            maxLength={500}
+                            minRows={2}
+                            {...getInputProps("guestMessage")}
+                        />
                     )}
 
                     <Group mt="md" position="right">

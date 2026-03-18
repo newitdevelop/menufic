@@ -50,6 +50,8 @@ export const restaurantRouter = createTRPCRouter({
                 yearlyEndDate: input.yearlyEndDate || null,
                 periodStartDate: input.periodStartDate || null,
                 periodEndDate: input.periodEndDate || null,
+                notifyGuests: input.notifyGuests ?? false,
+                guestMessage: input.guestMessage || null,
                 restaurantBanner: { connect: { id: input.restaurantId } },
             },
         });
@@ -83,6 +85,8 @@ export const restaurantRouter = createTRPCRouter({
             yearlyEndDate: input.yearlyEndDate || null,
             periodStartDate: input.periodStartDate || null,
             periodEndDate: input.periodEndDate || null,
+            notifyGuests: input.notifyGuests ?? false,
+            guestMessage: input.guestMessage || null,
         };
 
         // If user uploaded a new image, process it
@@ -140,6 +144,8 @@ export const restaurantRouter = createTRPCRouter({
                 name: input.name,
                 privacyPolicyUrl: input.privacyPolicyUrl,
                 termsAndConditionsUrl: input.termsAndConditionsUrl,
+                googlePlaceId: input.googlePlaceId ?? null,
+                tripadvisorUrl: input.tripadvisorUrl ?? null,
                 userId: ctx.session.user.id,
             },
             include: { image: true },
@@ -541,6 +547,8 @@ export const restaurantRouter = createTRPCRouter({
             name: input.name,
             privacyPolicyUrl: input.privacyPolicyUrl ?? null,
             termsAndConditionsUrl: input.termsAndConditionsUrl ?? null,
+            googlePlaceId: input.googlePlaceId ?? null,
+            tripadvisorUrl: input.tripadvisorUrl ?? null,
         };
 
         const transactions: (Prisma.Prisma__ImageClient<Image> | Prisma.Prisma__RestaurantClient<Restaurant>)[] = [];

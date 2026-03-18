@@ -256,6 +256,8 @@
             "successMessageService": "Your service booking request has been sent successfully!",
             "errorTitle": "Reservation Error"
         },
+        "leaveGoogleReview": "Leave a Google Review",
+        "leaveTripAdvisorReview": "Review on TripAdvisor",
         "seoTitle": "{name} Menu",
         "seoDescription": {
             "venueName": "Menu of venue {name}",
@@ -454,6 +456,10 @@
             "inputPrivacyPolicyUrlPlaceholder": "https://yourrestaurant.com/privacy",
             "inputTermsAndConditionsUrlLabel": "Terms & Conditions URL (Optional)",
             "inputTermsAndConditionsUrlPlaceholder": "https://yourrestaurant.com/terms",
+            "inputGooglePlaceIdLabel": "Google Place ID (Optional)",
+            "inputGooglePlaceIdPlaceholder": "e.g. ChIJN1t_tDeuEmsRUsoyG83frY4",
+            "inputTripadvisorUrlLabel": "TripAdvisor URL (Optional)",
+            "inputTripadvisorUrlPlaceholder": "https://www.tripadvisor.com/Restaurant_Review-...",
             "fetchVenuesError": "Failed to retrieve venues",
             "deleteModalTitle": "Delete venue {name}",
             "deleteModalDesc": "Are you sure, you want to delete this venue? This action will also delete all the items associated with this venue and cannot be undone",

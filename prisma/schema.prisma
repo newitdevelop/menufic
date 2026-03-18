@@ -25,6 +25,8 @@ model Restaurant {
     isPublished           Boolean
     privacyPolicyUrl      String?  // Optional URL to venue-specific privacy policy
     termsAndConditionsUrl String?  // Optional URL to venue-specific terms & conditions
+    googlePlaceId         String?  // Optional Google Place ID for "Leave a Review" button
+    tripadvisorUrl        String?  // Optional TripAdvisor URL for "Leave a Review" button
     menus                 Menu[]   @relation("MenusOfRestaurant")
     image                 Image?   @relation("ImageOfRestaurant", fields: [imageId], references: [id], onDelete: SetNull, onUpdate: SetNull)
     imageId               String?  @unique
@@ -155,6 +157,8 @@ model Image {
     blurHash         String
     color            String
     isAiGenerated    Boolean             @default(false)
+    notifyGuests     Boolean             @default(false) // Whether to show a notification to in-house guests
+    guestMessage     String?             // Notification message shown to in-house guests
     expiryDate       DateTime?           // Optional expiry date for banners (null = no expiry)
     // Banner scheduling fields
     scheduleType     BannerScheduleType  @default(ALWAYS)

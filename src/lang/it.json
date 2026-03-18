@@ -112,6 +112,8 @@
             "successMessageService": "La tua richiesta di prenotazione servizio è stata inviata con successo!",
             "errorTitle": "Errore nella Prenotazione"
         },
+        "leaveGoogleReview": "Lascia una recensione su Google",
+        "leaveTripAdvisorReview": "Recensisci su TripAdvisor",
         "seoTitle": "Menu {name}",
         "seoDescription": {
             "venueName": "Menu del locale {name}",

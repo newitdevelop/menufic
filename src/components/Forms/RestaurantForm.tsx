@@ -57,6 +57,8 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
             name: restaurant?.name || "",
             privacyPolicyUrl: (restaurant as any)?.privacyPolicyUrl ?? "",
             termsAndConditionsUrl: (restaurant as any)?.termsAndConditionsUrl ?? "",
+            googlePlaceId: (restaurant as any)?.googlePlaceId ?? "",
+            tripadvisorUrl: (restaurant as any)?.tripadvisorUrl ?? "",
         },
         validate: zodResolver(restaurantInput),
     });
@@ -71,6 +73,8 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
                 name: restaurant?.name || "",
                 privacyPolicyUrl: (restaurant as any)?.privacyPolicyUrl ?? "",
                 termsAndConditionsUrl: (restaurant as any)?.termsAndConditionsUrl ?? "",
+                googlePlaceId: (restaurant as any)?.googlePlaceId ?? "",
+                tripadvisorUrl: (restaurant as any)?.tripadvisorUrl ?? "",
             };
             setValues(formValues);
             resetDirty(formValues);
@@ -137,6 +141,19 @@ export const RestaurantForm: FC<Props> = ({ opened, onClose, restaurant, ...rest
                         placeholder={t("inputTermsAndConditionsUrlPlaceholder")}
                         type="url"
                         {...getInputProps("termsAndConditionsUrl")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputGooglePlaceIdLabel")}
+                        placeholder={t("inputGooglePlaceIdPlaceholder")}
+                        {...getInputProps("googlePlaceId")}
+                    />
+                    <TextInput
+                        disabled={loading}
+                        label={t("inputTripadvisorUrlLabel")}
+                        placeholder={t("inputTripadvisorUrlPlaceholder")}
+                        type="url"
+                        {...getInputProps("tripadvisorUrl")}
                     />
                     <ImageUpload
                         disabled={loading}
