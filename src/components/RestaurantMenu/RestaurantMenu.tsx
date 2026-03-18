@@ -174,6 +174,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const mantineTheme = useMantineTheme();
     const emblaApiRef = useRef<EmblaCarouselType | null>(null);
     const autoplayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const imagesCountRef = useRef(1);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [menuParent] = useAutoAnimate<HTMLDivElement>();
     const [reservationModalOpened, setReservationModalOpened] = useState(false);
@@ -263,13 +264,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     // Per-slide autoplay: hotel image = 5s, each banner = 10s
     const scheduleNextSlide = useCallback((slideIndex: number) => {
         if (autoplayTimerRef.current) clearTimeout(autoplayTimerRef.current);
-        if (!emblaApiRef.current || images.length <= 1) return;
+        if (!emblaApiRef.current || imagesCountRef.current <= 1) return;
         // Slide 0 is always the hotel image (5s); banner slides get 10s
         const delay = slideIndex === 0 ? 5000 : 10000;
         autoplayTimerRef.current = setTimeout(() => {
             emblaApiRef.current?.scrollNext();
         }, delay);
-    }, [images.length]);
+    }, []);
 
     const handleGetEmblaApi = useCallback((embla: EmblaCarouselType) => {
         emblaApiRef.current = embla;
@@ -281,13 +282,10 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
         scheduleNextSlide(index);
     }, [scheduleNextSlide]);
 
-    // Start autoplay once embla is ready and images are available
+    // Cleanup timer on unmount
     useEffect(() => {
-        if (emblaApiRef.current && images.length > 1) {
-            scheduleNextSlide(activeSlide);
-        }
         return () => { if (autoplayTimerRef.current) clearTimeout(autoplayTimerRef.current); };
-    }, [images.length]);
+    }, []);
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
     const uiTranslations = useMemo(() => {
@@ -546,10 +544,9 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const images: Image[] = useMemo(() => {
         const now = new Date();
         const activeBanners = restaurant?.banners?.filter((b) => isBannerActive(b, now)) || [];
-        if (restaurant?.image) {
-            return [restaurant?.image, ...activeBanners];
-        }
-        return activeBanners;
+        const result = restaurant?.image ? [restaurant.image, ...activeBanners] : activeBanners;
+        imagesCountRef.current = result.length;
+        return result;
     }, [restaurant]);
 
     const guestNotifications = useMemo(() => {
