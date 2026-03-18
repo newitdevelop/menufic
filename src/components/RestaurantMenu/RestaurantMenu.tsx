@@ -8,7 +8,6 @@ import {
     ActionIcon,
     Box,
     Button,
-    CloseButton,
     createStyles,
     Flex,
     Group,
@@ -45,18 +44,19 @@ import { Empty } from "../Empty";
 import { ImageKitImage } from "../ImageKitImage";
 import { LanguageSelector } from "../LanguageSelector";
 
-const adGlow = keyframes({
-    "0%, 100%": { boxShadow: "0 0 8px rgba(245, 166, 35, 0.3)" },
-    "50%": { boxShadow: "0 0 18px rgba(245, 166, 35, 0.5)" },
+const adFadeIn = keyframes({
+    "0%": { opacity: 0, transform: "translateY(-8px)" },
+    "100%": { opacity: 1, transform: "translateY(0)" },
 });
 
 const useStyles = createStyles((theme) => ({
     adBanner: {
         alignItems: "center",
-        animation: `${adGlow} 3s ease-in-out infinite`,
-        background: theme.fn.linearGradient(135, "#f5a623", "#f7c948", "#f5a623"),
+        animation: `${adFadeIn} 0.4s ease-out`,
+        backgroundColor: theme.colorScheme === "dark" ? theme.fn.rgba(theme.colors.blue[9], 0.25) : theme.fn.rgba(theme.colors.blue[0], 0.7),
+        border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.blue[7] : theme.colors.blue[2]}`,
         borderRadius: theme.radius.md,
-        color: "#4a3000",
+        color: theme.colorScheme === "dark" ? theme.colors.blue[2] : theme.colors.blue[8],
         display: "flex",
         gap: theme.spacing.sm,
         marginBottom: theme.spacing.md,
@@ -67,13 +67,13 @@ const useStyles = createStyles((theme) => ({
         },
     },
     adBannerIcon: {
-        color: "#7a5100",
+        color: theme.colorScheme === "dark" ? theme.colors.blue[4] : theme.colors.blue[5],
         flexShrink: 0,
     },
     adBannerText: {
         flex: 1,
         fontSize: theme.fontSizes.md,
-        fontWeight: 600,
+        fontWeight: 500,
         lineHeight: 1.4,
         [theme.fn.smallerThan("sm")]: {
             fontSize: theme.fontSizes.sm,
@@ -253,7 +253,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch] = useDebouncedValue(searchQuery, 200);
     const [excludedAllergens, setExcludedAllergens] = useState<string[]>([]);
-    const [dismissedBannerIds, setDismissedBannerIds] = useState<Set<string>>(new Set());
+    const [activeSlide, setActiveSlide] = useState(0);
     const t = useTranslations("menu");
 
     // Extract uiTranslations from first menu item (all items share same UI translations)
@@ -550,6 +550,7 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                     mx="auto"
                     onMouseEnter={bannerCarousalRef.current.stop}
                     onMouseLeave={bannerCarousalRef.current.reset}
+                    onSlideChange={setActiveSlide}
                     plugins={[bannerCarousalRef.current]}
                     slideGap="md"
                     styles={{ indicator: { background: White } }}
@@ -655,62 +656,19 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                 </Stack>
             </MediaQuery>
 
-            {/* Leave a Review buttons — non-TV only, shown when configured */}
-            {!isTV && ((restaurant as any).googlePlaceId || (restaurant as any).tripadvisorUrl) && (
-                <Flex
-                    className="no-print"
-                    align="center"
-                    direction={{ base: "column", md: "row" }}
-                    gap="xs"
-                    mb="md"
-                    mt="xs"
-                    wrap="wrap"
-                >
-                    {(restaurant as any).googlePlaceId && (
-                        <Button
-                            color="blue"
-                            component="a"
-                            href={`https://search.google.com/local/writereview?placeid=${(restaurant as any).googlePlaceId}`}
-                            radius="xl"
-                            rel="noopener noreferrer"
-                            size="xs"
-                            target="_blank"
-                            variant="outline"
-                        >
-                            ⭐ {t("leaveGoogleReview")}
-                        </Button>
-                    )}
-                    {(restaurant as any).tripadvisorUrl && (
-                        <Button
-                            color="green"
-                            component="a"
-                            href={(restaurant as any).tripadvisorUrl}
-                            radius="xl"
-                            rel="noopener noreferrer"
-                            size="xs"
-                            target="_blank"
-                            variant="outline"
-                        >
-                            🦉 {t("leaveTripAdvisorReview")}
-                        </Button>
-                    )}
-                </Flex>
-            )}
-
-            {guestNotifications
-                .filter((n) => !dismissedBannerIds.has(n.id))
-                .map((n) => (
-                    <Box key={n.id} className={classes.adBanner}>
+            {(() => {
+                const currentImage = images[activeSlide];
+                const currentNotification = currentImage
+                    ? guestNotifications.find((n) => n.id === currentImage.id)
+                    : null;
+                if (!currentNotification) return null;
+                return (
+                    <Box className={classes.adBanner}>
                         <IconSpeakerphone className={classes.adBannerIcon} size={24} />
-                        <Text className={classes.adBannerText}>{n.message}</Text>
-                        <CloseButton
-                            aria-label="Dismiss notification"
-                            onClick={() => setDismissedBannerIds((prev) => new Set(prev).add(n.id))}
-                            size="sm"
-                            sx={{ color: "#7a5100", opacity: 0.7, "&:hover": { opacity: 1 } }}
-                        />
+                        <Text className={classes.adBannerText}>{currentNotification.message}</Text>
                     </Box>
-                ))}
+                );
+            })()}
 
             <Tabs my={40} onTabChange={handleMenuChange} value={selectedMenu}>
                 <Tabs.List className="no-print">
@@ -854,6 +812,34 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                             })}
                         >
                             <Text size="xs" translate="yes">{menuDetails.message}</Text>
+                        </Button>
+                    )}
+                    {!isTV && (restaurant as any).googlePlaceId && (
+                        <Button
+                            color="blue"
+                            component="a"
+                            href={`https://search.google.com/local/writereview?placeid=${(restaurant as any).googlePlaceId}`}
+                            radius="xl"
+                            rel="noopener noreferrer"
+                            size="xs"
+                            target="_blank"
+                            variant="outline"
+                        >
+                            ⭐ {t("leaveGoogleReview")}
+                        </Button>
+                    )}
+                    {!isTV && (restaurant as any).tripadvisorUrl && (
+                        <Button
+                            color="green"
+                            component="a"
+                            href={(restaurant as any).tripadvisorUrl}
+                            radius="xl"
+                            rel="noopener noreferrer"
+                            size="xs"
+                            target="_blank"
+                            variant="outline"
+                        >
+                            🦉 {t("leaveTripAdvisorReview")}
                         </Button>
                     )}
                 </Flex>
