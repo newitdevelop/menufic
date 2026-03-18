@@ -3,6 +3,7 @@ import { useColorScheme, useLocalStorage } from "@mantine/hooks";
 import { NotificationsProvider } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { type AppType } from "next/app";
+import { useRouter } from "next/router";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { NextIntlProvider } from "next-intl";
@@ -20,6 +21,7 @@ const MyApp: AppType<{ messages?: AbstractIntlMessages; session: Session | null 
     Component,
     pageProps: { session, ...pageProps },
 }) => {
+    const { locale } = useRouter();
     const preferredColorScheme = useColorScheme();
 
     const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -52,7 +54,7 @@ const MyApp: AppType<{ messages?: AbstractIntlMessages; session: Session | null 
                     <CustomFonts />
                     <NotificationsProvider>
                         <SessionProvider session={session}>
-                            <NextIntlProvider messages={pageProps.messages}>
+                            <NextIntlProvider locale={locale ?? "en"} messages={pageProps.messages}>
                                 <Component {...pageProps} />
                             </NextIntlProvider>
                             <Analytics />
