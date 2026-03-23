@@ -394,7 +394,7 @@
                 "enhancePhotoSuccess": "Photo enhanced successfully",
                 "inputBomIdLabel": "BOM ID",
                 "inputBomIdPlaceholder": "Enter BOM ID number",
-                "inputBomIdDescription": "check Odoo of {venueName}",
+                "inputBomIdDescription": "Verifique ID Lista de Materiais (BOM) em Odoo do {venueName}",
                 "noBomId": "No BOM ID"
             },
             "pack": {
