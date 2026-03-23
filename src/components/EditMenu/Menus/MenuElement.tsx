@@ -138,6 +138,9 @@ export const MenuElement: FC<Props> = ({ item, selectedMenu, restaurantId, setSe
             <MenuForm
                 menu={item}
                 onClose={() => setMenuFormOpen(false)}
+                onMenuUpdated={(updated) => {
+                    if (selectedMenu?.id === updated.id) setSelectedMenu(updated);
+                }}
                 opened={menuFormOpen}
                 restaurantId={restaurantId}
             />

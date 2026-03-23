@@ -26,10 +26,12 @@ interface Props extends ModalProps {
     menu?: Menu;
     /** Id of the restaurant that the menu belongs to */
     restaurantId: string;
+    /** Called with the updated menu data after a successful update */
+    onMenuUpdated?: (menu: Menu) => void;
 }
 
 /** Form to be used when allowing users to add or edit menus of restaurant */
-export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuItem, ...rest }) => {
+export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuItem, onMenuUpdated, ...rest }) => {
     const trpcCtx = api.useContext();
     const theme = useMantineTheme();
     const t = useTranslations("dashboard.editMenu.menu");
@@ -51,6 +53,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             (trpcCtx.menu as any).getAll.setData({ restaurantId }, (menus: any) =>
                 menus?.map((item: any) => (item.id === data.id ? { ...item, ...data } : item))
             );
+            onMenuUpdated?.(data as Menu);
             showSuccessToast(tCommon("updateSuccess"), t("updateSuccessDesc", { name: data.name }));
         },
     });

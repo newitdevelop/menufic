@@ -539,8 +539,12 @@ export const restaurantRouter = createTRPCRouter({
             data: { isPublished: input.isPublished },
             where: { id: input.id },
         });
-        /** Revalidate the published menu page */
-        await ctx.res?.revalidate(`/venue/${input.id}/menu`);
+        /** Revalidate the published menu page (best-effort, SSR pages skip ISR) */
+        try {
+            await ctx.res?.revalidate(`/venue/${input.id}/menu`);
+        } catch (e) {
+            console.warn(`[setPublished] Revalidation skipped:`, e);
+        }
         return restaurant;
     }),
 

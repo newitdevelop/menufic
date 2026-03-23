@@ -250,7 +250,12 @@ export const menuRouter = createTRPCRouter({
         if (shouldInvalidate && currentMenu.restaurant?.id) {
             const restaurantId = currentMenu.restaurant.id;
             console.log(`[Menu Update] Revalidating /venue/${restaurantId}/menu due to menu content/visibility change`);
-            await ctx.res?.revalidate(`/venue/${restaurantId}/menu`);
+            try {
+                await ctx.res?.revalidate(`/venue/${restaurantId}/menu`);
+            } catch (e) {
+                // Revalidation is best-effort; SSR pages don't support ISR revalidate
+                console.warn(`[Menu Update] Revalidation skipped:`, e);
+            }
         }
 
         return updatedMenu;
