@@ -27,7 +27,7 @@ export async function sendSms(to: string, message: string): Promise<void> {
                 recipients: [normalized],
                 content: message,
                 msg_type: "text",
-                data_coding: "text",
+                data_coding: "unicode",
             },
         ],
         message_globals: {
