@@ -32,7 +32,6 @@ export async function sendSms(to: string, message: string): Promise<void> {
         ],
         message_globals: {
             originator: env.DIRECT7_SMS_ORIGINATOR ?? "Menufic",
-            report_url: "",
         },
     };
 
