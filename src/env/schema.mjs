@@ -38,6 +38,8 @@ export const serverSchema = z.object({
     SMTP_USER: z.string().optional(), // SMTP username/email
     SMTP_PASS: z.string().optional(), // SMTP password
     SMTP_FROM: z.string().optional(), // From email address (defaults to SMTP_USER if not set)
+    DIRECT7_API_KEY: z.string().optional(), // Direct7 SMS API key for customer reservation notifications
+    DIRECT7_SMS_ORIGINATOR: z.string().optional(), // Sender name shown on SMS (max 11 chars for alphanumeric)
     TEST_MENUFIC_USER_LOGIN_KEY: z.string().optional(),
 });
 

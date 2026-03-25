@@ -311,3 +311,90 @@ Please contact the customer to confirm this ${isServiceBooking ? "booking" : "re
 
     await sendEmail({ to, subject, text, html });
 }
+
+/**
+ * Send a reservation confirmation email to the customer
+ */
+export async function sendCustomerConfirmationEmail(params: {
+    to: string;
+    restaurantName: string;
+    menuName: string;
+    serviceNames?: string[];
+    date: Date;
+    time: string;
+    partySize: number;
+}): Promise<void> {
+    const { to, restaurantName, menuName, serviceNames, date, time, partySize } = params;
+    const isServiceBooking = serviceNames && serviceNames.length > 0;
+
+    const formattedDate = date.toLocaleDateString("pt-PT", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
+    const subject = isServiceBooking
+        ? `Confirmação de Marcação / Booking Confirmation – ${restaurantName}`
+        : `Confirmação de Reserva / Reservation Confirmation – ${restaurantName}`;
+
+    const servicesLine = isServiceBooking ? `\nServiço(s) / Service(s): ${serviceNames!.join(", ")}` : "";
+
+    const text = `
+🇵🇹 Obrigado pela sua ${isServiceBooking ? "marcação" : "reserva"}!
+
+Recebemos o seu pedido para ${restaurantName} (${menuName}).${servicesLine}
+Data: ${formattedDate}
+Hora: ${time}
+${!isServiceBooking ? `Pessoas: ${partySize}\n` : ""}
+Entraremos em contacto em breve para confirmar.
+
+────────────────────────
+
+🇬🇧 Thank you for your ${isServiceBooking ? "booking" : "reservation"}!
+
+We received your request at ${restaurantName} (${menuName}).${servicesLine}
+Date: ${formattedDate}
+Time: ${time}
+${!isServiceBooking ? `Party size: ${partySize}\n` : ""}
+We will contact you shortly to confirm.
+    `.trim();
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #9f3040; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .section { background-color: #f7fafc; padding: 24px 30px; border-radius: 0 0 8px 8px; }
+        .detail { margin: 10px 0; }
+        .label { font-weight: bold; color: #2d3748; }
+        .value { color: #4a5568; }
+        .divider { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+        .footer { margin-top: 20px; text-align: center; color: #a0aec0; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2 style="margin:0">${restaurantName}</h2>
+            <p style="margin:4px 0 0">${isServiceBooking ? "🇵🇹 Confirmação de Marcação &nbsp;|&nbsp; 🇬🇧 Booking Confirmation" : "🇵🇹 Confirmação de Reserva &nbsp;|&nbsp; 🇬🇧 Reservation Confirmation"}</p>
+        </div>
+        <div class="section">
+            <div class="detail"><span class="label">Menu:</span> <span class="value">${menuName}</span></div>
+            ${isServiceBooking ? `<div class="detail"><span class="label">Serviço(s) / Service(s):</span> <span class="value">${serviceNames!.join(", ")}</span></div>` : ""}
+            <div class="detail"><span class="label">🇵🇹 Data / 🇬🇧 Date:</span> <span class="value">${formattedDate}</span></div>
+            <div class="detail"><span class="label">🇵🇹 Hora / 🇬🇧 Time:</span> <span class="value">${time}</span></div>
+            ${!isServiceBooking ? `<div class="detail"><span class="label">🇵🇹 Pessoas / 🇬🇧 Party:</span> <span class="value">${partySize}</span></div>` : ""}
+            <hr class="divider">
+            <p style="color:#4a5568">🇵🇹 Entraremos em contacto em breve para confirmar a sua ${isServiceBooking ? "marcação" : "reserva"}.</p>
+            <p style="color:#4a5568">🇬🇧 We will contact you shortly to confirm your ${isServiceBooking ? "booking" : "reservation"}.</p>
+        </div>
+        <div class="footer">Menufic — automated confirmation</div>
+    </div>
+</body>
+</html>`.trim();
+
+    await sendEmail({ to, subject, text, html });
+}

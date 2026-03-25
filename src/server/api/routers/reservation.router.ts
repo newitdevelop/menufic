@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 
 import { createTRPCRouter, publicProcedure } from "src/server/api/trpc";
-import { sendReservationEmail, isEmailServiceAvailable } from "src/server/services/email.service";
+import { sendReservationEmail, sendCustomerConfirmationEmail, isEmailServiceAvailable } from "src/server/services/email.service";
+import { sendReservationSms, isSmsServiceAvailable } from "src/server/services/sms.service";
 import { reservationSubmissionInput } from "src/utils/validators";
 
 export const reservationRouter = createTRPCRouter({
@@ -96,6 +97,41 @@ export const reservationRouter = createTRPCRouter({
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Failed to send reservation request. Please try again later.",
             });
+        }
+
+        // Send customer confirmation — best-effort (never fail the reservation if these fail)
+        const serviceNames = input.serviceNames && input.serviceNames.length > 0 ? input.serviceNames : undefined;
+
+        if (input.email) {
+            try {
+                await sendCustomerConfirmationEmail({
+                    to: input.email,
+                    restaurantName: menu.restaurant.name,
+                    menuName: menu.name,
+                    serviceNames,
+                    date: input.date,
+                    time: input.time,
+                    partySize: input.partySize,
+                });
+            } catch (error) {
+                console.warn("[Reservation] Customer confirmation email failed (non-fatal):", error);
+            }
+        }
+
+        if (input.phone) {
+            try {
+                await sendReservationSms({
+                    phone: input.phone,
+                    restaurantName: menu.restaurant.name,
+                    menuName: menu.name,
+                    serviceNames,
+                    date: input.date,
+                    time: input.time,
+                    partySize: input.partySize,
+                });
+            } catch (error) {
+                console.warn("[Reservation] Customer SMS failed (non-fatal):", error);
+            }
         }
 
         return {
