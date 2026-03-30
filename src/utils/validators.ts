@@ -67,6 +67,7 @@ export const reservationSubmissionInput = z.object({
     email: z.string().email("Invalid email address"),
     phone: z.string().min(1, "Phone number is required"),
     contactPreference: contactPreferenceEnum,
+    marketingConsent: z.boolean().default(false),
 });
 
 export const menuInput = z.object({
@@ -114,6 +115,8 @@ export const menuInput = z.object({
         .optional()
         .transform((val) => (val === "" ? undefined : val))
         .pipe(z.string().url("Invalid external URL").optional()),
+    // Days the menu is available (displayed to guests alongside working hours)
+    availableDays: z.array(z.number().int().min(0).max(6)).default([]), // 0=Sun, 1=Mon … 6=Sat
     // Schedule fields (for repeating menus)
     scheduleType: menuScheduleType.default("ALWAYS"),
     dailyStartTime: z.string().nullable().optional(),

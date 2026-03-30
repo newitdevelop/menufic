@@ -168,6 +168,22 @@ interface Props {
     };
 }
 
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Mon first
+
+function formatAvailableDays(days: number[]): string {
+    if (!days || days.length === 0) return "";
+    const sorted = [...days].sort((a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b));
+    if (sorted.length === 7) return "Mon–Sun";
+    // Detect consecutive range
+    const indices = sorted.map(d => DAY_ORDER.indexOf(d));
+    const isConsecutive = indices.every((idx, i) => i === 0 || idx === indices[i - 1]! + 1);
+    if (isConsecutive && sorted.length >= 3) {
+        return `${DAY_NAMES[sorted[0]!]}–${DAY_NAMES[sorted[sorted.length - 1]!]}`;
+    }
+    return sorted.map(d => DAY_NAMES[d]!).join(", ");
+}
+
 /** Component to display all the menus and banners of the restaurant */
 export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const { classes, theme } = useStyles();
@@ -739,7 +755,12 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                                           month: "short",
                                           year: "numeric",
                                       })}`
-                                    : menu.availableTime}
+                                    : [
+                                          formatAvailableDays((menu as any).availableDays),
+                                          menu.availableTime,
+                                      ]
+                                          .filter(Boolean)
+                                          .join(" · ")}
                             </Text>
                         </Tabs.Tab>
                     ))}

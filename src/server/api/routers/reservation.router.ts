@@ -99,8 +99,30 @@ export const reservationRouter = createTRPCRouter({
             });
         }
 
-        // Send customer confirmation — best-effort (never fail the reservation if these fail)
+        // Persist reservation to database (best-effort — never fail the submission if this fails)
         const serviceNames = input.serviceNames && input.serviceNames.length > 0 ? input.serviceNames : undefined;
+        try {
+            await ctx.prisma.reservation.create({
+                data: {
+                    menuId: input.menuId,
+                    restaurantId: menu.restaurant.id,
+                    restaurantName: menu.restaurant.name,
+                    menuName: menu.name,
+                    serviceNames: serviceNames ?? [],
+                    date: input.date,
+                    time: input.time,
+                    partySize: input.partySize,
+                    email: input.email,
+                    phone: input.phone,
+                    contactPreference: input.contactPreference,
+                    marketingConsent: input.marketingConsent ?? false,
+                },
+            });
+        } catch (error) {
+            console.warn("[Reservation] Failed to persist reservation to DB (non-fatal):", error);
+        }
+
+        // Send customer confirmation — best-effort (never fail the reservation if these fail)
 
         if (input.email) {
             try {

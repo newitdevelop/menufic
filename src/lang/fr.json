@@ -110,7 +110,10 @@
             "successTitleService": "Réservation de Service Envoyée",
             "successMessage": "Votre demande de réservation a été envoyée avec succès !",
             "successMessageService": "Votre demande de réservation de service a été envoyée avec succès !",
-            "errorTitle": "Erreur de Réservation"
+            "errorTitle": "Erreur de Réservation",
+            "marketingConsentText": "J'accepte de recevoir des communications marketing conformément à la",
+            "marketingConsentLink": "Politique de Confidentialité",
+            "marketingConsentOptional": "(Facultatif)"
         },
         "leaveGoogleReview": "Laisser un avis Google",
         "leaveTripAdvisorReview": "Avis sur TripAdvisor",

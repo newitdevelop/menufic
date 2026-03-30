@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useState } from "react";
 
-import { Button, Checkbox, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme, Select } from "@mantine/core";
+import { Anchor, Button, Checkbox, Group, Modal, NumberInput, Paper, Stack, Stepper, Text, TextInput, useMantineTheme, Select } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconCalendar, IconClock, IconUsers, IconPhone, IconBriefcase, IconCheck } from "@tabler/icons";
@@ -57,6 +57,9 @@ interface ReservationTranslations {
     successMessage: string;
     successMessageService?: string;
     errorTitle: string;
+    marketingConsentText?: string;
+    marketingConsentLink?: string;
+    marketingConsentOptional?: string;
 }
 
 interface ServiceItem {
@@ -132,6 +135,9 @@ const DEFAULT_TRANSLATIONS: ReservationTranslations = {
     successMessage: "Your reservation request has been sent successfully!",
     successMessageService: "Your service booking request has been sent successfully!",
     errorTitle: "Reservation Error",
+    marketingConsentText: "I agree to receive marketing communications in accordance with the",
+    marketingConsentLink: "Privacy Policy",
+    marketingConsentOptional: "(Optional)",
 };
 
 export const ReservationForm: FC<Props> = ({
@@ -153,6 +159,7 @@ export const ReservationForm: FC<Props> = ({
     const theme = useMantineTheme();
     const t = translations || DEFAULT_TRANSLATIONS;
     const [activeStep, setActiveStep] = useState(0);
+    const [marketingConsent, setMarketingConsent] = useState(false);
 
     // For service menus, we have 5 steps (service selection + 4 original steps)
     // For regular menus, we have 4 steps
@@ -277,13 +284,14 @@ export const ReservationForm: FC<Props> = ({
 
         submitReservation({
             menuId,
-            serviceNames: serviceNames, // Array of selected service names for service bookings
+            serviceNames: serviceNames,
             date: values.date,
             time: values.time,
             partySize: values.partySize,
             email: values.email,
             phone: values.phone,
             contactPreference: values.contactPreference,
+            marketingConsent,
         });
     };
 
@@ -337,6 +345,7 @@ export const ReservationForm: FC<Props> = ({
             onClose={() => {
                 reset();
                 setActiveStep(0);
+                setMarketingConsent(false);
                 onClose();
             }}
             title={
@@ -655,6 +664,24 @@ export const ReservationForm: FC<Props> = ({
                                 ]}
                                 withAsterisk
                                 {...getInputProps("contactPreference")}
+                            />
+                            <Checkbox
+                                checked={marketingConsent}
+                                onChange={(e) => setMarketingConsent(e.currentTarget.checked)}
+                                label={
+                                    <Text size="xs">
+                                        {t.marketingConsentText || DEFAULT_TRANSLATIONS.marketingConsentText}{" "}
+                                        <Anchor
+                                            href="https://porto.neyahotels.com/en/privacy-policy/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            size="xs"
+                                        >
+                                            {t.marketingConsentLink || DEFAULT_TRANSLATIONS.marketingConsentLink}
+                                        </Anchor>
+                                        . {t.marketingConsentOptional || DEFAULT_TRANSLATIONS.marketingConsentOptional}
+                                    </Text>
+                                }
                             />
                             <Paper p="md" sx={(theme) => ({ backgroundColor: theme.colors.gray[0] })}>
                                 <Stack spacing="xs">

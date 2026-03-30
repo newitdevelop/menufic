@@ -60,6 +60,7 @@ model Menu {
     updatedAt               DateTime            @updatedAt
     name                    String
     availableTime           String
+    availableDays           Int[]               @default([]) // Days of week menu is open (shown to guests): 0=Sun, 1=Mon … 6=Sat
     telephone               String?
     email                   String?
     reservations            String?             // URL for external reservations (deprecated, use reservationType)
@@ -101,6 +102,27 @@ model Menu {
     @@id([id, userId])
     @@index([restaurantId])
     @@index([isActive, endDate])
+}
+
+model Reservation {
+    id                String            @id @default(cuid())
+    createdAt         DateTime          @default(now())
+    menuId            String
+    restaurantId      String
+    restaurantName    String
+    menuName          String
+    serviceNames      String[]          @default([])
+    date              DateTime
+    time              String
+    partySize         Int
+    email             String
+    phone             String
+    contactPreference ContactPreference @default(PHONE)
+    marketingConsent  Boolean           @default(false)
+
+    @@index([restaurantId])
+    @@index([date])
+    @@index([createdAt])
 }
 
 model Category {

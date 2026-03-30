@@ -110,7 +110,10 @@
             "successTitleService": "Marcação Enviada",
             "successMessage": "O seu pedido de reserva foi enviado com sucesso!",
             "successMessageService": "O seu pedido de marcação de serviço foi enviado com sucesso!",
-            "errorTitle": "Erro na Reserva"
+            "errorTitle": "Erro na Reserva",
+            "marketingConsentText": "Concordo em receber comunicações de marketing de acordo com a",
+            "marketingConsentLink": "Política de Privacidade",
+            "marketingConsentOptional": "(Opcional)"
         },
         "leaveGoogleReview": "Deixar uma Avaliação no Google",
         "leaveTripAdvisorReview": "Avaliar no TripAdvisor",

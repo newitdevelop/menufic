@@ -254,7 +254,10 @@
             "successTitleService": "Booking Sent",
             "successMessage": "Your reservation request has been sent successfully!",
             "successMessageService": "Your service booking request has been sent successfully!",
-            "errorTitle": "Reservation Error"
+            "errorTitle": "Reservation Error",
+            "marketingConsentText": "I agree to receive marketing communications in accordance with the",
+            "marketingConsentLink": "Privacy Policy",
+            "marketingConsentOptional": "(Optional)"
         },
         "leaveGoogleReview": "Leave a Google Review",
         "leaveTripAdvisorReview": "Review on TripAdvisor",

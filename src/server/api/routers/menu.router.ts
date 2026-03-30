@@ -77,6 +77,7 @@ export const menuRouter = createTRPCRouter({
         return ctx.prisma.menu.create({
             data: {
                 availableTime: input.availableTime ?? "",
+                availableDays: input.availableDays ?? [],
                 email: input.email,
                 reservations: input.reservations,
                 message: input.message,
@@ -216,6 +217,7 @@ export const menuRouter = createTRPCRouter({
             ctx.prisma.menu.update({
                 data: {
                     availableTime: input.availableTime ?? "",
+                    availableDays: input.availableDays ?? [],
                     email: input.email ?? null,
                     reservations: input.reservations ?? null,
                     message: input.message ?? null,

@@ -110,7 +110,10 @@
             "successTitleService": "Buchung Gesendet",
             "successMessage": "Ihre Reservierungsanfrage wurde erfolgreich gesendet!",
             "successMessageService": "Ihre Servicebuchungsanfrage wurde erfolgreich gesendet!",
-            "errorTitle": "Reservierungsfehler"
+            "errorTitle": "Reservierungsfehler",
+            "marketingConsentText": "Ich stimme zu, Marketingmitteilungen gemäß der",
+            "marketingConsentLink": "Datenschutzrichtlinie",
+            "marketingConsentOptional": "(Optional)"
         },
         "leaveGoogleReview": "Google-Bewertung schreiben",
         "leaveTripAdvisorReview": "Auf TripAdvisor bewerten",

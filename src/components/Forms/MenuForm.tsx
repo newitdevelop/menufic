@@ -114,6 +114,8 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
             // Menu type fields
             menuType: (menuItem as any)?.menuType || "EXTERNAL",
             externalUrl: (menuItem as any)?.externalUrl || "",
+            // Available days (shown to guests alongside working hours)
+            availableDays: (menuItem as any)?.availableDays || [],
             // Schedule fields - map legacy isTemporary to PERIOD schedule type
             scheduleType: (menuItem as any)?.scheduleType || ((menuItem as any)?.isTemporary ? "PERIOD" : "ALWAYS"),
             dailyStartTime: (menuItem as any)?.dailyStartTime || null,
@@ -158,6 +160,8 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                 // Menu type fields
                 menuType: (menuItem as any)?.menuType || "EXTERNAL",
                 externalUrl: (menuItem as any)?.externalUrl || "",
+                // Available days (shown to guests alongside working hours)
+                availableDays: (menuItem as any)?.availableDays || [],
                 // Schedule fields - map legacy isTemporary to PERIOD schedule type
                 scheduleType: (menuItem as any)?.scheduleType || ((menuItem as any)?.isTemporary ? "PERIOD" : "ALWAYS"),
                 dailyStartTime: (menuItem as any)?.dailyStartTime || null,
@@ -322,6 +326,36 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                         >
                             Add Time Range
                         </Button>
+                    </div>
+
+                    <div>
+                        <Text size="sm" weight={500} mb={8}>
+                            Available Days
+                        </Text>
+                        <Text size="xs" color="dimmed" mb={8}>
+                            Select which days of the week this menu is available
+                        </Text>
+                        <Chip.Group
+                            multiple
+                            value={values.availableDays.map(String)}
+                            onChange={(vals) => setFieldValue("availableDays", vals.map(Number))}
+                        >
+                            <Group spacing={6}>
+                                {[
+                                    { label: "Mon", value: 1 },
+                                    { label: "Tue", value: 2 },
+                                    { label: "Wed", value: 3 },
+                                    { label: "Thu", value: 4 },
+                                    { label: "Fri", value: 5 },
+                                    { label: "Sat", value: 6 },
+                                    { label: "Sun", value: 0 },
+                                ].map(({ label, value }) => (
+                                    <Chip key={value} value={String(value)} disabled={loading} size="sm">
+                                        {label}
+                                    </Chip>
+                                ))}
+                            </Group>
+                        </Chip.Group>
                     </div>
 
                     <TextInput
