@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { Badge, Box, Group, Stack, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useTranslations } from "next-intl";
@@ -21,6 +21,8 @@ interface Props extends ModalProps {
 /** Modal to view details of a selected menu item */
 export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...rest }) => {
     const theme = useMantineTheme();
+    const onCloseRef = useRef(onClose);
+    useEffect(() => { onCloseRef.current = onClose; });
 
     // Get UI translations from menu item (server-side translated via DeepL)
     const uiTranslations = (menuItem as any)?.uiTranslations || {
@@ -29,10 +31,48 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
         allergens: {},
     };
 
-    // Dispatch events for Smart TV navigation
+    // Dispatch events for Smart TV navigation + handle Back key and OK/Enter key
     useEffect(() => {
         if (opened) {
             window.dispatchEvent(new Event("modal:open"));
+
+            // Push a history entry so the TV remote Back key pops it instead of leaving the page
+            window.history.pushState({ menuItemModalOpen: true }, '');
+            let historyPushed = true;
+
+            const handlePopState = () => {
+                // Back key was pressed — history state already popped, just close modal
+                historyPushed = false;
+                onCloseRef.current();
+            };
+
+            const handleKeyDown = (e: KeyboardEvent) => {
+                // OK / centre button on TV remote (Enter) closes the modal
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    const target = e.target as HTMLElement;
+                    const isInteractive =
+                        target.tagName === 'BUTTON' ||
+                        target.tagName === 'A' ||
+                        target.tagName === 'INPUT' ||
+                        target.isContentEditable;
+                    if (!isInteractive) {
+                        e.preventDefault();
+                        onCloseRef.current();
+                    }
+                }
+            };
+
+            window.addEventListener('popstate', handlePopState);
+            window.addEventListener('keydown', handleKeyDown);
+
+            return () => {
+                window.removeEventListener('popstate', handlePopState);
+                window.removeEventListener('keydown', handleKeyDown);
+                // If modal was closed by something other than the Back key, pop our history entry
+                if (historyPushed) {
+                    window.history.back();
+                }
+            };
         } else {
             window.dispatchEvent(new Event("modal:close"));
         }
