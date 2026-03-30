@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { Badge, Box, Group, Stack, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
 
 import type { ModalProps } from "@mantine/core";
 import type { Image, MenuItem } from "@prisma/client";
@@ -21,6 +22,7 @@ interface Props extends ModalProps {
 /** Modal to view details of a selected menu item */
 export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...rest }) => {
     const theme = useMantineTheme();
+    const router = useRouter();
     const onCloseRef = useRef(onClose);
     useEffect(() => { onCloseRef.current = onClose; });
 
@@ -40,11 +42,15 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
             window.history.pushState({ menuItemModalOpen: true }, '');
             let historyPushed = true;
 
-            const handlePopState = () => {
-                // Back key was pressed — history state already popped, just close modal
-                historyPushed = false;
-                onCloseRef.current();
-            };
+            // Block Next.js from processing this popstate — we handle it ourselves
+            router.beforePopState(() => {
+                if (historyPushed) {
+                    historyPushed = false;
+                    onCloseRef.current();
+                    return false; // prevent Next.js navigation
+                }
+                return true;
+            });
 
             const handleKeyDown = (e: KeyboardEvent) => {
                 // OK / centre button on TV remote (Enter) closes the modal
@@ -62,21 +68,21 @@ export const ViewMenuItemModal: FC<Props> = ({ menuItem, opened, onClose, ...res
                 }
             };
 
-            window.addEventListener('popstate', handlePopState);
             window.addEventListener('keydown', handleKeyDown);
 
             return () => {
-                window.removeEventListener('popstate', handlePopState);
                 window.removeEventListener('keydown', handleKeyDown);
+                router.beforePopState(() => true); // restore normal Next.js navigation
                 // If modal was closed by something other than the Back key, pop our history entry
                 if (historyPushed) {
+                    historyPushed = false;
                     window.history.back();
                 }
             };
         } else {
             window.dispatchEvent(new Event("modal:close"));
         }
-    }, [opened]);
+    }, [opened, router]);
 
     const bgColor = useMemo(() => {
         if (menuItem?.image?.color) {
