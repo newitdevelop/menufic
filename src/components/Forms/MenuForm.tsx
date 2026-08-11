@@ -295,7 +295,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     placeholder="e.g., 11:00"
                                     format="24"
                                     clearable
-                                    {...getInputProps(`timeRanges.${index}.startTime`)}
+                                    {...(getInputProps(`timeRanges.${index}.startTime`) as any)}
                                 />
                                 <TimeInput
                                     disabled={loading}
@@ -303,7 +303,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     placeholder="e.g., 23:00"
                                     format="24"
                                     clearable
-                                    {...getInputProps(`timeRanges.${index}.endTime`)}
+                                    {...(getInputProps(`timeRanges.${index}.endTime`) as any)}
                                 />
                                 <ActionIcon
                                     color="red"
@@ -423,7 +423,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     format="24"
                                     clearable
                                     withAsterisk
-                                    {...getInputProps("reservationStartTime")}
+                                    {...(getInputProps("reservationStartTime") as any)}
                                 />
                                 <TimeInput
                                     disabled={loading}
@@ -433,7 +433,7 @@ export const MenuForm: FC<Props> = ({ opened, onClose, restaurantId, menu: menuI
                                     format="24"
                                     clearable
                                     withAsterisk
-                                    {...getInputProps("reservationEndTime")}
+                                    {...(getInputProps("reservationEndTime") as any)}
                                 />
                             </Group>
                             <Group grow>

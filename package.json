@@ -20,7 +20,7 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/server": "^11.11.0",
-        "@formkit/auto-animate": "^1.0.0-pre-alpha.3",
+        "@formkit/auto-animate": "^0.10.0",
         "@mantine/carousel": "^5.10.5",
         "@mantine/core": "^5.10.5",
         "@mantine/dates": "^5.10.5",
