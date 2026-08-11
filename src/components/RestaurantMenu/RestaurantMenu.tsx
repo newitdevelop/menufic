@@ -259,6 +259,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
     const categoryIdFromQuery = router.query?.categoryId as string | undefined;
     const packIdFromQuery = router.query?.packId as string | undefined;
 
+    // Deep-link: ?reserve=1&guests=4&date=2026-08-15
+    const reserveParam = router.query?.reserve as string | undefined;
+    const guestsParam = router.query?.guests as string | undefined;
+    const dateParam = router.query?.date as string | undefined;
+    const deepLinkInitialDate = dateParam ? (() => { const d = new Date(dateParam); return isNaN(d.getTime()) ? null : d; })() : null;
+    const deepLinkInitialPartySize = guestsParam ? parseInt(guestsParam, 10) || 2 : undefined;
+
     // Smart TV detection: Auto-select "Room*" menu if accessing from TV
     // If menuId is provided in query params, use that instead
     const initialMenu = useMemo(
@@ -406,6 +413,13 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
             setSelectedMenu(menuIdFromQuery);
         }
     }, [menuIdFromQuery]);
+
+    // Deep-link: open reservation modal automatically when ?reserve=1 is in URL
+    useEffect(() => {
+        if (reserveParam === "1" && !reservationModalOpened) {
+            setReservationModalOpened(true);
+        }
+    }, [reserveParam]);
 
     // Keyboard shortcuts for language switching (Smart TV remote control)
     useEffect(() => {
@@ -1020,6 +1034,8 @@ export const RestaurantMenu: FC<Props> = ({ restaurant }) => {
                         onClose={() => setReservationModalOpened(false)}
                         isServiceMenu={isServiceMenu}
                         services={services}
+                        initialDate={deepLinkInitialDate}
+                        initialPartySize={deepLinkInitialPartySize}
                     />
                 );
             })()}

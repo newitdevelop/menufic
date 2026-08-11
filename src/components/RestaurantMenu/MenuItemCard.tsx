@@ -1,22 +1,20 @@
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 
-import { Box, createStyles, Paper, Stack, Text } from "@mantine/core";
+import { Box, createStyles, Group, Paper, Stack, Text } from "@mantine/core";
+import { IconPhoto } from "@tabler/icons";
 
 import type { Image, MenuItem } from "@prisma/client";
 
 import { calculateVATInclusivePrice } from "src/utils/helpers";
 
 import { ViewMenuItemModal } from "./ViewMenuItemModal";
-import { ImageKitImage } from "../ImageKitImage";
 
 export interface StyleProps {
     imageColor?: string;
 }
 
-const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
-    const image = getRef("image");
-
+const useStyles = createStyles((theme, { imageColor }: StyleProps) => {
     const bgColor = useMemo(() => {
         if (imageColor) {
             if (theme.colorScheme === "light") {
@@ -33,27 +31,6 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             gap: 0,
             overflow: "hidden",
             padding: theme.spacing.lg,
-        },
-        cardImage: {
-            height: "clamp(150px, 12vw, 300px)", // Increased max to 300px for 4K
-            ref: image,
-            transition: "transform 500ms ease",
-            width: "clamp(150px, 12vw, 300px)",
-            "@media (min-width: 3840px)": {
-                height: "280px", // Fixed larger size for 4K
-                width: "280px",
-            },
-        },
-        cardImageWrap: {
-            borderRadius: theme.radius.lg,
-            height: "clamp(150px, 12vw, 300px)", // Increased max to 300px for 4K
-            overflow: "hidden",
-            position: "relative",
-            width: "clamp(150px, 12vw, 300px)",
-            "@media (min-width: 3840px)": {
-                height: "280px", // Fixed larger size for 4K
-                width: "280px",
-            },
         },
         cardItem: {
             "&:hover": {
@@ -76,8 +53,6 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             overflow: "hidden",
             padding: "0 !important",
             transition: "all 500ms ease",
-            [`&:hover .${image}`]: { transform: "scale(1.05)" },
-            [`&:focus .${image}`]: { transform: "scale(1.05)" },
         },
         cardItemDesc: { WebkitLineClamp: 3 },
         cardItemTitle: { WebkitLineClamp: 2 },
@@ -88,6 +63,11 @@ const useStyles = createStyles((theme, { imageColor }: StyleProps, getRef) => {
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "normal",
+        },
+        photoIcon: {
+            color: theme.colors.primary[5],
+            flexShrink: 0,
+            opacity: 0.7,
         },
     };
 });
@@ -118,45 +98,26 @@ export const MenuItemCard: FC<Props> = ({ item }) => {
                 component="button"
                 data-testid="menu-item-card"
                 onClick={() => setModalVisible(true)}
-                sx={{
-                    minHeight: "150px", // Minimum height, but can grow with content
-                }}
+                sx={{ minHeight: "80px" }}
                 tabIndex={0}
             >
-                {item?.image?.path && (
-                    <Box className={classes.cardImageWrap}>
-                        <Box className={classes.cardImage}>
-                            <ImageKitImage
-                                blurhash={item?.image?.blurHash}
-                                color={item?.image?.color}
-                                height={150}
-                                imageAlt={item.name}
-                                imagePath={item?.image?.path}
-                                width={150}
-                            />
-                        </Box>
-                        {(item?.image as any)?.disclaimer && (
-                            <Text align="center" color="dimmed" fs="italic" mt={4} size="xs">
-                                {(item?.image as any).disclaimer}
-                            </Text>
-                        )}
-                    </Box>
-                )}
-
                 <Stack className={classes.cardDescWrap}>
-                    <Text
-                        className={cx(classes.cardText, classes.cardItemTitle)}
-                        size="lg"
-                        translate="yes"
-                        weight={700}
-                    >
-                        {item.name}
-                    </Text>
-                    {item.price ? (
+                    <Group spacing={6} noWrap align="flex-start">
                         <Text
-                            color="red"
-                            size="sm"
+                            className={cx(classes.cardText, classes.cardItemTitle)}
+                            size="lg"
+                            translate="yes"
+                            weight={700}
+                            sx={{ flex: 1 }}
                         >
+                            {item.name}
+                        </Text>
+                        {item?.image?.path && (
+                            <IconPhoto className={classes.photoIcon} size={16} />
+                        )}
+                    </Group>
+                    {item.price ? (
+                        <Text color="red" size="sm">
                             {item.currency || "€"}{displayPrice} ({item.vatRate || 23}% {uiTranslations.vatIncluded})
                         </Text>
                     ) : null}

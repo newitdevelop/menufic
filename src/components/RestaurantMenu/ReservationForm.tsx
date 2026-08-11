@@ -84,6 +84,8 @@ interface Props {
     onClose: () => void;
     isServiceMenu?: boolean; // If true, shows service selection step (for non-edible menus)
     services?: ServiceItem[]; // List of services/items to choose from (for non-edible menus)
+    initialDate?: Date | null; // Pre-filled date (from deep-link URL param)
+    initialPartySize?: number; // Pre-filled party size (from deep-link URL param)
 }
 
 /** Multi-step reservation form similar to TheFork */
@@ -155,6 +157,8 @@ export const ReservationForm: FC<Props> = ({
     onClose,
     isServiceMenu = false,
     services = [],
+    initialDate,
+    initialPartySize,
 }) => {
     const theme = useMantineTheme();
     const t = translations || DEFAULT_TRANSLATIONS;
@@ -227,9 +231,9 @@ export const ReservationForm: FC<Props> = ({
     const { getInputProps, onSubmit, values, setFieldValue, reset } = useForm({
         initialValues: {
             selectedServices: [] as { id: string; name: string; price?: number | null }[],
-            date: null as Date | null,
+            date: (initialDate ?? null) as Date | null,
             time: "",
-            partySize: 2,
+            partySize: initialPartySize ?? 2,
             email: "",
             phone: "",
             contactPreference: "PHONE" as "PHONE" | "WHATSAPP" | "EMAIL",
